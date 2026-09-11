@@ -110,6 +110,7 @@ TypeB配线故障=null（无通路）；TypeC配线故障=A口→入A→出②�
 
 ## 仓库 / 团队分享（2026-09-11）
 
+- **在线网站（GitHub Pages）**：https://ineocode.github.io/all-optical-network-course/ （已开启；public 仓库免费；根目录含 `.nojekyll` 禁用 Jekyll，保持与本地文件一致）
 - **GitHub 仓库**：https://github.com/Ineocode/all-optical-network-course （**public**，默认分支 `main`）
   - 已改为 public：任何拿到链接的人都能下载（无需邀请协作者）。已验证匿名 ZIP 归档可下（codeload 200）。
 - **网络处置（重要）**：本机 `github.com` HTTPS 被阻断（DNS 解析到被墙 IP，curl 超时 000），但 `api.github.com`/`codeload.github.com`/`raw.githubusercontent.com` 可通。

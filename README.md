@@ -2,7 +2,10 @@
 
 > 面向**医院新楼建设**的全光园区网络（POL / F5G）自学课程。9 课，3 周，每课 45 分钟，最终产出可提交的《新楼全光网络建设方案》。
 
+🌐 **在线浏览**：<https://ineocode.github.io/all-optical-network-course/>
+
 课程主页（**从这里开始**）：打开 **[`index.html`](./index.html)**——所有页面都可从这里进入，每页也能返回主页。
+（克隆到本地后直接打开 `index.html` 即可，纯静态、无需服务器。）
 
 ---
 
@@ -62,6 +65,9 @@
 ## 团队使用
 
 ### 获取课程
+
+- **在线直接看**：<https://ineocode.github.io/all-optical-network-course/>（推荐，零安装）
+- **下载到本地**：
 
 ```bash
 git clone https://github.com/Ineocode/all-optical-network-course.git
