@@ -23,9 +23,48 @@
   --danger: #b43e3e;
   --warning: #8a6217;
   --success: #26704b;
+  /* 图示/动画用到的表面色（随主题切换） */
+  --node-active-fill: #eef3f8;
+  --node-passive-fill: #fdf1ea;
+  --pipe-bg: #eceae2;
+  --panel: #ffffff;
+  --down-fill: #eeeeea;
+  --ok-fill: #e6f2ea;
+  --bad-fill: #fbeaea;
   --sans: ui-sans-serif, system-ui, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
   --mono: ui-monospace, "SF Mono", "Cascadia Code", Consolas, monospace;
   --radius: 8px;
+}
+
+/* ============================================================
+   深色模式：跟随系统，或用页头按钮手动切换（data-theme 由 theme.js 设置）
+   ============================================================ */
+:root[data-theme="dark"] {
+  --canvas: #15140f;
+  --surface-1: #1d1c17;
+  --surface-2: #242320;
+  --inverse: #0b0b09;
+  --border-subtle: #35332c;
+  --border-strong: #56534a;
+  --text-primary: #ece9e0;
+  --text-secondary: #bdb8ad;
+  --text-tertiary: #8d887d;
+  --accent: #e58a66;
+  --accent-hover: #f2a184;
+  --accent-strong: #e89a77;
+  --accent-soft: color-mix(in srgb, var(--accent) 22%, #242320);
+  --blue: #86aed3;
+  --blue-soft: color-mix(in srgb, var(--blue) 18%, #242320);
+  --danger: #e08585;
+  --warning: #d9ab55;
+  --success: #6fc095;
+  --node-active-fill: #1b2733;
+  --node-passive-fill: #2f221b;
+  --pipe-bg: #34322c;
+  --panel: #242320;
+  --down-fill: #2a2925;
+  --ok-fill: #1e2e26;
+  --bad-fill: #33201f;
 }
 
 * { box-sizing: border-box; }
@@ -181,8 +220,8 @@ td code { font-size: 0.8em; }
 }
 .q button:hover:not(:disabled) { border-color: var(--accent-hover); color: var(--accent-hover); }
 .q button:disabled { cursor: default; }
-.q button.correct { border-color: var(--success); color: var(--success); background: color-mix(in srgb, var(--success) 7%, white); font-weight: 600; }
-.q button.wrong { border-color: var(--danger); color: var(--danger); background: color-mix(in srgb, var(--danger) 6%, white); }
+.q button.correct { border-color: var(--success); color: var(--success); background: color-mix(in srgb, var(--success) 12%, var(--surface-2)); font-weight: 600; }
+.q button.wrong { border-color: var(--danger); color: var(--danger); background: color-mix(in srgb, var(--danger) 12%, var(--surface-2)); }
 .q .explain { margin: 0.75rem 0 0; font-size: 14px; color: var(--text-secondary); display: none; }
 .q .explain.show { display: block; }
 .quiz-score { font-family: var(--mono); font-size: 13px; color: var(--accent-strong); font-weight: 600; margin-top: 0.6rem; }
@@ -242,6 +281,18 @@ blockquote { margin: 1.2rem 0; padding: 0.3rem 0 0.3rem 1.1rem; border-left: 2px
 .links a { margin-right: 1.2rem; color: var(--accent-strong); text-decoration: none; }
 .links a:hover { text-decoration: underline; }
 
+/* ---------- 深色模式切换按钮 ---------- */
+.theme-toggle {
+  position: fixed; top: 0.85rem; right: 0.85rem; z-index: 999;
+  width: 2.2rem; height: 2.2rem; border-radius: 999px;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--border-strong);
+  background: var(--surface-2); color: var(--text-secondary);
+  font-size: 15px; line-height: 1; cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .1);
+}
+.theme-toggle:hover { border-color: var(--accent); color: var(--accent-strong); }
+
 /* ---------- 打印 ---------- */
 @media print {
   body { font-size: 11pt; background: #fff; }
@@ -251,4 +302,5 @@ blockquote { margin: 1.2rem 0; padding: 0.3rem 0 0.3rem 1.1rem; border-left: 2px
   .q button:disabled { color: #222; }
   .q .explain, .recall .reveal { display: block; }
   a { color: #222; }
+  .theme-toggle { display: none; }
 }

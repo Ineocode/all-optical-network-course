@@ -148,6 +148,15 @@ TypeB配线故障=null（无通路）；TypeC配线故障=A口→入A→出②�
 4. 推荐阅读（primary source，含双语 PDF）
 5. 页脚：`.next` 预告 + `.links` 导航（**不放“发我数据/问我”**）
 
+## 深色模式（2026-09-11）
+
+GitHub Pages 本身不提供主题，深色模式由站点自己实现：
+- `assets/theme.js`：在 `<head>` 同步设定 `data-theme`（跟随 `prefers-color-scheme`），右上角注入切换按钮，选择写入 `localStorage`（key `teach-theme`）；用户未手动选时，系统主题变化实时跟随。
+- `lesson.css`：`:root[data-theme="dark"]` 覆盖全部颜色变量，另加了图示/动画用的表面色变量（`--node-active-fill` / `--pipe-bg` / `--panel` / `--down-fill` / `--ok-fill` / `--bad-fill`）。
+- `pon-flow.js`：注入的 CSS 类改用变量；场景里写死的表面色（管道、业务框、ONU 变灰、OLT 高亮）改用 `var(...)`。
+- 已接入 19 个页面（index + 9 lessons + 9 速查表）；7 个双语 PDF 源文件是打印用文档，没接。
+- 已验证：切换后 `body`/`code`/`th`/SVG 节点/文字的 computed 颜色均变为暗色，切回后恢复。
+
 ## 视觉设计（已定）
 
 - 预设：Editorial Technology（编辑网格、规则线、等宽编号、全无衬线）

@@ -34,18 +34,18 @@
     "padding:0 0.3rem 0.5rem;display:flex;gap:1rem;flex-wrap:wrap;}",
     ".ponmap .pf-legend i{display:inline-block;width:0.7rem;height:0.7rem;border-radius:3px;margin-right:0.3rem;vertical-align:-0.05rem;}",
     ".ponmap text{font-family:ui-sans-serif,system-ui,'PingFang SC','Microsoft YaHei',sans-serif;}",
-    ".ponmap .n-label{font-size:15px;font-weight:700;fill:#141413;}",
-    ".ponmap .n-sub{font-size:11px;fill:#78766e;}",
-    ".ponmap .seg-label{font-size:11px;fill:#78766e;font-family:ui-monospace,monospace;}",
-    ".ponmap .hud{font-family:ui-monospace,monospace;font-size:12.5px;fill:#141413;}",
-    ".ponmap .hud-ok{fill:#26704b;font-weight:700;}",
-    ".ponmap .hud-warn{fill:#b43e3e;font-weight:700;}",
-    ".ponmap .stage-box{fill:#f4f2ea;stroke:#b0aea5;stroke-width:1;}",
-    ".ponmap .stage-box.active{fill:#f6e7e0;stroke:#d97757;}",
-    ".ponmap .stage-t{font-size:12.5px;font-weight:700;fill:#141413;}",
-    ".ponmap .stage-s{font-size:10.5px;fill:#78766e;}",
-    ".ponmap .node-active{fill:#eef3f8;stroke:#2f5d8a;stroke-width:1.5;}",
-    ".ponmap .node-passive{fill:#fdf1ea;stroke:#d97757;stroke-width:1.4;stroke-dasharray:5 4;}",
+    ".ponmap .n-label{font-size:15px;font-weight:700;fill:var(--text-primary);}",
+    ".ponmap .n-sub{font-size:11px;fill:var(--text-tertiary);}",
+    ".ponmap .seg-label{font-size:11px;fill:var(--text-tertiary);font-family:ui-monospace,monospace;}",
+    ".ponmap .hud{font-family:ui-monospace,monospace;font-size:12.5px;fill:var(--text-primary);}",
+    ".ponmap .hud-ok{fill:var(--success);font-weight:700;}",
+    ".ponmap .hud-warn{fill:var(--danger);font-weight:700;}",
+    ".ponmap .stage-box{fill:var(--surface-1);stroke:var(--border-strong);stroke-width:1;}",
+    ".ponmap .stage-box.active{fill:var(--accent-soft);stroke:var(--accent);}",
+    ".ponmap .stage-t{font-size:12.5px;font-weight:700;fill:var(--text-primary);}",
+    ".ponmap .stage-s{font-size:10.5px;fill:var(--text-tertiary);}",
+    ".ponmap .node-active{fill:var(--node-active-fill);stroke:var(--blue);stroke-width:1.5;}",
+    ".ponmap .node-passive{fill:var(--node-passive-fill);stroke:var(--accent);stroke-width:1.4;stroke-dasharray:5 4;}",
     "@media (prefers-reduced-motion: reduce){.ponmap .pf-controls{opacity:.85;}}"
   ].join("");
 
@@ -402,8 +402,8 @@
 
       // OLT 高亮：谁在承载业务
       var useB = (fault === "feeder");
-      oltA.style.fill = useB ? "#f4f2ea" : ""; oltA.style.stroke = useB ? "#b0aea5" : "";
-      oltB.style.fill = useB ? "#e6f2ea" : ""; oltB.style.stroke = useB ? "#26704b" : "";
+      oltA.style.fill = useB ? "var(--down-fill)" : ""; oltA.style.stroke = useB ? "var(--border-strong)" : "";
+      oltB.style.fill = useB ? "var(--ok-fill)" : ""; oltB.style.stroke = useB ? "var(--success)" : "";
 
       // 端口：当前到达哪个口
       var usePort2 = (fault === "dist" && typeC);
@@ -412,7 +412,7 @@
       PT2.ring.setAttribute("opacity", usePort2 ? 1 : 0);
 
       // ONU：业务中断则变灰
-      onu.style.fill = down ? "#eeeeea" : ""; onu.style.stroke = down ? "#b43e3e" : "";
+      onu.style.fill = down ? "var(--down-fill)" : ""; onu.style.stroke = down ? "var(--danger)" : "";
       svc.textContent = down ? "业务中断" : "业务正常";
       svc.setAttribute("class", down ? "hud hud-warn" : "hud hud-ok");
 
@@ -489,7 +489,7 @@
     function slicePath(o) { return [[OLR[0], OLR[1] + o], [SP[0], SP[1] + o], [ONUl[0], ONUl[1] + o]]; }
 
     // ① 同一张 PON 的物理管道（浅灰粗管）——先画，位于节点之下
-    g.appendChild(el("path", { d: pathD([OLR, SP, ONUl]), fill: "none", stroke: "#eceae2",
+    g.appendChild(el("path", { d: pathD([OLR, SP, ONUl]), fill: "none", stroke: "#eceae2", style: "stroke:var(--pipe-bg)",
       "stroke-width": 22, "stroke-linecap": "round", "stroke-linejoin": "round" }));
 
     // ② 三条隔离管道（贯穿 OLT→分光器→ONU；TDM 分开 / VLAN 合并）
@@ -518,7 +518,7 @@
     // ⑤ 右侧三个业务框
     for (i = 0; i < 3; i++) {
       g.appendChild(el("rect", { x: boxX, y: cys[i] - boxH/2, width: boxW, height: boxH, rx: 8,
-        fill: "#fff", stroke: colors[i], "stroke-width": 1.8 }));
+        fill: "#fff", style: "fill:var(--panel)", stroke: colors[i], "stroke-width": 1.8 }));
       var t = txt(boxX + 18, cys[i] + 7, names[i], "n-label", "start");
       t.setAttribute("fill", colors[i]);
       g.appendChild(t);
@@ -574,7 +574,7 @@
     drawOnu(g, 0, "目标 ONU", "正常用户");
     drawOnu(g, 1, "其他 ONU", "同 PON 口");
     // eavesdropper
-    g.appendChild(el("rect", { x: ONU_X, y: ONU_CY[2]-ONU_H/2, width: ONU_W, height: ONU_H, rx: 8, fill: "#fbeaea", stroke: "#b43e3e", "stroke-width": 1.6 }));
+    g.appendChild(el("rect", { x: ONU_X, y: ONU_CY[2]-ONU_H/2, width: ONU_W, height: ONU_H, rx: 8, fill: "#fbeaea", style: "fill:var(--bad-fill)", stroke: "#b43e3e", "stroke-width": 1.6 }));
     g.appendChild(txt(ONU_X+ONU_W/2, ONU_CY[2]-2, "恶意 ONU", "n-label", "middle"));
     g.appendChild(txt(ONU_X+ONU_W/2, ONU_CY[2]+18, "被改装 · 窃听", "n-sub", "middle"));
     var state = txt(40, 40, "", "hud"); this.hudG.appendChild(state);
