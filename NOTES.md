@@ -101,6 +101,14 @@ TypeB配线故障=null（无通路）；TypeC配线故障=A口→入A→出②�
 → **今后新建 lesson：不加“发我数据/问我”的页脚；如需预告，用 `.footer .next`。**
 页脚 `.links`（速查表 / 术语表 / 路线图）保留。
 
+## 仓库 / 团队分享（2026-09-11）
+
+- **GitHub 仓库**：https://github.com/Ineocode/all-optical-network-course （**private**，默认分支 `main`）
+- 已推送 46 个文件；`.research/`（21MB 研究草稿与 ITU PDF）已在 `.gitignore` 中排除
+- 本机 git 操作需**绕过失效代理**：在命令前加 `env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u ALL_PROXY -u all_proxy`
+- 日后更新：`git add -A && git commit -m "..." && git push`
+- 团队加入：GitHub 仓库 Settings → Collaborators 邀请；或直接 `git clone https://github.com/Ineocode/all-optical-network-course.git`
+
 ## 导航约定（2026-09-11）
 
 根目录新增 **`index.html` 课程主页（路线图导航页）**，含三周分段课程卡片 + 参考文档库 + 学习辅助链接。
