@@ -49,7 +49,6 @@
 ├── MISSION.md                 # 学习任务（为什么学 / 成功标准 / 边界）
 ├── RESOURCES.md               # 一手资料清单（含可信度标注与 Gaps）
 ├── GLOSSARY.md                # 术语基准（全课程统一的用词）
-├── ROADMAP.md                 # 路线图（Markdown 版）
 ├── NOTES.md                   # 教学设计与工作笔记
 └── learning-records/          # 学习记录（≈ 教学决策记录）
 ```

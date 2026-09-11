@@ -476,39 +476,88 @@
 
   PonFlow.prototype.scene_services = function () {
     var self = this, g = this.base;
-    link(g, oltRight(), [SPLIT.x, SPLIT.y], false);
-    drawOlt(g); drawSplitter(g);
-    drawOnu(g, 2, "ONU（房间）", "有源 · 多业务");
-    var y0 = SPLIT.y;
-    var colors = ["#b43e3e", "#2f5d8a", "#26704b"];
+    // 逻辑：三种业务源自 OLT，在同一张 PON 上（OLT→分光器→ONU）以隔离管道传输，
+    //       到 ONU 后分别送入右侧三个业务框。
+    var OLR = [OLT.x + OLT.w, OLT.y + OLT.h/2];     // (180,230) 业务起点 = OLT 右缘
+    var SP  = [SPLIT.x, SPLIT.y];                   // (480,220) 无源分光器
+    var ONUx = 620, ONUy = 185, ONUw = 120, ONUh = 70;
+    var ONUl = [ONUx, ONUy + ONUh/2];               // (620,220)
+    var ONUr = [ONUx + ONUw, ONUy + ONUh/2];        // (740,220)
     var names = ["内网", "外网", "设备网"];
+    var colors = ["#b43e3e", "#2f5d8a", "#26704b"];
+    var boxX = 790, boxW = 150, boxH = 46, cys = [110, 220, 330];
+    function slicePath(o) { return [[OLR[0], OLR[1] + o], [SP[0], SP[1] + o], [ONUl[0], ONUl[1] + o]]; }
+
+    // ① 同一张 PON 的物理管道（浅灰粗管）——先画，位于节点之下
+    g.appendChild(el("path", { d: pathD([OLR, SP, ONUl]), fill: "none", stroke: "#eceae2",
+      "stroke-width": 22, "stroke-linecap": "round", "stroke-linejoin": "round" }));
+
+    // ② 三条隔离管道（贯穿 OLT→分光器→ONU；TDM 分开 / VLAN 合并）
+    var slices = colors.map(function (c) {
+      var p = el("path", { d: "", fill: "none", stroke: c, "stroke-width": 3.4,
+        "stroke-linecap": "round", "stroke-linejoin": "round", opacity: .8 });
+      g.appendChild(p); return p;
+    });
+
+    // ③ 节点（画在管道之上，避免管道盖住分光器）
+    drawOlt(g, "OLT", "三种业务的起点");
+    drawSplitter(g, "无源 · 不供电");
+    g.appendChild(el("rect", { x: ONUx, y: ONUy, width: ONUw, height: ONUh, rx: 8, "class": "node-active" }));
+    g.appendChild(txt(ONUx + ONUw/2, ONUy + 30, "ONU", "n-label", "middle"));
+    g.appendChild(txt(ONUx + ONUw/2, ONUy + 50, "有源 · 多业务", "n-sub", "middle"));
+
+    // ④ ONU → 右侧业务框
     var lanes = [];
     for (var i = 0; i < 3; i++) {
-      var yy = y0 - 30 + i * 30;
-      lanes.push([ [SPLIT.x, SPLIT.y], [SPLIT.x + 120, yy], [ONU_X, yy] ]);
+      var lane = [ONUr.slice(), [ONUr[0] + 25, cys[i]], [boxX, cys[i]]];
+      lanes.push(lane);
+      g.appendChild(el("path", { d: pathD(lane), fill: "none", stroke: colors[i],
+        "stroke-width": 2.4, opacity: .5 }));
     }
-    lanes.forEach(function (L, i) {
-      g.appendChild(el("path", { d: pathD(L), fill: "none", stroke: colors[i], "stroke-width": 2, opacity: .5 }));
-      g.appendChild(txt(ONU_X + 6, L[2][1] - 6, names[i], "seg-label", "start"));
-    });
+
+    // ⑤ 右侧三个业务框
+    for (i = 0; i < 3; i++) {
+      g.appendChild(el("rect", { x: boxX, y: cys[i] - boxH/2, width: boxW, height: boxH, rx: 8,
+        fill: "#fff", stroke: colors[i], "stroke-width": 1.8 }));
+      var t = txt(boxX + 18, cys[i] + 7, names[i], "n-label", "start");
+      t.setAttribute("fill", colors[i]);
+      g.appendChild(t);
+      g.appendChild(txt(boxX + boxW - 16, cys[i] + 7, "业务", "n-sub", "end"));
+    }
+
+    // ⑥ 标注
+    g.appendChild(txt((OLR[0] + ONUl[0]) / 2, 166, "同一张 PON 承载三种业务", "seg-label", "middle"));
     var mode = txt(40, 40, "", "hud"); this.hudG.appendChild(mode);
+    var tag = txt(ONUx + ONUw/2, ONUy + ONUh + 24, "", "seg-label", "middle"); this.hudG.appendChild(tag);
+
     var hard = true;
     function render() {
+      var offs = hard ? [-14, 0, 14] : [0, 0, 0];
+      slices.forEach(function (p, i) { p.setAttribute("d", pathD(slicePath(offs[i]))); });
       if (hard) {
-        mode.textContent = "TDM 硬隔离：内网 / 外网 / 设备网 各走独立管道（硬隔离）";
+        mode.textContent = "TDM 硬隔离：内网 / 外网 / 设备网 在同一张 PON 上各走独立管道";
         mode.setAttribute("class", "hud hud-ok");
+        tag.textContent = "↑ 三条独立管道";
+        tag.setAttribute("class", "seg-label");
       } else {
-        mode.textContent = "仅 VLAN 逻辑隔离：共用同一管道，配置错误或攻击可能越权";
+        mode.textContent = "仅 VLAN 逻辑隔离：三种业务挤在同一条管道，配置错误或攻击可能越权";
         mode.setAttribute("class", "hud hud-warn");
+        tag.textContent = "↑ 共用一条管道";
+        tag.setAttribute("class", "hud hud-warn");
       }
     }
     function cycle() {
       self.clearPulses();
-      lanes.forEach(function (L, i) {
-        self.spawn(L, 1500, hard ? 0 : 0, null, colors[i], hard ? 6 : 6);
-      });
+      var offs = hard ? [-14, 0, 14] : [0, 0, 0];
+      for (var i = 0; i < 3; i++) {
+        (function (i) {
+          self.spawn(slicePath(offs[i]), 950, hard ? 0 : i * 320, function () {
+            self.spawn(lanes[i], 750, 0, null, colors[i], 6);
+          }, colors[i], 6);
+        })(i);
+      }
     }
-    render(); cycle(); this.set(cycle, 2200);
+    render(); cycle(); this.set(cycle, 2600);
     var b = this.btn("切换为“仅 VLAN”", function(){
       hard = !hard; b.textContent = hard ? "切换为“仅 VLAN”" : "切换为“TDM 硬隔离”";
       b.classList.toggle("on", !hard); render(); cycle();
