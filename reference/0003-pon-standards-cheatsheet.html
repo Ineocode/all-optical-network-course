@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>速查表 · PON 制式与选型</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<style>
+  .page { max-width: 52rem; }
+  .sheet h2 { margin-top: 2.2rem; }
+  td:first-child { white-space: nowrap; }
+  .ref-head { display:flex; justify-content:space-between; align-items:baseline; gap:1rem; flex-wrap:wrap; }
+</style>
+</head>
+<body>
+<div class="page sheet">
+
+  <header class="masthead">
+    <div class="ref-head">
+      <p class="course-label">速查表 · Reference 0003</p>
+      <p class="meta">配套 Lesson 03 · 打印友好</p>
+    </div>
+    <h1>PON 制式表 &amp; 选型速查</h1>
+    <p class="meta"><span>一手来源：ITU-T G.984 / G.987 / G.9807.1 / G.989 / G.9804 · IEEE 802.3</span></p>
+  </header>
+
+  <h2><span class="no">01</span> 制式总表</h2>
+  <table>
+    <thead><tr><th>制式</th><th>标准</th><th>下行 / 上行</th><th>定位</th></tr></thead>
+    <tbody>
+      <tr><td>EPON</td><td>IEEE 802.3ah</td><td>1.25G / 1.25G</td><td>早期，新院区基本不再选</td></tr>
+      <tr><td>10G-EPON</td><td>IEEE 802.3av</td><td>10G / 10G（或 10/1）</td><td>IEEE 路线，国内院区少见</td></tr>
+      <tr><td>GPON</td><td>ITU-T G.984</td><td>2.5G / 1.25G</td><td>成熟便宜、存量多</td></tr>
+      <tr><td>XG-PON</td><td>ITU-T G.987</td><td>10G / 2.5G</td><td>非对称万兆</td></tr>
+      <tr><td><strong>XGS-PON</strong></td><td>ITU-T G.9807.1</td><td><strong>10G / 10G</strong></td><td><strong>新院区主力</strong></td></tr>
+      <tr><td>NG-PON2</td><td>ITU-T G.989</td><td>40G（4λ × 10G）</td><td>波长堆叠，平滑扩容</td></tr>
+      <tr><td>50G-PON</td><td>ITU-T G.9804</td><td>50G / 25G（可对称 50G）</td><td>AI 影像、Wi-Fi 7</td></tr>
+    </tbody>
+  </table>
+  <p class="cite">50G-PON 线速率：下行 49.7664 Gbit/s，上行可选 12.4416 / 24.8832 / 49.7664 Gbit/s（G.9804.3）。</p>
+
+  <h2><span class="no">02</span> F5G / F5G-A</h2>
+  <table>
+    <thead><tr><th>名词</th><th>含义</th></tr></thead>
+    <tbody>
+      <tr><td>F5G</td><td>ETSI 提出的"第五代固定网络"产业标签（对应 5G），不是具体协议</td></tr>
+      <tr><td>F5G-A</td><td>F5G 演进版：万兆普及、光感知与可视化、实时韧性联接、绿色全光网</td></tr>
+      <tr><td>"F5G 全光院区"</td><td>= 基于 PON（GPON/XGS-PON/50G-PON）的全光院区方案</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="no">03</span> 带宽账</h2>
+  <div class="win">
+    <p><strong>收敛比 = Σ（所有 ONU 承诺带宽）÷ PON 口线路速率</strong></p>
+    <p>下行广播共享、上行 TDMA 共享；所有 ONU 同时跑满时，每人 ≈ 线路速率 ÷ 分光比（理论下限）。</p>
+  </div>
+  <table>
+    <thead><tr><th>PON 口</th><th>分光比</th><th>每 ONU 承诺</th><th>Σ承诺</th><th>收敛比</th></tr></thead>
+    <tbody>
+      <tr><td>XGS-PON 10G</td><td>1:32</td><td>100M</td><td>3.2G</td><td>0.32（宽松）</td></tr>
+      <tr><td>XGS-PON 10G</td><td>1:64</td><td>100M</td><td>6.4G</td><td>0.64（可行但留余量少）</td></tr>
+      <tr><td>GPON 2.5G</td><td>1:32</td><td>100M</td><td>3.2G</td><td>1.28（超了，不可行）</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="no">04</span> 两道门判定流程</h2>
+  <table>
+    <thead><tr><th>步骤</th><th>动作</th></tr></thead>
+    <tbody>
+      <tr><td>① 数点位定业务</td><td>统计每区每点位的服务与承诺带宽</td></tr>
+      <tr><td>② 过光功率门</td><td>固定损耗 + 分光器 IL + 余量 ≤ 预算 → 得到分光比上限</td></tr>
+      <tr><td>③ 过带宽门</td><td>Σ承诺 ÷ 线路速率 = 收敛比，检查是否够用</td></tr>
+      <tr><td>④ 选制式</td><td>两道门不够 → 升级制式或减小分光比</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="no">05</span> 选型矩阵（新建医院参考）</h2>
+  <table>
+    <thead><tr><th>区域 / 场景</th><th>制式</th><th>分光比</th></tr></thead>
+    <tbody>
+      <tr><td>普通病房、办公、门禁</td><td>XGS-PON</td><td>1:32</td></tr>
+      <tr><td>存量 / 低价值区域</td><td>GPON</td><td>1:32 / 1:64</td></tr>
+      <tr><td>影像科、4K 手术示教</td><td>XGS-PON</td><td>1:4 – 1:8</td></tr>
+      <tr><td>数字病理 AI、Wi-Fi 7 全覆盖</td><td>50G-PON</td><td>1:4 – 1:16</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="no">06</span> 案例数字</h2>
+  <table>
+    <thead><tr><th>案例 / 指标</th><th>数值</th></tr></thead>
+    <tbody>
+      <tr><td>南京农业大学（NAU）全光校园</td><td>XGS-PON + Wi-Fi 6，OLT + 无源分光器 SPL + ONU + 面板 AP，上下行对称 10G，两层架构</td></tr>
+      <tr><td>数字病理上传（50G PON + AI）</td><td>129 s → 15 s</td></tr>
+      <tr><td>单纤速率（XGS-PON Pro）</td><td>12.5G</td></tr>
+      <tr><td>关键业务保护</td><td>Type C 双链路保护</td></tr>
+      <tr><td>一纤到房间布线节省</td><td>约 80%</td></tr>
+    </tbody>
+  </table>
+
+  <div class="footer">
+    <div class="links">
+      <a href="../index.html">课程主页</a>
+      <a href="../lessons/0003-pon-standards-and-selection.html">Lesson 03</a>
+      <a href="./0002-odn-power-budget-cheatsheet.html">L2 速查表</a>
+      <a href="./0001-architecture-comparison-cheatsheet.html">L1 速查表</a>
+      <a href="../GLOSSARY.md">术语表</a>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

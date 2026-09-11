@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>速查表 · 全光院区架构对比与 PON 制式</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<style>
+  .page { max-width: 52rem; }
+  .sheet h2 { margin-top: 2.2rem; }
+  .dense p, .dense li { font-size: 15px; }
+  td:first-child { white-space: nowrap; }
+  .ref-head { display:flex; justify-content:space-between; align-items:baseline; gap:1rem; flex-wrap:wrap; }
+</style>
+</head>
+<body>
+<div class="page sheet">
+
+  <header class="masthead">
+    <div class="ref-head">
+      <p class="course-label">速查表 · Reference 0001</p>
+      <p class="meta">配套 Lesson 01 · 打印友好</p>
+    </div>
+    <h1>全光院区架构对比 &amp; PON 制式速查</h1>
+    <p class="meta"><span>一手来源：ITU-T · 华为白皮书 · T/CECA 20002-2019</span></p>
+  </header>
+
+  <h2><span class="no">01</span> 术语辨析：两个"全光网络"</h2>
+  <table>
+    <thead><tr><th></th><th>A · 电信全光网（AON）</th><th>B · 全光院区（POL / F5G）</th></tr></thead>
+    <tbody>
+      <tr><td>关键词</td><td>OXC / ROADM / 波长 / 光交叉</td><td>PON / 分光器 / 无源 / 一纤到房间</td></tr>
+      <tr><td>典型场景</td><td>骨干网、城域网、长途传输</td><td>医院院区、校园、酒店、办公楼</td></tr>
+      <tr><td>本工作区</td><td>仅作概念区分</td><td><strong>主线</strong>（新楼建设选它）</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="no">02</span> 架构对比：三层有源 vs 两层无源</h2>
+  <table>
+    <thead><tr><th>维度</th><th>传统三层以太网</th><th>全光院区（POL / FTTO）</th></tr></thead>
+    <tbody>
+      <tr><td>拓扑</td><td>核心-汇聚-接入，点对点星型</td><td>OLT-ODN-ONU，点到多点（P2MP）</td></tr>
+      <tr><td>有源设备</td><td>每层都有（核心/汇聚/接入交换机）</td><td>只有两端：OLT（机房）+ ONU（房间）</td></tr>
+      <tr><td>中间层</td><td>有源交换机，需供电/散热/UPS/弱电间</td><td>无源 ODN：分光器 + 光纤，不供电</td></tr>
+      <tr><td>传输介质</td><td>铜缆（Cat6a/Cat7）+ 部分光纤</td><td>单模光纤</td></tr>
+      <tr><td>距离</td><td>铜缆 ≤ 100 m</td><td>光纤可达 20 km</td></tr>
+      <tr><td>介质特性</td><td>独立带宽，不共享</td><td>共享介质：一个 PON 口下 ONU 共享带宽</td></tr>
+      <tr><td>故障定位</td><td>有源设备可管可查，较容易</td><td>无源分光器不可管，需光功率监测/OTDR</td></tr>
+      <tr><td>升级</td><td>换设备/换铜缆，代价大</td><td>换两端板卡即可，光纤一次布放管几十年</td></tr>
+      <tr><td>运维</td><td>成熟，工具多</td><td>必须与既有以太网<strong>统一网管</strong>，否则割裂</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="no">03</span> PON 制式速查</h2>
+  <table>
+    <thead><tr><th>制式</th><th>标准</th><th>下行 / 上行</th><th>一句话</th></tr></thead>
+    <tbody>
+      <tr><td>GPON</td><td>ITU-T G.984</td><td>2.5G / 1.25G</td><td>第一代主力，存量网络多</td></tr>
+      <tr><td>XG-PON</td><td>ITU-T G.987</td><td>10G / 2.5G</td><td>非对称 10G</td></tr>
+      <tr><td>XGS-PON</td><td>ITU-T G.9807.1</td><td>10G / 10G</td><td><strong>当前院区主力（对称 10G）</strong></td></tr>
+      <tr><td>NG-PON2</td><td>ITU-T G.989</td><td>40G（波长堆叠）</td><td>TWDM 路线，多波长升级</td></tr>
+      <tr><td>50G-PON</td><td>ITU-T G.9804</td><td>50G</td><td>面向 Wi-Fi 7 / AI 病理等新高带宽</td></tr>
+    </tbody>
+  </table>
+  <p class="cite">光功率预算（Class B+ / C+ 等光收发指标）的权威出处：ITU-T G.984.2 —
+  <a href="https://www.itu.int/rec/T-REC-G.984.2/en" target="_blank">itu.int/rec/T-REC-G.984.2</a></p>
+
+  <h2><span class="no">04</span> 选型判断口诀</h2>
+  <table>
+    <thead><tr><th>信号</th><th>倾向</th></tr></thead>
+    <tbody>
+      <tr><td>新建建筑、无铜缆包袱</td><td>优先全光</td></tr>
+      <tr><td>点位密集（病房、门诊、教室、客房）</td><td>优先全光</td></tr>
+      <tr><td>跨楼层 / 跨楼 / 距离 &gt; 100 m</td><td>优先全光</td></tr>
+      <tr><td>多业务合一（数据+电话+电视+AP+物联网）</td><td>优先全光</td></tr>
+      <tr><td>需要内外网/设备网隔离</td><td>全光（硬隔离切片）</td></tr>
+      <tr><td>单点大功率 PoE（如部分摄像机/AP 集中供电）</td><td>谨慎，评估 PoF 或保留以太网</td></tr>
+      <tr><td>存量铜缆多且不宜改造的老院区</td><td>保留以太网 / 局部改造</td></tr>
+      <tr><td>仅零星几个点位</td><td>保留以太网更划算</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="no">05</span> 医院落地参考数字（华为医疗方案）</h2>
+  <table>
+    <thead><tr><th>指标</th><th>数值</th></tr></thead>
+    <tbody>
+      <tr><td>一纤到房间布线节省</td><td>约 80%</td></tr>
+      <tr><td>数字病理切片上传（50G PON + AI）</td><td>129 s → 15 s</td></tr>
+      <tr><td>AI 阅片报告生成</td><td>1 小时 → 5 分钟</td></tr>
+      <tr><td>单纤速率（XGS-PON Pro）</td><td>12.5G</td></tr>
+      <tr><td>保护方式</td><td>Type C 双链路保护</td></tr>
+      <tr><td>隔离</td><td>TDM 硬隔离切片（内网/外网/设备网）</td></tr>
+    </tbody>
+  </table>
+  <p class="cite">来源：<a href="https://e.huawei.com/en/solutions/enterprise-optical-network/campus-optix/medical-campus-optical-network" target="_blank">Huawei iFTTO for Healthcare</a>（厂商数据，汇报时可注明出处）</p>
+
+  <h2><span class="no">06</span> 必背三句话</h2>
+  <div class="win">
+    <p>① 传统院区是三层<strong>有源</strong>交换机，全光院区是 OLT-ODN-ONU 两层，中间<strong>无源</strong>。<br>
+    ② 铜缆到桌面 ≤ 100 m，光纤可达 20 km。<br>
+    ③ 无源 = 中间分光器不供电；<strong>OLT 和 ONU 仍然有源、仍然要供电</strong>。</p>
+  </div>
+
+  <div class="footer">
+    <div class="links">
+      <a href="../index.html">课程主页</a>
+      <a href="../lessons/0001-what-is-all-optical-campus.html">Lesson 01</a>
+      <a href="../GLOSSARY.md">术语表</a>
+      <a href="../RESOURCES.md">资料清单</a>
+      <a href="../ROADMAP.md">路线图</a>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>速查表 · 华为 OLT 配置命令</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<style>
+  .page { max-width: 54rem; }
+  .sheet h2 { margin-top: 2.2rem; }
+  .ref-head { display:flex; justify-content:space-between; align-items:baseline; gap:1rem; flex-wrap:wrap; }
+  td:first-child { white-space: nowrap; }
+</style>
+</head>
+<body>
+<div class="page sheet">
+
+  <header class="masthead">
+    <div class="ref-head">
+      <p class="course-label">速查表 · Reference 0008</p>
+      <p class="meta">配套 Lesson 08 · 打印友好</p>
+    </div>
+    <h1>华为 OLT（MA5800 / EA5800）配置命令速查</h1>
+    <p class="meta"><span>命令来自公开配置实例，务必以设备《命令参考》为准</span></p>
+  </header>
+
+  <div class="danger">
+    <span class="t">免责与用法</span>
+    型号/版本间命令语法有差异。本表用于理解<strong>流程与对象关系</strong>，实际配置前请对照设备文档。
+    参考：博客园《GPON 介绍及华为 OLT 网关注册配置流程》、简书《华为 OLT 业务配置》。
+  </div>
+
+  <h2><span class="no">01</span> 命令清单（按配置顺序）</h2>
+  <table>
+    <thead><tr><th>步骤</th><th>命令</th><th>作用</th></tr></thead>
+    <tbody>
+      <tr><td>登录</td><td><code>enable</code> / <code>config</code></td><td>提权、进全局配置模式</td></tr>
+      <tr><td>查硬件</td><td><code>display board 0</code></td><td>看板卡在位</td></tr>
+      <tr><td>进 PON 口</td><td><code>interface gpon 0/1</code></td><td>进入帧/槽对应的 PON 组</td></tr>
+      <tr><td>查端口</td><td><code>display port state 0</code></td><td>PON 口是否启用</td></tr>
+      <tr><td>找 ONU</td><td><code>display ont autofind 0</code></td><td>列出未注册 ONU 及其 SN</td></tr>
+      <tr><td>DBA 模板</td><td><code>dba-profile add profile-id 10 type4 max 1024000</code></td><td>建上行带宽合约（type1–5）</td></tr>
+      <tr><td>线路模板</td><td><code>ont-lineprofile gpon profile-id 10 profile-name …</code></td><td>建 T-CONT / GEM 模板</td></tr>
+      <tr><td>— T-CONT</td><td><code>tcont 1 dba-profile-id 10</code></td><td>T-CONT 绑定 DBA</td></tr>
+      <tr><td>— GEM</td><td><code>gem add 1 eth tcont 1</code></td><td>GEM port 绑定 T-CONT</td></tr>
+      <tr><td>— 映射</td><td><code>gem mapping 1 0 vlan 100</code></td><td>用户 VLAN 映射到 GEM</td></tr>
+      <tr><td>— 提交</td><td><code>commit</code> / <code>quit</code></td><td>模板生效并退出</td></tr>
+      <tr><td>业务模板</td><td><code>ont-srvprofile gpon profile-id 10 profile-name …</code></td><td>定义 ONU 端口能力</td></tr>
+      <tr><td>— 端口</td><td><code>ont-port eth 4 pots 1</code></td><td>4 个网口 + 1 个电话口</td></tr>
+      <tr><td>注册 ONU</td><td><code>ont add 0 0 sn-auth &lt;SN&gt; omci ont-lineprofile-id 10 ont-srvprofile-id 10 desc ward-101</code></td><td>认证 SN、分配 ONU-ID 上线</td></tr>
+      <tr><td>备用认证</td><td><code>ont add 0 0 password-auth &lt;密码&gt; always-on omci …</code></td><td>用密码/注册 ID 认证</td></tr>
+      <tr><td>业务落地</td><td><code>service-port vlan 100 gpon 0/1/0 ont 0 gemport 1 multi-service user-vlan 100 tag-transform translate</code></td><td>GEM + VLAN 绑定</td></tr>
+      <tr><td>Native VLAN</td><td><code>ont port native-vlan 0 0 eth 1 vlan 10 priority 0</code></td><td>给 UNI 口配本地 VLAN</td></tr>
+      <tr><td>上行 VLAN</td><td><code>vlan 100 smart</code> / <code>port vlan 100 0/19 0</code></td><td>核心侧放通业务 VLAN</td></tr>
+      <tr><td>保存</td><td><code>save</code></td><td>写入设备，重启不丢</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="no">02</span> 验证 / 排错命令</h2>
+  <table>
+    <thead><tr><th>命令</th><th>看什么</th></tr></thead>
+    <tbody>
+      <tr><td><code>display ont info 0 0</code></td><td>ONU 运行状态、配置状态、光功率</td></tr>
+      <tr><td><code>display ont info by-sn &lt;SN&gt;</code></td><td>按 SN 查 ONU 是否已注册</td></tr>
+      <tr><td><code>display service-port port 0/1/0 ont 0</code></td><td>该 ONU 的业务流与 VLAN 映射</td></tr>
+      <tr><td><code>display ont-lineprofile gpon profile-id 10</code></td><td>线路模板内容</td></tr>
+      <tr><td><code>undo service-port &lt;index&gt;</code></td><td>删除某条业务流</td></tr>
+      <tr><td><code>interface gpon 0/1</code> → <code>ont delete 0 0</code></td><td>删除 ONU</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="no">03</span> 命令 ↔ 业务模型对照</h2>
+  <table>
+    <thead><tr><th>模型对象（L7）</th><th>对应命令</th></tr></thead>
+    <tbody>
+      <tr><td>ONU 身份（ONU-ID）</td><td><code>ont add</code>（sn-auth / password-auth）</td></tr>
+      <tr><td>上行带宽（T-CONT / Alloc-ID）</td><td><code>dba-profile add</code> + <code>tcont</code></td></tr>
+      <tr><td>业务封装（GEM port）</td><td><code>gem add</code> + <code>gem mapping</code></td></tr>
+      <tr><td>业务落地（service-port / VLAN）</td><td><code>service-port</code> + <code>vlan</code> / <code>port vlan</code></td></tr>
+      <tr><td>ONU 端口能力</td><td><code>ont-srvprofile</code> + <code>ont-port</code></td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="no">04</span> 配置完成自检清单</h2>
+  <ol class="checklist" data-checklist="lesson-0008-config">
+    <li>PON 口启用、光功率正常（先于一切配置）</li>
+    <li>DBA 模板已建，T-CONT 类型与业务匹配</li>
+    <li>ont-lineprofile 已 commit，GEM 与 VLAN 映射正确</li>
+    <li>ont-srvprofile 端口型号与实际 ONU 一致</li>
+    <li>ONU 注册成功，display ont info 状态为 online</li>
+    <li>service-port 已建，内外层 VLAN 转换方式正确</li>
+    <li>上行 VLAN 已在核心侧放通</li>
+    <li>已执行 save，并做过一次重启/断电验证</li>
+  </ol>
+
+  <div class="footer">
+    <div class="links">
+      <a href="../index.html">课程主页</a>
+      <a href="../lessons/0008-hands-on-configuration.html">Lesson 08</a>
+      <a href="./0007-service-model-cheatsheet.html">L7 速查表</a>
+      <a href="../GLOSSARY.md">术语表</a>
+    </div>
+  </div>
+
+</div>
+<script src="../assets/checklist.js"></script>
+</body>
+</html>

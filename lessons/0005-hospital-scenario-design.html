@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 05 · 医院场景设计</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+<div class="page">
+
+  <header class="masthead">
+    <p class="course-label"><a href="../index.html">← 课程主页</a> · 全光网络架构 · Lesson 05</p>
+    <h1>医院场景设计：三张网、五个区域、一套 QoS</h1>
+    <p class="meta">
+      <span>2026-09-11</span>
+      <span>约 45 分钟</span>
+      <span>前置：Lesson 04</span>
+    </p>
+  </header>
+
+  <div class="win">
+    <span class="label">本课成果 · Win</span>
+    <p>你能产出一份<strong>医院全光网络的分区设计</strong>：把病房、门诊、手术室、影像、物联网分别用什么接、
+    走哪张网、怎么隔离、QoS 怎么排，一次讲清楚。</p>
+  </div>
+
+  <p><a href="./0004-topology-and-protection.html">上一课</a>画好了"骨架"（OLT、ODN、保护）。
+  这一课给它填上"血肉"：<strong>每个房间、每台设备怎么接，业务怎么分，安全怎么隔离。</strong></p>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">01</span> 先分三张网：内网 / 外网 / 设备网</h2>
+
+  <p>医院网络复杂，不是因为它大，而是因为<strong>业务安全等级不同</strong>。
+  最实用的第一步，是把所有业务归到三张逻辑网里：</p>
+
+  <table>
+    <thead><tr><th>网络</th><th>承载什么</th><th>安全等级</th></tr></thead>
+    <tbody>
+      <tr><td><strong>内网（诊疗网）</strong></td><td>HIS、EMR、PACS/LIS、移动护理、医生站</td><td>最高，涉及患者隐私与诊疗安全</td></tr>
+      <tr><td><strong>外网（办公/互联网）</strong></td><td>OA、邮件、互联网、患者/访客 Wi-Fi</td><td>中，可与互联网互通</td></tr>
+      <tr><td><strong>设备网（物联网）</strong></td><td>监护、楼控、门禁、资产定位、医疗设备网口</td><td>高，且设备多、协议杂</td></tr>
+    </tbody>
+  </table>
+
+  <h3>三种隔离方式，强度递增</h3>
+  <table>
+    <thead><tr><th>方式</th><th>做法</th><th>强度</th></tr></thead>
+    <tbody>
+      <tr><td>VLAN / 逻辑隔离</td><td>同一张物理网上用 VLAN 分开</td><td>弱：配置错误或攻击可能越权</td></tr>
+      <tr><td>独立 ONU/光纤</td><td>不同网络用不同的 ONU 或光纤</td><td>中：物理层面分开，但共享 OLT/ODN</td></tr>
+      <tr><td><strong>硬隔离切片（TDM）</strong></td><td>在 PON 上用时分复用划出独立管道</td><td>强：内网、外网、设备网在同一张网上做到<strong>硬隔离</strong></td></tr>
+    </tbody>
+  </table>
+  <p class="cite">华为医疗方案明确采用"基于 TDM 的硬管道（hard pipes），融合外网、内网与设备网，保障网络信息安全"
+  <sup><a href="https://e.huawei.com/en/solutions/enterprise-optical-network/campus-optix/medical-campus-optical-network" target="_blank">[华为医疗方案]</a></sup>。</p>
+
+  <p>看三张网怎么走：默认 <strong>TDM 硬隔离</strong>（内网/外网/设备网各走独立管道）；
+  点按钮切成"仅 VLAN"，它们就共用同一条管道——风险也随之而来。</p>
+  <div class="ponmap" data-mode="services"></div>
+
+  <div class="tip">
+    <span class="t">全光的额外好处</span>
+    传统以太网里，三张网往往要三套交换机、三套布线；全光园区可以<strong>一张物理网 + 三种隔离</strong>承载，
+    这正是"一纤到房间、多种业务合一"的底气。
+  </div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">02</span> 五个区域的接入设计</h2>
+
+  <table>
+    <thead><tr><th>区域</th><th>接什么</th><th>设计要点</th></tr></thead>
+    <tbody>
+      <tr><td><strong>病房</strong></td><td>信息点、电话、电视、监护、呼叫、Wi-Fi 面板 AP</td><td>一个 ONU 多业务下挂；一纤到房间，布线量可省约 80%</td></tr>
+      <tr><td><strong>门诊 / 诊室</strong></td><td>PC、打印、自助机、AP</td><td>点位密、业务杂；按楼层走二级分光</td></tr>
+      <tr><td><strong>手术室 / 示教</strong></td><td>4K 影像、术野摄像、示教直播</td><td>低时延 + <strong>零漫游</strong> + <strong>Type C</strong> 保护</td></tr>
+      <tr><td><strong>影像科（PACS/CT/MR）</strong></td><td>大文件上传/调阅</td><td>单点 1–10G，分光比 <strong>1:4–1:8</strong>，就近 ONU</td></tr>
+      <tr><td><strong>数字病理 / AI</strong></td><td>大切片上传、AI 推理</td><td>用 <strong>50G-PON</strong> + AI，上传 129 s → 15 s</td></tr>
+      <tr><td><strong>物联网 / 设备</strong></td><td>监护、门禁、楼控、资产标签、医疗设备网口</td><td>光 AP + 开放物联网；NearLink 亚米级资产定位</td></tr>
+    </tbody>
+  </table>
+
+  <div class="win">
+    <span class="label">一个可以汇报的数字</span>
+    <p>传统铜缆网络读取 <strong>1000 张医学影像约需 30 秒</strong>；FTTO 全光网络可以降到 <strong>不到 1 秒</strong>。
+    这是"为什么要上全光"最直观的一句话 <span class="cite">（Omdia 医院 FTTO 分析）</span>。</p>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">03</span> QoS：把带宽和优先级排好</h2>
+
+  <p>一张网上跑所有业务，就必须排优先级。医院里建议的顺序是：</p>
+
+  <table>
+    <thead><tr><th>优先级</th><th>业务</th><th>诉求</th></tr></thead>
+    <tbody>
+      <tr><td>最高</td><td>医疗设备、语音呼叫、手术/示教视频</td><td>低时延、低抖动、不丢包</td></tr>
+      <tr><td>高</td><td>内网诊疗系统（HIS/EMR/PACS）</td><td>稳定、可靠、带宽有保障</td></tr>
+      <tr><td>中</td><td>办公、互联网</td><td>尽力而为</td></tr>
+      <tr><td>低</td><td>患者/访客 Wi-Fi、后勤</td><td>可被挤占</td></tr>
+    </tbody>
+  </table>
+
+  <h3>两个容易被忽略的体验指标</h3>
+  <ul>
+    <li><strong>零漫游（zero roaming）</strong>：移动护理车、手术示教设备在 AP 间移动时不断网——
+    对需要连续连接的场景是刚需，选 ONU/光 AP 时要问清楚。</li>
+    <li><strong>时延 vs 带宽</strong>：影像要的是"大带宽"，手术要的是"低时延"，访客要的是"并发"。
+    三个诉求不同，不能用同一个分光比和同一种 QoS 模板打发。</li>
+  </ul>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">04</span> 两个真实案例（可写进汇报）</h2>
+
+  <table>
+    <thead><tr><th>医院</th><th>场景与成效</th></tr></thead>
+    <tbody>
+      <tr><td>武汉协和医院质子治疗中心</td><td>质子治疗的辐射要求线缆埋在厚混凝土里；若用铜缆，后续升级几乎无法换线。全光方案用光纤一次布放，避免了这个死结</td></tr>
+      <tr><td>贵州省人民医院</td><td>全网支持<strong>全链路保护 + 双归属冗余</strong>，故障切换 <strong>50 ms 内</strong>完成</td></tr>
+      <tr><td>深圳大学附属华南医院</td><td>广东省首个 F5G 全光医院</td></tr>
+      <tr><td>武汉市中心医院杨春湖院区</td><td>用 FTTO 构建数字孪生医院的网络底座</td></tr>
+    </tbody>
+  </table>
+  <p class="cite">来源：Omdia《FTTO for hospitals》分析、华为医疗方案页。</p>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">05</span> 技能练习</h2>
+
+  <div class="quiz" data-quiz='[
+   {"q":"要让“内网 / 外网 / 设备网”在同一张全光网上做到最强隔离，应采用？",
+    "options":["只划分不同的 VLAN","基于 TDM 的硬隔离切片","只在出口加防火墙","只靠密码与认证"],
+    "answer":1,
+    "explain":"VLAN 是逻辑隔离，配置错误可能越权；基于 TDM 的硬隔离切片能在同一张 PON 上划出独立管道，是华为医疗方案的强隔离做法。"},
+   {"q":"影像科（CT/MR/PACS）接入设计最关键的一点是？",
+    "options":["高带宽、小分光比、就近 ONU","尽量用最大分光比省光纤","与患者 Wi-Fi 共用同一 ONU","全部改成无线接入"],
+    "answer":0,
+    "explain":"影像要频繁上传/调阅大文件，需要单点 1–10G 与低损耗，所以分光比要小（1:4–1:8）、ONU 就近；不能和访客 Wi-Fi 抢资源。"},
+   {"q":"按 Omdia 的分析，铜缆网络读 1000 张医学影像约需多久，FTTO 后降至多少？",
+    "options":["约 3 秒 → 不到 1 秒","约 10 秒 → 约 1 秒","约 30 秒 → 不到 1 秒","约 60 秒 → 约 5 秒"],
+    "answer":2,
+    "explain":"原文是传统铜缆约 30 秒，FTTO 可降到不到 1 秒——这是最直观的“为什么要上全光”的数字。"},
+   {"q":"手术室与示教场景，最需要同时满足哪三项？",
+    "options":["最大分光比、最低造价、最少光纤","与办公网合并、省网管、省机房","只用无线、免布线、免供电","低时延、零漫游、Type C 保护"],
+    "answer":3,
+    "explain":"手术与示教要连续、稳定的高清视频：低时延是体验，零漫游保证移动不断网，Type C 保证任意一点故障业务不断。"},
+   {"q":"把设备/物联网纳入全光网络，最直接的价值是什么？",
+    "options":["资产定位与设备全生命周期管理","提高患者访客的上网速度","替代内网的核心交换机","降低影像科室的带宽需求"],
+    "answer":0,
+    "explain":"光 AP + 开放物联网可做资产定位、设备全生命周期管理（华为方案用 NearLink 实现亚米级定位），这是传统以太网接入难以低成本做到的。"}
+  ]'></div>
+
+  <div class="recall">
+    <div class="rt">回忆练习 · 产出一份分区设计</div>
+    <p>针对"800 床新住院楼"，写出你的<strong>分区设计表</strong>（区域 / 接入方式 / 走哪张网 / 隔离方式 / QoS 优先级）。至少覆盖：病房、门诊、手术室、影像科、物联网。</p>
+    <textarea placeholder="区域 | 接什么 | 走哪张网 | 怎么隔离 | QoS……"></textarea>
+    <button type="button">看参考答案</button>
+    <div class="reveal">
+      <p><strong>病房：</strong>一个 ONU 多业务下挂信息点/电话/电视/监护 + 面板 AP → 内网 + 设备网 + 外网（访客 Wi-Fi）→ TDM 硬隔离切片 → 医疗设备/语音最高优先级。</p>
+      <p><strong>门诊/诊室：</strong>ONU + PC/打印/自助机/AP → 内网 + 外网 → 硬隔离切片 → 诊疗系统高优先级、办公中优先级。</p>
+      <p><strong>手术室/示教：</strong>独立 ONU + 光 AP，4K 视频 → 内网（示教可独立切片）→ Type C 保护 + 零漫游 → 最高优先级、低时延。</p>
+      <p><strong>影像科：</strong>独立 ONU，10G 上行，分光比 1:4–1:8 → 内网 → 硬隔离切片 → 高优先级大带宽。</p>
+      <p><strong>物联网：</strong>光 AP + 开放物联网/NearLink → 设备网 → 独立切片 → 中优先级；资产定位与设备管理走设备网，不占内网。</p>
+      <p class="cite">评判标准：三张网是否分清、关键区是否保护、QoS 是否分层、有没有把不同诉求的业务混在一条管道里。</p>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">06</span> 本课推荐阅读（Primary Source）</h2>
+
+  <div class="reading">
+    <span class="t">行业分析 · 中英对照</span>
+    <p><strong>Stephen Wilson (Omdia)：《FTTO for hospitals》</strong>——第三方分析机构对"医院为什么需要 FTTO"的分析。</p>
+    <p>它给了本课几乎所有硬数字：影像读取 30 s→&lt;1 s、光纤寿命约 30 年、可平滑升级到 10G/50G PON、
+    武汉协和质子治疗中心的埋线难题、贵州省人民医院 50 ms 切换。已整理成<strong>中英对照双语 PDF</strong>（上下排）：</p>
+    <p>👉 <a href="../reference/0005-hospital-ftto-bilingual.pdf">reference/0005-hospital-ftto-bilingual.pdf</a>
+    &nbsp;·&nbsp; 原文：<a href="https://e.huawei.com/en/blogs/2025/solutions/enterprise-optical-network/ftto-hospital" target="_blank">e.huawei.com</a></p>
+  </div>
+
+  <div class="reading">
+    <span class="t">速查</span>
+    <p>三张网隔离强度 + 区域接入 + QoS 分层：<a href="../reference/0005-hospital-design-cheatsheet.html">reference/0005-hospital-design-cheatsheet.html</a></p>
+  </div>
+
+  <div class="footer">
+    <div class="next">
+      <span class="t">下一课</span>
+      <p>下一步：让网络“扛得住”。<strong>Lesson 06 · 可靠性与运维</strong>：Type B/C 之外，ONU 认证、AES 加密、网管平台、光功率监测怎么配，以及一份可执行的运维要点清单。</p>
+    </div>
+    <div class="links">
+      <a href="../index.html">课程主页</a>
+      <a href="./0004-topology-and-protection.html">← Lesson 04</a>
+      <a href="./0005-hospital-scenario-design.html">本课</a>
+      <a href="../reference/0005-hospital-design-cheatsheet.html">医院设计速查表</a>
+      <a href="../GLOSSARY.md">术语表</a>
+      <a href="../ROADMAP.md">路线图</a>
+    </div>
+  </div>
+
+</div>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/recall.js"></script>
+<script src="../assets/pon-flow.js"></script>
+</body>
+</html>

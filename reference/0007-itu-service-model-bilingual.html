@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>中英对照 · ITU-T G.984.3：业务模型（T-CONT / Alloc-ID / GEM / DBA）</title>
+<style>
+  @page { size: A4; margin: 17mm 18mm 15mm; }
+  :root{
+    --ink:#141413; --sub:#4a4842; --line:#dcd9cf; --accent:#b3542f; --soft:#f6f4ee;
+    --en: "Charter", "Georgia", "Times New Roman", serif;
+    --cn: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{font-family:var(--cn); color:var(--ink); font-size:10.4pt; line-height:1.6;}
+  .doc{max-width:174mm;margin:0 auto;}
+  header{border-bottom:2px solid var(--ink);padding-bottom:5mm;margin-bottom:5mm;}
+  .kicker{font-family:var(--cn);font-size:8pt;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:700;margin:0 0 3mm;}
+  h1{font-family:var(--en);font-size:16pt;line-height:1.24;margin:0 0 2.5mm;font-weight:700;}
+  h1 .cn{display:block;font-family:var(--cn);font-size:11.5pt;font-weight:600;color:var(--sub);margin-top:1.5mm;}
+  .byline{font-size:8.6pt;color:var(--sub);margin:0;}
+  .note{background:var(--soft);border-left:3px solid var(--accent);padding:2.6mm 4mm;font-size:8.6pt;color:var(--sub);margin:0 0 5mm;}
+  h2.sec{font-size:10.8pt;font-family:var(--cn);border-bottom:1px solid var(--line);padding-bottom:1.4mm;margin:6mm 0 3.5mm;color:var(--ink);}
+  .para{border-top:1px solid var(--line);padding:3.5mm 0 5mm;}
+  .para:first-of-type{border-top:none;}
+  .pair{margin:0 0 5.2mm;}
+  .pair:last-child{margin-bottom:0;}
+  .en{font-family:var(--en);font-size:10.2pt;line-height:1.5;color:var(--ink);margin:0;}
+  .cn{font-size:10.1pt;line-height:1.6;color:var(--sub);margin:0.5mm 0 0;padding-left:3.2mm;border-left:2px solid #e6cfc4;}
+  .cn strong{color:var(--accent);}
+  table{border-collapse:collapse;width:100%;margin:2mm 0 1mm;font-size:9.3pt;}
+  th,td{border-bottom:1px solid var(--line);padding:1.5mm 2mm;text-align:left;vertical-align:top;}
+  th{background:var(--soft);font-weight:700;}
+  td .zh{color:var(--sub);font-size:8.8pt;display:block;}
+  .terms{font-size:8.8pt;color:var(--sub);margin-top:6mm;border-top:2px solid var(--ink);padding-top:3.5mm;break-inside:avoid;}
+  .terms table td:first-child{font-family:var(--en);color:var(--ink);white-space:nowrap;width:40%;}
+  footer{margin-top:5mm;border-top:1px solid var(--line);padding-top:2.6mm;font-size:7.8pt;color:#8b897f;}
+
+  @media print { .home-nav { display: none; } }
+  .home-nav { font-size: 9pt; margin: 0 0 4mm; }
+  .home-nav a { color: #b3542f; text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <header>
+    <p class="kicker">中英对照双语资料 · 全光网络架构课程 Reference 0007</p>
+    <h1>ITU-T G.984.3: The G-PON Service Model
+      <span class="cn">ITU-T G.984.3：G-PON 业务模型（T-CONT / Alloc-ID / GEM / DBA）</span>
+    </h1>
+    <p class="byline">ITU-T G.984.3 (01/2014) · 术语定义 §3.2、Alloc-ID §5.5.3、T-CONT 类型 Table 7-1 ·
+      原文：<a href="https://www.itu.int/rec/T-REC-G.984.3/en">itu.int/rec/T-REC-G.984.3</a></p>
+  </header>
+
+  <p class="home-nav"><a href="../index.html">← 返回课程主页</a></p>
+
+  <p class="note">
+    <strong>阅读说明：</strong>每句英文下方紧跟中文译文（Trancy 式上下排）。表格为中英对照。
+    本文件仅为学习目的摘录 ITU-T 建议书的关键定义与表格，版权归 ITU 所有。
+    译文由 AI 生成，准确性以 ITU 原文为准。
+  </p>
+
+  <h2 class="sec">一、ONU 激活 / Activation (§3.2.1)</h2>
+  <div class="para">
+    <div class="pair"><p class="en">activation: A set of distributed procedures executed by the optical line termination (OLT) and the optical network units (ONUs) that allows an inactive ONU to join or resume operations on the passive optical network (PON).</p>
+      <p class="cn">激活：由光线路终端（OLT）和光网络单元（ONU）共同执行的一组分布式过程，使一个未激活的 ONU 能够加入或恢复在 PON 上的运行。</p></div>
+    <div class="pair"><p class="en">The activation process includes three phases: parameter learning, serial number acquisition and ranging.</p>
+      <p class="cn">激活过程包含三个阶段：<strong>参数学习、序列号获取和测距</strong>。</p></div>
+  </div>
+
+  <h2 class="sec">二、带宽分配与 DBA / Bandwidth allocation &amp; DBA (§3.2.2, §3.2.4)</h2>
+  <div class="para">
+    <div class="pair"><p class="en">bandwidth allocation: An upstream transmission opportunity granted by the OLT for the duration of the specified time interval to the specified traffic-bearing entity within an ONU.</p>
+      <p class="cn">带宽分配：OLT 在指定时间区间内，授予某个 ONU 内指定承载流量实体的一次上行发送机会。</p></div>
+    <div class="pair"><p class="en">dynamic bandwidth assignment (DBA): A process by which the OLT distributes the upstream PON capacity between the traffic-bearing entities within ONUs, based on the dynamic indication of their activity status and their configured traffic contracts.</p>
+      <p class="cn">动态带宽分配（DBA）：OLT 依据各 ONU 内承载流量实体的活动状态动态指示及其配置的流量合约，把上行 PON 容量在这些实体之间进行分配的过程。</p></div>
+  </div>
+
+  <h2 class="sec">三、GEM port 与 T-CONT / GEM port &amp; T-CONT (§3.2.9, §3.2.25)</h2>
+  <div class="para">
+    <div class="pair"><p class="en">GEM port: An abstraction on the G-PON transmission convergence (GTC) adaptation sublayer representing a logical connection associated with a specific client packet flow.</p>
+      <p class="cn">GEM port：G-PON 传输汇聚（GTC）适配子层上的一个抽象，代表与某个特定客户端分组业务流相关联的<strong>逻辑连接</strong>。</p></div>
+    <div class="pair"><p class="en">transmission container (T-CONT): A traffic-bearing object within an ONU that represents a group of logical connections, is managed via the OMCC, and is treated as a single entity for the purpose of upstream bandwidth assignment on the PON.</p>
+      <p class="cn">传输容器（T-CONT）：ONU 内承载流量的对象，代表一组逻辑连接，经 OMCC 管理，并在 PON 上作为<strong>单一实体</strong>参与上行带宽分配。</p></div>
+  </div>
+
+  <h2 class="sec">四、Alloc-ID / Allocation identifier (§5.5.3)</h2>
+  <div class="para">
+    <div class="pair"><p class="en">Allocation identifier (Alloc-ID) is a 12-bit number that the OLT assigns to an ONU to identify a traffic-bearing entity that is a recipient of upstream bandwidth allocations within that ONU.</p>
+      <p class="cn">分配标识（Alloc-ID）是一个 12 位数字，由 OLT 分配给 ONU，用于标识该 ONU 内接收上行带宽分配的承载流量实体。</p></div>
+    <div class="pair"><p class="en">Such a traffic-bearing entity can be represented either by a T-CONT or by the upstream OMCC.</p>
+      <p class="cn">这样的承载流量实体既可以是 T-CONT，也可以是上行 OMCC。</p></div>
+    <div class="pair"><p class="en">Each ONU is assigned at least its default Alloc-ID, which is numerically equal to that ONU's ONU-ID, and may be assigned additional Alloc-IDs per the OLT's discretion.</p>
+      <p class="cn">每个 ONU 至少被分配一个<strong>默认 Alloc-ID</strong>，其数值等于该 ONU 的 ONU-ID；OLT 还可自行决定为其分配额外的 Alloc-ID。</p></div>
+    <div class="pair"><p class="en">The ONU's default Alloc-ID is assigned implicitly, by virtue of the ONU-ID assignment, and does not require an explicit Assign_Alloc-ID PLOAM message.</p>
+      <p class="cn">ONU 的默认 Alloc-ID 随 ONU-ID 的分配隐式分配，不需要显式的 Assign_Alloc-ID PLOAM 消息。</p></div>
+    <div class="pair"><p class="en">The default Alloc-ID is used to carry the upstream PLOAM and OMCC traffic and may carry user data traffic.</p>
+      <p class="cn">默认 Alloc-ID 用于承载上行 PLOAM 与 OMCC 流量，也可承载用户数据流量。</p></div>
+    <div class="pair"><p class="en">The default Alloc-ID cannot be de-allocated or changed using an Assign_Alloc-ID PLOAM message.</p>
+      <p class="cn">默认 Alloc-ID 不能被 Assign_Alloc-ID PLOAM 消息去分配或更改。</p></div>
+  </div>
+
+  <h2 class="sec">五、五种 T-CONT 类型 / T-CONT types (Table 7-1)</h2>
+  <table>
+    <thead><tr><th>Component <span class="zh">流量描述符成分</span></th><th>Type 1</th><th>Type 2</th><th>Type 3</th><th>Type 4</th><th>Type 5</th></tr></thead>
+    <tbody>
+      <tr><td>Fixed bandwidth <span class="zh">固定带宽</span></td><td>RF</td><td></td><td></td><td></td><td>RF</td></tr>
+      <tr><td>Assured BW <span class="zh">保证带宽</span></td><td></td><td>RA</td><td>RA</td><td></td><td>RA</td></tr>
+      <tr><td>Maximum BW <span class="zh">最大带宽</span></td><td>RM = RF</td><td>RM = RA</td><td>RM &gt; RA</td><td>RM</td><td>RM ≥ RF + RA</td></tr>
+      <tr><td>Additional BW eligibility <span class="zh">额外带宽资格</span></td><td>None</td><td>None</td><td>NA</td><td>BE</td><td>Any</td></tr>
+    </tbody>
+  </table>
+  <div class="para">
+    <div class="pair"><p class="en">T-CONT type 1 is characterized by the fixed bandwidth component only, and is not eligible to share surplus bandwidth. It is suitable for carrying fixed-rate (or variable-rate with relatively low rate bound) traffic which is sensitive to delay and jitter.</p>
+      <p class="cn">T-CONT Type 1 只具有固定带宽成分，不具备共享剩余带宽的资格。适合承载对时延和抖动敏感、固定速率（或速率上限较低的变速）的业务。</p></div>
+    <div class="pair"><p class="en">T-CONT type 2 is characterized by the assured bandwidth only, and is not eligible to share surplus bandwidth. It is suitable for carrying on-off type traffic with well-defined rate bound which does not have strict delay and jitter requirements.</p>
+      <p class="cn">T-CONT Type 2 只具有保证带宽成分，不具备共享剩余带宽的资格。适合承载速率上限明确、对时延和抖动要求不严格的 on-off 型业务。</p></div>
+    <div class="pair"><p class="en">T-CONT type 3 is characterized by assured bandwidth and eligibility to participate in non-assured bandwidth sharing. It is suitable for carrying variable-rate bursty traffic which requires average rate guarantee.</p>
+      <p class="cn">T-CONT Type 3 具有保证带宽，并有资格参与非保证带宽的共享。适合承载需要平均速率保证的变速突发业务。</p></div>
+    <div class="pair"><p class="en">T-CONT type 4 is characterized by eligibility to share the Best-effort bandwidth with neither fixed nor assured bandwidth provisions. It is suitable for carrying variable-rate bursty traffic which does not exhibit delay sensitivity.</p>
+      <p class="cn">T-CONT Type 4 只具备共享尽力而为带宽的资格，既无固定也无保证带宽配置。适合承载对时延不敏感的变速突发业务。</p></div>
+    <div class="pair"><p class="en">Finally, T-CONT type 5 is a consolidation of other T-CONT types which can be applied to most general traffic flows.</p>
+      <p class="cn">最后，T-CONT Type 5 是其它类型的整合，可应用于大多数通用业务流。</p></div>
+  </div>
+
+  <div class="terms">
+    <h2 class="sec" style="margin-top:2mm;">关键术语中英对照 / Key Terms</h2>
+    <table>
+      <tr><td>activation</td><td>激活（ONU 上线）</td></tr>
+      <tr><td>parameter learning</td><td>参数学习</td></tr>
+      <tr><td>serial number acquisition</td><td>序列号获取</td></tr>
+      <tr><td>ranging</td><td>测距</td></tr>
+      <tr><td>bandwidth allocation</td><td>带宽分配（一次上行发送机会）</td></tr>
+      <tr><td>DBA</td><td>动态带宽分配</td></tr>
+      <tr><td>traffic-bearing entity</td><td>承载流量实体（T-CONT 或上行 OMCC）</td></tr>
+      <tr><td>Alloc-ID</td><td>分配标识（12 位，默认等于 ONU-ID）</td></tr>
+      <tr><td>T-CONT</td><td>传输容器</td></tr>
+      <tr><td>GEM port</td><td>GEM 端口（业务流逻辑连接）</td></tr>
+      <tr><td>OMCC</td><td>ONU 管理与控制通道（承载 OMCI）</td></tr>
+      <tr><td>RF / RA / RM / NA / BE</td><td>固定 / 保证 / 最大 / 非保证 / 尽力而为带宽</td></tr>
+    </table>
+  </div>
+
+  <footer>
+    Source: ITU-T Recommendation G.984.3 (01/2014), Clauses 3.2, 5.5.3 and Table 7-1. © ITU. Excerpted for educational use.
+    译文由本教学工作区的 AI 老师生成，准确性以 ITU 原文为准。
+  </footer>
+
+</div>
+</body>
+</html>

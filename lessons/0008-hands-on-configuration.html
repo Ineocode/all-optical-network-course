@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 08 · 上手配置：一条业务端到端</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+<div class="page">
+
+  <header class="masthead">
+    <p class="course-label"><a href="../index.html">← 课程主页</a> · 全光网络架构 · Lesson 08</p>
+    <h1>上手配置：把六步变成命令</h1>
+    <p class="meta">
+      <span>2026-09-11</span>
+      <span>约 45 分钟</span>
+      <span>前置：Lesson 07</span>
+    </p>
+  </header>
+
+  <div class="win">
+    <span class="label">本课成果 · Win</span>
+    <p>你能照着命令，在一台华为 OLT（MA5800 / EA5800）上完成<strong>一条端到端业务</strong>：
+    PON 口 → 建模板 → 注册 ONU → 打 service-port → 放通 VLAN → 验证。</p>
+  </div>
+
+  <div class="danger">
+    <span class="t">先看这条（很重要）</span>
+    不同型号/软件版本的命令语法<strong>会有差异</strong>。本课目的是让你理解<strong>流程与对象关系</strong>，
+    命令以华为 MA5800/EA5800 系列为例，<strong>实际配置务必以你设备的《命令参考》为准</strong>。
+    本课命令来自公开的华为 OLT 配置实例（见页脚来源），可交叉验证，但不替代官方文档。
+  </div>
+
+  <p><a href="./0007-olt-onu-service-model.html">上一课</a>给了六步模型。这一课用具体场景把它跑一遍。</p>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">01</span> 场景与准备</h2>
+
+  <table>
+    <thead><tr><th>项目</th><th>取值（示例）</th></tr></thead>
+    <tbody>
+      <tr><td>设备</td><td>华为 MA5800 / EA5800（CLI 与 MA5680T 同族）</td></tr>
+      <tr><td>PON 口</td><td>帧/槽/口 = <code>0/1</code>，PON 端口号 <code>0</code>（即 <code>0/1/0</code>）</td></tr>
+      <tr><td>ONU 序列号（SN）</td><td><code>4857544312345678</code>（16 位十六进制，以实际为准）</td></tr>
+      <tr><td>业务</td><td>病房内网，用户侧 VLAN <code>100</code>，OLT 侧 VLAN <code>100</code></td></tr>
+      <tr><td>模板编号</td><td>DBA / 线路 / 业务模板统一用 <code>profile-id 10</code></td></tr>
+      <tr><td>上行口</td><td>如 <code>0/19/0</code>（以你的上行板卡为准）</td></tr>
+    </tbody>
+  </table>
+
+  <p class="cite">命名建议：模板用 <code>hospital-line-100</code> 这类带业务含义的名字，半年后你还能看懂。</p>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">02</span> 动手：九步走完一条业务</h2>
+
+  <ol class="steps">
+
+    <li>
+      <h3>登录并进入配置模式</h3>
+      <pre>MA5800&gt;<span class="hl">enable</span>
+MA5800#<span class="hl">config</span>
+MA5800(config)#</pre>
+      <p><code>enable</code> 提权，<code>config</code> 进全局配置模式。后面所有命令都在 <code>(config)</code> 下。</p>
+    </li>
+
+    <li>
+      <h3>确认板卡与 PON 口在位</h3>
+      <pre>MA5800(config)#<span class="hl">display board 0</span>
+MA5800(config)#<span class="hl">interface gpon 0/1</span>
+MA5800(config-if-gpon-0/1)#<span class="hl">display port state 0</span></pre>
+      <p>先确认业务板在位、PON 口已启用、光模块正常——<strong>光功率不通，后面全白配</strong>。</p>
+    </li>
+
+    <li>
+      <h3>发现未注册的 ONU（拿到 SN）</h3>
+      <pre>MA5800(config-if-gpon-0/1)#<span class="hl">display ont autofind 0</span></pre>
+      <p>输出会列出该 PON 口下等待注册的 ONU 及其 <strong>SN</strong>。抄下你要注册的那一台。</p>
+    </li>
+
+    <li>
+      <h3>建 DBA 模板（上行带宽合约）</h3>
+      <pre>MA5800(config)#<span class="hl">dba-profile add profile-id 10 type4 max 1024000</span>
+<span class="cmt"># type4 = 尽力而为共享；max 1024000 kbit/s ≈ 1G。索引 1–9 系统保留，从 10 起用。</span></pre>
+      <p>对应 <a href="./0007-olt-onu-service-model.html">L7 的 T-CONT 类型</a>：语音/监护可选 type1/2，普通业务 type4 即可。</p>
+    </li>
+
+    <li>
+      <h3>建线路模板（T-CONT + GEM，管上行与封装）</h3>
+      <pre>MA5800(config)#<span class="hl">ont-lineprofile gpon profile-id 10 profile-name hospital-line-100</span>
+MA5800(config-gpon-lineprofile-10)#<span class="hl">tcont 1 dba-profile-id 10</span>
+MA5800(config-gpon-lineprofile-10)#<span class="hl">gem add 1 eth tcont 1</span>
+MA5800(config-gpon-lineprofile-10)#<span class="hl">gem mapping 1 0 vlan 100</span>
+MA5800(config-gpon-lineprofile-10)#<span class="hl">commit</span>
+MA5800(config-gpon-lineprofile-10)#<span class="hl">quit</span></pre>
+      <p>这里把 L7 的模型落成命令：<strong>T-CONT 绑 DBA</strong>（上行带宽）→ <strong>GEM port 绑 T-CONT</strong>（封装）→
+      <strong>GEM 映射 VLAN</strong>（业务流）。<code>commit</code> 后模板才生效。</p>
+    </li>
+
+    <li>
+      <h3>建业务模板（ONU 端口能力）</h3>
+      <pre>MA5800(config)#<span class="hl">ont-srvprofile gpon profile-id 10 profile-name hospital-srv</span>
+MA5800(config-gpon-srvprofile-10)#<span class="hl">ont-port eth 4 pots 1</span>
+MA5800(config-gpon-srvprofile-10)#<span class="hl">commit</span>
+MA5800(config-gpon-srvprofile-10)#<span class="hl">quit</span></pre>
+      <p>告诉系统这台 ONU 有 4 个网口、1 个电话口（按实际型号配）。</p>
+    </li>
+
+    <li>
+      <h3>注册 ONU（让它拿到 ONU-ID 上线）</h3>
+      <pre>MA5800(config)#<span class="hl">interface gpon 0/1</span>
+MA5800(config-if-gpon-0/1)#<span class="hl">ont add 0 0 sn-auth 4857544312345678 omci ont-lineprofile-id 10 ont-srvprofile-id 10 desc ward-101</span>
+<span class="cmt"># 语法：ont add &lt;PON口&gt; &lt;ONU-ID&gt; sn-auth &lt;SN&gt; omci ont-lineprofile-id &lt;x&gt; ont-srvprofile-id &lt;y&gt; desc &lt;别名&gt;</span>
+<span class="cmt"># 也可用密码认证：ont add 0 0 password-auth &lt;密码&gt; always-on omci ont-lineprofile-id 10 ont-srvprofile-id 10 desc ward-101</span></pre>
+      <p>对应 L7 的激活：认证 SN → 分配 ONU-ID（这里指定为 0）上线。</p>
+    </li>
+
+    <li>
+      <h3>打 service-port（业务落地，绑 GEM 与 VLAN）</h3>
+      <pre>MA5800(config)#<span class="hl">service-port vlan 100 gpon 0/1/0 ont 0 gemport 1 multi-service user-vlan 100 tag-transform translate</span>
+<span class="cmt"># vlan 100 = OLT 侧 VLAN；user-vlan 100 = ONU 用户侧 VLAN；translate = 内外 VLAN 转换</span></pre>
+      <p>这条命令把"ONU 的 GEM port 1"与"业务 VLAN"绑起来——业务到这里才真正通到 OLT 侧。</p>
+      <div class="warn"><span class="t">语法提醒</span>部分版本需要显式写 service-port 索引；请对照你设备的命令参考。</div>
+    </li>
+
+    <li>
+      <h3>放通上行 VLAN，并保存</h3>
+      <pre>MA5800(config)#<span class="hl">vlan 100 smart</span>
+MA5800(config)#<span class="hl">port vlan 100 0/19 0</span>
+<span class="cmt"># 0/19 为上行口，以你的上行板卡为准</span>
+MA5800(config)#<span class="hl">save</span>
+<span class="cmt"># commit 只让模板生效；save 才把配置写入设备，重启不丢</span></pre>
+    </li>
+  </ol>
+
+  <p>把配置顺序"跑"一遍（对照上面的九步命令）：每一步都会点亮一个配置对象，
+  它们按依赖关系依次建立：</p>
+  <div class="ponmap" data-mode="pipeline"
+       data-stages="PON 口|DBA 模板|线路模板\nT-CONT/GEM|业务模板|注册 ONU|service-port\n绑 VLAN|上行 VLAN|save"
+       data-note="配置顺序（不可颠倒）"></div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">03</span> 验证：怎么确认真的通了</h2>
+
+  <table>
+    <thead><tr><th>命令</th><th>看什么</th></tr></thead>
+    <tbody>
+      <tr><td><code>display ont info 0 0</code></td><td>ONU 的 Run state、Config state、光功率是否正常</td></tr>
+      <tr><td><code>display service-port port 0/1/0 ont 0</code></td><td>业务流是否建立、VLAN 映射是否正确</td></tr>
+      <tr><td>现场测光功率 / 打流</td><td>ONU 收光在灵敏度之上；PC 能拿到网关、能 ping 通</td></tr>
+    </tbody>
+  </table>
+
+  <div class="win">
+    <span class="label">命令 ↔ 模型对照（背这张表就够）</span>
+    <p><code>dba-profile</code> / <code>tcont</code> → 上行带宽（T-CONT）　·　
+    <code>gem add</code> / <code>gem mapping</code> → 业务封装（GEM port）　·　
+    <code>ont add</code> → 身份（ONU-ID）　·　
+    <code>service-port</code> → 业务落地（GEM + VLAN）</p>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">04</span> 新手最常踩的五个坑</h2>
+
+  <table>
+    <thead><tr><th>现象</th><th>常见原因</th></tr></thead>
+    <tbody>
+      <tr><td>ONU 注册不上</td><td>SN 抄错/大小写；认证方式与模板不匹配；光功率太低</td></tr>
+      <tr><td>模板改了不生效</td><td>忘了 <code>commit</code>（模板内）或忘了 <code>save</code>（全局）</td></tr>
+      <tr><td>ONU 上线但业务不通</td><td>service-port 没建；GEM / VLAN 映射对不上；用户侧 VLAN 与 OLT 侧没转换</td></tr>
+      <tr><td>能通一会儿就断</td><td>光功率临界、或主备切换配置未生效</td></tr>
+      <tr><td>重启后配置丢了</td><td>只 <code>commit</code> 没 <code>save</code></td></tr>
+    </tbody>
+  </table>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">05</span> 技能练习</h2>
+
+  <div class="quiz" data-quiz='[
+   {"q":"用序列号注册 ONU 时，命令里的认证关键字是？",
+    "options":["password-auth","sn-auth","mac-auth","loid-auth"],
+    "answer":1,
+    "explain":"华为 OLT 的 ont add 支持 sn-auth（序列号认证）与 password-auth（密码/注册 ID 认证）两种，序列号对应 sn-auth。"},
+   {"q":"要把 T-CONT 绑定到 DBA 模板，应使用哪条命令？",
+    "options":["gem add 1 eth tcont 1","ont add 0 0 sn-auth …","tcont 1 dba-profile-id 10","service-port vlan 100 …"],
+    "answer":2,
+    "explain":"在 ont-lineprofile 内用 tcont <编号> dba-profile-id <模板号> 建立 T-CONT 与 DBA 模板的绑定；gem add 是把 GEM 绑到 T-CONT 上。"},
+   {"q":"让业务真正落地、把 GEM 与 VLAN 绑起来的命令是？",
+    "options":["dba-profile add","ont-srvprofile","display ont info","service-port"],
+    "answer":3,
+    "explain":"service-port（业务流）通过 ONU-ID、GEM port、PON 口与内外层 VLAN 唯一定义一条数据流，业务到这里才通到 OLT 侧。"},
+   {"q":"在 ont-lineprofile 里改完配置，必须执行哪条才让模板生效？",
+    "options":["commit","save","quit","reset"],
+    "answer":0,
+    "explain":"模板内的改动要 commit 才生效；save 是把全局配置写入设备（防止重启丢失），两者不同。"},
+   {"q":"把全局配置写入设备、保证重启不丢的命令是？",
+    "options":["commit","save","write","backup"],
+    "answer":1,
+    "explain":"save 才是保存到设备；commit 只作用于当前模板。忘了 save 是新手最常见的“重启后配置没了”。"}
+  ]'></div>
+
+  <div class="recall">
+    <div class="rt">回忆练习 · 写出命令顺序</div>
+    <p>不看上面，按顺序写出"注册一台 ONU 并开通一条内网业务"的关键命令（写命令名 + 一句话作用即可）：</p>
+    <textarea placeholder="1. …&#10;2. …&#10;3. …"></textarea>
+    <button type="button">看参考答案</button>
+    <div class="reveal">
+      <p>① <code>display ont autofind 0</code> — 找到未注册 ONU 的 SN；<br>
+      ② <code>dba-profile add … type4 max …</code> — 建上行带宽合约；<br>
+      ③ <code>ont-lineprofile …</code> + <code>tcont</code> + <code>gem add</code> + <code>gem mapping</code> + <code>commit</code> — 建 T-CONT/GEM/VLAN 映射；<br>
+      ④ <code>ont-srvprofile …</code> + <code>ont-port eth …</code> + <code>commit</code> — 定义 ONU 端口能力；<br>
+      ⑤ <code>ont add 0 0 sn-auth &lt;SN&gt; omci ont-lineprofile-id 10 ont-srvprofile-id 10 desc …</code> — 注册 ONU；<br>
+      ⑥ <code>service-port vlan 100 gpon 0/1/0 ont 0 gemport 1 multi-service user-vlan 100 tag-transform translate</code> — 业务落地；<br>
+      ⑦ <code>vlan 100 smart</code> + <code>port vlan 100 0/19 0</code> — 放通上行 VLAN；<br>
+      ⑧ <code>save</code> — 保存；<br>
+      ⑨ <code>display ont info 0 0</code> / <code>display service-port port 0/1/0 ont 0</code> — 验证。</p>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">06</span> 参考与来源</h2>
+
+  <div class="reading">
+    <span class="t">命令来源（公开实例，可交叉验证）</span>
+    <p>本课命令结构参考了两篇公开的华为 OLT 配置实例：</p>
+    <p>· <a href="https://www.cnblogs.com/sysk/p/8777508.html" target="_blank">博客园《GPON 介绍及华为 OLT 网关注册配置流程》</a>（DBA / lineprofile / srvprofile / ont add / service-port）<br>
+       · <a href="https://www.jianshu.com/p/c89bc026c2a5" target="_blank">简书《华为 OLT 业务配置》</a>（ont add 两种认证、service-port、native-vlan）</p>
+  </div>
+
+  <div class="reading">
+    <span class="t">速查</span>
+    <p>命令清单 + 命令↔模型对照 + 排错表：<a href="../reference/0008-huawei-olt-cli-cheatsheet.html">reference/0008-huawei-olt-cli-cheatsheet.html</a></p>
+    <p class="cite">说明：本课一手资料为中文配置实例（非英文），故未配双语 PDF；若你需要，我可以整理一份华为英文《命令参考》对应的中英对照。</p>
+  </div>
+
+  <div class="footer">
+    <div class="next">
+      <span class="t">下一课</span>
+      <p>最后一课：把三周所学变成一份可提交的方案。<strong>Lesson 09 · 产出建设方案</strong>：一份《新楼全光网络建设方案》的框架与写作要点（需求→选型→拓扑→配置→运维→投资），你可以直接把前 8 课算过的数字填进去。</p>
+    </div>
+    <div class="links">
+      <a href="../index.html">课程主页</a>
+      <a href="./0007-olt-onu-service-model.html">← Lesson 07</a>
+      <a href="./0008-hands-on-configuration.html">本课</a>
+      <a href="../reference/0008-huawei-olt-cli-cheatsheet.html">OLT 命令速查表</a>
+      <a href="../GLOSSARY.md">术语表</a>
+      <a href="../ROADMAP.md">路线图</a>
+    </div>
+  </div>
+
+</div>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/recall.js"></script>
+<script src="../assets/pon-flow.js"></script>
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 03 · PON 制式与选型</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+<div class="page">
+
+  <header class="masthead">
+    <p class="course-label"><a href="../index.html">← 课程主页</a> · 全光网络架构 · Lesson 03</p>
+    <h1>PON 制式与选型：两道门都得过</h1>
+    <p class="meta">
+      <span>2026-09-11</span>
+      <span>约 45 分钟</span>
+      <span>前置：Lesson 02</span>
+    </p>
+  </header>
+
+  <div class="win">
+    <span class="label">本课成果 · Win</span>
+    <p>你能拿到一个院区的需求，说出该用 <strong>GPON / XGS-PON / 50G-PON</strong> 中的哪一种、分光比大概定多少，
+    并讲清楚为什么——同时通过<strong>光功率</strong>和<strong>带宽</strong>两道门。</p>
+  </div>
+
+  <p><a href="./0002-odn-and-power-budget.html">上一课</a>我们算清了"能不能通"这道门（光功率）。
+  这一课补上第二道门：<strong>一个 PON 口的带宽要分给谁</strong>——也就是选哪个制式、分光比定多少。</p>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">01</span> 制式家族一览</h2>
+
+  <p>PON 家族比想象中整齐：每一代都是"上下行速率一起涨"。下表是院区真正会遇到的几种：</p>
+
+  <table>
+    <thead><tr><th>制式</th><th>标准</th><th>下行 / 上行</th><th>一句话定位</th></tr></thead>
+    <tbody>
+      <tr><td>GPON</td><td>ITU-T G.984</td><td>2.5G / 1.25G</td><td>成熟、便宜、存量多；低带宽场景仍在用</td></tr>
+      <tr><td>XG-PON</td><td>ITU-T G.987</td><td>10G / 2.5G</td><td>非对称万兆，上行是短板</td></tr>
+      <tr><td><strong>XGS-PON</strong></td><td>ITU-T G.9807.1</td><td><strong>10G / 10G</strong></td><td><strong>当前新建院区主力</strong>（对称）</td></tr>
+      <tr><td>NG-PON2</td><td>ITU-T G.989</td><td>40G（4 波长 × 10G）</td><td>波长堆叠路线，平滑扩容</td></tr>
+      <tr><td>50G-PON</td><td>ITU-T G.9804</td><td>50G / 25G（可对称 50G）</td><td>AI 影像、Wi-Fi 7 等超高速场景</td></tr>
+    </tbody>
+  </table>
+  <p class="cite">GPON 速率见 ITU-T G.984.2；XG-PON 非对称、XGS-PON 对称见 G.987 / G.9807.1 的标准定义；50G-PON 下行 49.7664 Gbit/s、上行可选 12.44/24.88/49.77 Gbit/s（G.9804.3，业界光模块规格）。</p>
+
+  <div class="tip">
+    <span class="t">F5G / F5G-A 是什么</span>
+    F5G 是 ETSI 提出的"第五代固定网络"<strong>产业标签</strong>（对应 5G 之于移动），不是某个具体协议。
+    看到"F5G 全光院区"，就理解成"基于 PON 的全光院区方案"；它底下用的制式仍是 GPON / XGS-PON / 50G-PON。
+    <strong>F5G-A</strong> 是其演进版（万兆普及 + 光感知等）。
+  </div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">02</span> 一个 PON 口的带宽，是"共享"的</h2>
+
+  <p>这是全光院区最容易被误解的一点。在传统以太网里，每个接入交换机端口是独立带宽；
+  在 PON 里，<strong>一个 OLT 的 PON 口下面的所有 ONU 共享这条线路</strong>：</p>
+
+  <ul>
+    <li><strong>下行</strong>：OLT 发送的内容会广播给该 PON 口下所有 ONU，ONU 各取所需——所以下行总带宽是共享的。</li>
+    <li><strong>上行</strong>：ONU 之间用时分复用（TDMA），同一时刻只有一个 ONU 能发——上行总带宽也是共享的。</li>
+  </ul>
+
+  <p>于是就有了<strong>收敛比（oversubscription ratio）</strong>的概念：</p>
+
+  <div class="win">
+    <span class="label">带宽账</span>
+    <p>收敛比 = （所有 ONU 的承诺带宽之和）÷（PON 口线路速率）<br>
+    例：XGS-PON 一个 PON 口 10G，下挂 1:32，每个 ONU 承诺 100M → 32 × 100M = 3.2G，
+    收敛比 = 3.2G ÷ 10G = 0.32（相当于 1:3.1 收敛，很宽松）。</p>
+  </div>
+
+  <div class="warn">
+    <span class="t">常见误解</span>
+    "1:32 就是每个人只有 10G÷32 = 312M"——这只在<strong>所有 ONU 同时跑满</strong>时成立，
+    是理论的<strong>下限</strong>，不是常态。真实设计看的是收敛比：大部分时间大家用不满，
+    所以 1:32 通常能给到远高于 312M 的突发体验。
+  </div>
+
+  <p>看动画理解"共享"：下行是 OLT 一次广播、该 PON 口下所有 ONU <strong>同时</strong>收到；
+  上行是 TDMA，<strong>同一时刻只有一个 ONU 能发</strong>，其余排队等时隙。</p>
+  <div class="ponmap" data-mode="bandwidth"></div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">03</span> 选型 = 过两道门</h2>
+
+  <ol class="steps">
+    <li>
+      <h3>数点位、定业务</h3>
+      <p>每个房间/点位要接什么：信息点、电话、电视、Wi-Fi AP、监护设备、影像终端……
+      先估出每点的<strong>承诺带宽</strong>，这就是"带宽需求"的输入。</p>
+    </li>
+    <li>
+      <h3>定分光比候选（过光功率门）</h3>
+      <p>用<a href="./0002-odn-and-power-budget.html">上一课</a>的方法算：固定损耗 + 分光器损耗 + 余量 ≤ 预算。
+      这一步给出的分光比是<strong>上限</strong>。</p>
+    </li>
+    <li>
+      <h3>算带宽（过带宽门）</h3>
+      <p>Σ承诺带宽 ÷ 线路速率 = 收敛比。收敛比太小（接近或超过 1）说明分光比太大或制式太低，要收紧。</p>
+    </li>
+    <li>
+      <h3>选制式</h3>
+      <p>两道门都过不了 × 需求高 → 升级制式（GPON → XGS-PON → 50G-PON）；
+      需求低 × 预算紧 → 可以沿用 GPON。</p>
+    </li>
+  </ol>
+
+  <table>
+    <thead><tr><th>需求特征</th><th>建议制式</th><th>建议分光比</th></tr></thead>
+    <tbody>
+      <tr><td>普通病房、办公、门禁（每点 ≤100M）</td><td>XGS-PON</td><td>1:32（光功率允许时）</td></tr>
+      <tr><td>存量/低价值区域、预算紧</td><td>GPON</td><td>1:32 / 1:64</td></tr>
+      <tr><td>影像科、4K 手术示教（单点 1–10G）</td><td>XGS-PON</td><td>1:4 – 1:8</td></tr>
+      <tr><td>数字病理 + AI、Wi-Fi 7 全覆盖</td><td>50G-PON</td><td>1:4 – 1:16</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">04</span> 案例演示：某三甲医院新楼（800 床）</h2>
+
+  <p>假设新楼 20 层、约 <strong>2000 个信息点</strong>。按上面的流程走一遍（数据为演示用的典型值）：</p>
+
+  <table>
+    <thead><tr><th>区域</th><th>终端与业务</th><th>每点需求</th><th>制式</th><th>分光比</th></tr></thead>
+    <tbody>
+      <tr><td>住院病房</td><td>信息点 + 电话 + 电视 + 监护 + Wi-Fi AP</td><td>≤100M</td><td>XGS-PON</td><td>1:32</td></tr>
+      <tr><td>门诊 / 办公</td><td>PC、打印、自助机、AP</td><td>100M–1G</td><td>XGS-PON</td><td>1:32</td></tr>
+      <tr><td>影像科（PACS/CT/MR）</td><td>大文件上传、调阅</td><td>1–10G</td><td>XGS-PON</td><td>1:4 – 1:8</td></tr>
+      <tr><td>手术室 / 示教</td><td>4K 视频、零漫游</td><td>1–10G</td><td>XGS-PON</td><td>1:8</td></tr>
+      <tr><td>数字病理（AI 阅片）</td><td>大切片上传 + AI 推理</td><td>10G+</td><td>50G-PON</td><td>1:4</td></tr>
+    </tbody>
+  </table>
+
+  <p>每层的带宽账（以病房区为例）：一层 100 个点位 × 100M = 10G，
+  但这是"承诺带宽"不是"同时跑满"。若每层用一个 1:32 的 PON 口覆盖约 32 个房间，
+  32 × 100M = 3.2G，收敛比 0.32，<strong>带宽门轻松通过</strong>；光功率门在上一课也已验证 1:32 可行。</p>
+
+  <p>这组数字不是拍脑袋：华为在<strong>南京农业大学（NAU）</strong>的全光校园改造中，
+  就是用 <strong>XGS-PON + Wi-Fi 6</strong> 建了一张两层无源网络（OLT + 无源分光器 SPL + ONU + 面板 AP），
+  上下行对称 10G，光纤覆盖整个校园
+  <sup><a href="https://e.huawei.com/en/case-studies/enterprise-transmission-access/campus-optix-college-nanjing" target="_blank">[NAU 案例]</a></sup>。
+  医院侧，华为方案给出的实测数字是：50G PON + AI 把数字病理切片上传从 <strong>129s 压到 15s</strong>，
+  XGS-PON Pro 单纤 <strong>12.5G</strong>，关键业务用 Type C 双链路保护
+  <sup><a href="https://e.huawei.com/en/solutions/enterprise-optical-network/campus-optix/medical-campus-optical-network" target="_blank">[华为医疗方案]</a></sup>。</p>
+
+  <div class="tip">
+    <span class="t">可以直接抄的选型结论</span>
+    <strong>新建医院楼，主干选 XGS-PON（10G/10G），普通区域 1:32，影像/手术 1:4–1:8，
+    病理 AI / Wi-Fi 7 覆盖区用 50G-PON。</strong> 这样一张网能扛住未来十年，中途升级只需换两端板卡。
+  </div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">05</span> 技能练习</h2>
+
+  <div class="quiz" data-quiz='[
+   {"q":"目前新建医院院区的主力 PON 制式是下列哪一种？",
+    "options":["GPON（2.5G 下行）","XGS-PON（对称 10G）","NG-PON2（40G）","EPON（1.25G）"],
+    "answer":1,
+    "explain":"XGS-PON（ITU-T G.9807.1）上下行对称 10G，是当前新院区主力；GPON 偏存量与低带宽，NG-PON2 尚未大规模铺开。"},
+   {"q":"XG-PON 与 XGS-PON 的核心区别是什么？",
+    "options":["下行速率相差十倍","分光比上限不同","上行速率是否对称","是否使用单模光纤"],
+    "answer":2,
+    "explain":"XG-PON 是 10G/2.5G 非对称，XGS-PON 是 10G/10G 对称——差别在上行，这也是它适合双向业务的原因。"},
+   {"q":"确定分光比时，必须同时通过哪两道门？",
+    "options":["光功率预算与带宽收敛","成本预算与施工工期","设备品牌与网管平台","机柜空间与供电容量"],
+    "answer":0,
+    "explain":"先用损耗预算算出分光比上限，再用收敛比检查带宽是否够；两道都过，分光比才成立。"},
+   {"q":"数字病理 AI 阅片、Wi-Fi 7 全覆盖这类超高速场景，优先考虑？",
+    "options":["GPON（2.5G 下行）","XG-PON（10G/2.5G）","NG-PON2（40G）","50G-PON（50G 下行）"],
+    "answer":3,
+    "explain":"50G-PON（G.9804）单波长 50G，面向 AI 影像与 Wi-Fi 7 回传；华为医疗方案用 50G PON + AI 把病理上传从 129s 降到 15s。"},
+   {"q":"XGS-PON 一个 PON 口下行 10G，下挂 1:32，若所有 ONU 同时跑满，每个约分到？",
+    "options":["约 1000M","约 310M","约 100M","约 32M"],
+    "answer":1,
+    "explain":"10G ÷ 32 ≈ 312M，这是所有 ONU 同时跑满的理论下限；实际按收敛比设计，常态体验远高于此。"}
+  ]'></div>
+
+  <div class="recall">
+    <div class="rt">回忆练习 · 选型决策</div>
+    <p>先不看上面的表。给你三个场景，说出你选的制式和分光比，各用一句话说明理由：</p>
+    <p><strong>(a)</strong> 老院区一栋小楼，只接 20 个办公信息点，预算紧张；<br>
+    <strong>(b)</strong> 新楼影像科，CT/MR 要频繁把 1–5GB 的影像上传到 PACS；<br>
+    <strong>(c)</strong> 新建 20 层病房楼，每层约 100 个信息点，含电话/电视/监护/Wi-Fi AP。</p>
+    <textarea placeholder="写下你的选择和理由……"></textarea>
+    <button type="button">看参考答案</button>
+    <div class="reveal">
+      <p><strong>(a)</strong> GPON（或 XGS-PON，看预算与未来规划）。点位少、带宽需求低，收敛和光功率都没有压力，
+      用便宜的成熟制式即可；如果希望未来十年不再动，直接上 XGS-PON 更省心。</p>
+      <p><strong>(b)</strong> XGS-PON，分光比 1:4 – 1:8。单点 1–10G 的突发上传，分光比不能大；
+      若还有 AI 病理，则升级到 50G-PON。光功率因分光比小而非常宽裕。</p>
+      <p><strong>(c)</strong> XGS-PON，1:32。每层 100 点 × 100M = 10G 承诺带宽，按每 PON 口覆盖 ~32 个点算，
+      收敛比约 0.32；光功率门在 L2 已验证 1:32 可行。两道门都过。</p>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">06</span> 本课推荐阅读（Primary Source）</h2>
+
+  <div class="reading">
+    <span class="t">真实案例 · 中英对照</span>
+    <p><strong>Huawei: "Sowing the Seeds of the Future — Optical Fiber Radically Improves the Digital Level of NAU's Campus"</strong>
+    —— 南京农业大学（NAU）用 <strong>XGS-PON + Wi-Fi 6</strong> 完成全光校园改造的真实案例。</p>
+    <p>它把本课讲的"选型结论"落到了地上：为什么选 XGS-PON、两层架构长什么样、设备清单、升级有多容易。
+    已整理成<strong>中英对照双语 PDF</strong>（上下排）：</p>
+    <p>👉 <a href="../reference/0003-xgspon-campus-case-bilingual.pdf">reference/0003-xgspon-campus-case-bilingual.pdf</a>
+    &nbsp;·&nbsp; 原文：<a href="https://e.huawei.com/en/case-studies/enterprise-transmission-access/campus-optix-college-nanjing" target="_blank">e.huawei.com</a></p>
+  </div>
+
+  <div class="reading">
+    <span class="t">速查</span>
+    <p>制式表 + 带宽账 + 选型矩阵：<a href="../reference/0003-pon-standards-cheatsheet.html">reference/0003-pon-standards-cheatsheet.html</a></p>
+  </div>
+
+  <div class="footer">
+    <div class="next">
+      <span class="t">下一课</span>
+      <p>下一步，我们开始“把方案画出来”。<strong>Lesson 04 · 全光院区分层与拓扑</strong>：OLT 放哪、ODN 怎么分、双归属和 Type B/C 保护怎么做。你可以先想一个问题：新楼的 OLT 应该放在住院楼、门诊楼，还是独立的中心机房？为什么？</p>
+    </div>
+    <div class="links">
+      <a href="../index.html">课程主页</a>
+      <a href="./0002-odn-and-power-budget.html">← Lesson 02</a>
+      <a href="./0003-pon-standards-and-selection.html">本课</a>
+      <a href="../reference/0003-pon-standards-cheatsheet.html">制式速查表</a>
+      <a href="../GLOSSARY.md">术语表</a>
+      <a href="../ROADMAP.md">路线图</a>
+    </div>
+  </div>
+
+</div>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/recall.js"></script>
+<script src="../assets/pon-flow.js"></script>
+</body>
+</html>

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 02 · ODN 与光功率预算</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+<div class="page">
+
+  <header class="masthead">
+    <p class="course-label"><a href="../index.html">← 课程主页</a> · 全光网络架构 · Lesson 02</p>
+    <h1>ODN 与光功率预算：这条链路到底能不能通？</h1>
+    <p class="meta">
+      <span>2026-09-11</span>
+      <span>约 45 分钟</span>
+      <span>前置：Lesson 01</span>
+    </p>
+  </header>
+
+  <div class="win">
+    <span class="label">本课成果 · Win</span>
+    <p>你能把一条真实链路的损耗**逐项加起来**，和光功率预算比较，判断某个分光比能不能用——
+    并算出这条链路最多能做到 <strong>1:几</strong>。</p>
+  </div>
+
+  <p><a href="./0001-what-is-all-optical-campus.html">上一课</a>我们把网络压成了"OLT—<strong>无源 ODN</strong>—ONU"两层，
+  并用虚线画出了中间那一层。但虚线里到底装了什么？光从 OLT 出发，经过它会不会"越走越弱"到 ONU 收不到？
+  这一课就把那层虚线拆开。</p>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">01</span> ODN 里到底装了什么</h2>
+
+  <p>标准里的定义很干脆：ODN 是"接入网中的一棵光纤树，辅以功率分光器或波长分光器、滤波器，
+  以及其他无源光器件"
+  <sup><a href="https://www.itu.int/rec/T-REC-G.984.2/en" target="_blank">[ITU-T G.984.2]</a></sup>。
+  落到工程上，你会在图纸上看到这几样东西：</p>
+
+  <table>
+    <thead><tr><th>器件</th><th>作用</th><th>有源 / 无源</th></tr></thead>
+    <tbody>
+      <tr><td>单模光纤（G.652）</td><td>传光；楼间主干 + 楼内垂直/水平</td><td>无源</td></tr>
+      <tr><td>分光器（Splitter，1:N）</td><td>把 OLT 一个 PON 口的光均分给 N 个 ONU</td><td>无源（不供电）</td></tr>
+      <tr><td>连接器（跳纤 / 法兰）</td><td>设备与光缆、ODF 之间的活动连接</td><td>无源</td></tr>
+      <tr><td>熔接点（Splice）</td><td>两段光缆永久接续</td><td>无源</td></tr>
+      <tr><td>ODF（光纤配线架）</td><td>光缆成端、调度、留纤</td><td>无源</td></tr>
+    </tbody>
+  </table>
+
+  <div class="tip">
+    <span class="t">关键心智模型</span>
+    ODN 是一个**纯损耗元件串起来的链条**。光每经过一个器件就弱一点；
+    链路能不能通，只看"总损耗"有没有超过"预算"。没有玄学，就是加法。
+  </div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">02</span> 会"吃掉"光的四样东西（都有权威上限）</h2>
+
+  <p>下面每个数值都来自 ITU-T 标准，做方案时按**最大值**算（最坏情况）：</p>
+
+  <h3>① 光纤衰减 — G.652</h3>
+  <table>
+    <thead><tr><th>波长</th><th>G.652 最大衰减</th><th>用途</th></tr></thead>
+    <tbody>
+      <tr><td>1310 nm</td><td><strong>0.4 dB/km</strong></td><td>PON 上行（ONU→OLT），损耗通常最大，是限制方向</td></tr>
+      <tr><td>1490 nm</td><td>约 0.4 dB/km（1530–1565 nm 段最大 0.30）</td><td>PON 下行（OLT→ONU）</td></tr>
+      <tr><td>1550 nm</td><td>0.35 dB/km</td><td>视频叠加 / 长距</td></tr>
+    </tbody>
+  </table>
+  <p class="cite">来源：ITU-T G.652 (08/2024) 光纤衰减系数上限。</p>
+
+  <h3>② 分光器插入损耗 — G.671</h3>
+  <p>这是最容易被忽略、也最"吃预算"的一项。1×N 分光器在 1310 nm 窗口的最大插入损耗：</p>
+  <table>
+    <thead><tr><th>分光比</th><th>1:2</th><th>1:4</th><th>1:8</th><th>1:16</th><th>1:32</th><th>1:64</th></tr></thead>
+    <tbody>
+      <tr><td>最大 IL（dB，普通距离）</td><td>3.9</td><td>7.4</td><td>10.6</td><td>14.1</td><td>17.5</td><td>20.9</td></tr>
+      <tr><td>最大 IL（dB，扩展距离）</td><td>3.8</td><td>7.1</td><td>10.5</td><td>13.7</td><td>17.1</td><td>20.3</td></tr>
+    </tbody>
+  </table>
+  <p class="cite">来源：ITU-T G.671 (11/2025) 第 6.6 节，PON 用无源分支器件。注意：分光比翻一倍，损耗大约**加 3 dB**。</p>
+
+  <h3>③ 连接器 + ④ 熔接 — G.671</h3>
+  <table>
+    <thead><tr><th>接续方式</th><th>最大插入损耗</th></tr></thead>
+    <tbody>
+      <tr><td>单芯活动连接器</td><td>0.5 dB / 个</td></tr>
+      <tr><td>熔接（主动对准）</td><td>0.3 dB / 点</td></tr>
+      <tr><td>熔接（被动对准）/ 机械接续</td><td>0.5 dB / 点</td></tr>
+    </tbody>
+  </table>
+  <p class="cite">来源：ITU-T G.671 (11/2025) 第 6.7、6.14 节。</p>
+
+  <h3>还有两项"必须留"的</h3>
+  <ul>
+    <li><strong>光路代价（optical path penalty）：1 dB</strong> — G.984.2 规定的最大光路代价，直接计入预算。</li>
+    <li><strong>设计余量：3 dB</strong> — 给老化、温度、维修留的余量。不留余量的方案，验收时好看，三年后就会出问题。</li>
+  </ul>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">03</span> 光功率预算：把损耗相加，和预算比</h2>
+
+  <p>先复习三条 dB 运算规则（你学过，但很容易在项目里算错）：</p>
+  <table>
+    <thead><tr><th>规则</th><th>例子</th></tr></thead>
+    <tbody>
+      <tr><td>串起来就相加</td><td>0.5 dB 连接器 + 14.1 dB 分光器 = 14.6 dB</td></tr>
+      <tr><td>3 dB ≈ 功率减半</td><td>分光比 1:2 → 少一半光</td></tr>
+      <tr><td>10 dB = 功率降到 1/10</td><td>1:32 约 17.5 dB，比 1/10 还少一半</td></tr>
+    </tbody>
+  </table>
+
+  <p>预算（budget）本身也来自标准：它是"发送功率 − 接收灵敏度"，也就是这条链路**允许损失多少 dB**。
+  G.984.2 给出了 GPON 的等级：</p>
+
+  <table>
+    <thead><tr><th>等级</th><th>允许损耗范围</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>ODN Class A</td><td>5 – 20 dB</td><td>ODN 本身的衰减等级（G.982）</td></tr>
+      <tr><td>ODN Class B</td><td>10 – 25 dB</td><td></td></tr>
+      <tr><td>ODN Class C</td><td>15 – 30 dB</td><td></td></tr>
+      <tr><td><strong>Class B+</strong></td><td>13 – <strong>28 dB</strong></td><td>GPON 主流；最大损耗 28 dB</td></tr>
+      <tr><td><strong>Class C+</strong></td><td>17 – <strong>32 dB</strong></td><td>扩展距离，最大 60 km</td></tr>
+      <tr><td>Class D</td><td>20 – 35 dB</td><td>更长距离</td></tr>
+    </tbody>
+  </table>
+  <p class="cite">来源：ITU-T G.984.2 (08/2019) 表 2a、附件 A（B+）、附录 V（C+/D）。XGS-PON 用另一套等级（N1/N2/E1/E2，见 G.9807.1），方法完全一样，算的时候用设备手册标称的预算值。</p>
+
+  <div class="win">
+    <span class="label">判定公式</span>
+    <p><strong>总损耗 = 光纤 + 分光器 + 连接器 + 熔接 + 光路代价(1 dB) + 设计余量(3 dB)　≤　预算</strong><br>
+    成立 → 能开通；不成立 → 降分光比、减长度、换更高等级的光模块。</p>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">04</span> 工作示例：新楼病房，最多能到 1:几？</h2>
+
+  <div class="tip">
+    <span class="t">场景（可替换成你的真实数字）</span>
+    新楼 20 层病房楼。主机房（OLT）到新楼主干光缆 <strong>2.0 km</strong>，楼内到最远病房再 <strong>0.3 km</strong>。
+    主干有 <strong>2 个熔接点</strong>，全程 <strong>4 个活动连接器</strong>。按上行 1310 nm、Class B+（28 dB）算。
+  </div>
+
+  <ol class="steps">
+    <li>
+      <h3>固定损耗（不含分光器）</h3>
+      <pre><span class="cmt"># 光纤</span>  2.3 km × 0.4 dB/km        = 0.92 dB
+<span class="cmt"># 熔接</span>  2 点 × 0.3 dB            = 0.60 dB
+<span class="cmt"># 连接器</span> 4 个 × 0.5 dB          = 2.00 dB
+<span class="cmt"># 光路代价</span> (G.984.2)          = 1.00 dB
+<span class="cmt"># 设计余量</span> (自行预留)         = 3.00 dB
+<span class="hl">固定部分合计</span>                 = 7.52 dB</pre>
+    </li>
+    <li>
+      <h3>还剩多少给分光器</h3>
+      <pre>28 dB (Class B+ 预算) − 7.52 dB = <span class="hl">20.48 dB</span>  ← 分光器能用的最大损耗</pre>
+    </li>
+    <li>
+      <h3>拿 G.671 的分光器损耗去比</h3>
+      <table>
+        <thead><tr><th>分光比</th><th>分光器 IL</th><th>是否 ≤ 20.48 dB</th><th>结论</th></tr></thead>
+        <tbody>
+          <tr><td>1:16</td><td>14.1 dB</td><td>✓ 还剩 6.4 dB</td><td>宽敞，推荐</td></tr>
+          <tr><td>1:32</td><td>17.5 dB</td><td>✓ 还剩 3.0 dB</td><td>刚好，可用</td></tr>
+          <tr><td>1:64</td><td>20.9 dB</td><td>✗ 超 0.42 dB</td><td><strong>不可行</strong></td></tr>
+        </tbody>
+      </table>
+    </li>
+  </ol>
+
+  <div class="warn">
+    <span class="t">两个容易踩的坑</span>
+    ① 上面的损耗都是 G.671 的<strong>最大值</strong>，实测链路通常更宽松；但设计必须按最坏情况算，否则验收时"个别房间通不了"。<br>
+    ② 一个 PON 口的光功率预算是<strong>整条 P2MP 链路共享</strong>的——离分光器最远、连接器最多的那个 ONU 决定这条线能不能过。
+  </div>
+
+  <p>把这条链路"跑"一遍：光脉冲从 OLT 出发，经过光纤、分光器逐段<strong>变暗</strong>，
+  顶部 HUD 实时显示预算、累计损耗与剩余余量：</p>
+  <div class="ponmap" data-mode="power"></div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">05</span> 分光比还有第二张面孔：带宽</h2>
+
+  <p>光功率只回答"能不能通"。分光比还决定另一件事：<strong>N 个 ONU 共享一个 PON 口的带宽</strong>——
+  下行是广播，上行是时分复用（TDMA），同一时刻只有一个 ONU 能发。</p>
+
+  <p>所以 1:32 不只是"损耗够了"，还意味着 32 个病房/终端去分这个 PON 口的带宽。
+  这个"分光比 vs 带宽"的取舍是下一课的主题（见<a href="../ROADMAP.md">路线图</a>）。现在只要记住：
+  <strong>选分光比，是要同时通过"光功率"和"带宽"两道门。</strong></p>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">06</span> 技能练习</h2>
+
+  <p>先凭记忆作答，再回看上面的表。</p>
+
+  <div class="quiz" data-quiz='[
+   {"q":"ODN 里“无源”的部分，指的是下列哪一组器件？",
+    "options":["光纤、分光器、连接器和熔接点","OLT、ONU 与光模块","交换机、路由器与防火墙","光模块与供电单元"],
+    "answer":0,
+    "explain":"ODN 是光纤、分光器、连接器、熔接点、ODF 这些无源器件的集合；OLT 与 ONU 都是有源的。"},
+   {"q":"分光比从 1:16 提到 1:32，分光器带来的损耗大约怎么变？",
+    "options":["大约减少三到四分贝","大约增加三到四分贝","基本保持不变","增加到原来的两倍"],
+    "answer":1,
+    "explain":"分光比每翻一倍，功率减半，约 +3 dB：1:16 是 14.1 dB，1:32 是 17.5 dB（G.671 最大值）。"},
+   {"q":"判断一条 PON 链路能否开通，正确的比较方式是？",
+    "options":["分光比小于等于预算值","ONU 数量小于等于预算值","总损耗小于等于光功率预算","光纤长度小于等于预算值"],
+    "answer":2,
+    "explain":"把光纤、分光器、连接器、熔接、光路代价、设计余量全部相加，与预算比较；成立才可开通。"},
+   {"q":"为什么做设计时必须预留设计余量（如 3 dB）？",
+    "options":["让分光比看起来更高","提高上行方向的带宽","降低连接器的采购成本","应对老化、温度与后期维修"],
+    "answer":3,
+    "explain":"余量是给光纤老化、温度变化、后期增减接续留的。没有余量的方案初期可用，几年后容易出问题。"},
+   {"q":"某链路固定损耗（含余量）7.52 dB，Class B+ 预算 28 dB，最多可用哪种分光器？",
+    "options":["1:64（损耗 20.9 dB）","1:32（损耗 17.5 dB）","1:128（损耗约 24 dB）","只能用 1:8（10.6 dB）"],
+    "answer":1,
+    "explain":"28 − 7.52 = 20.48 dB 留给分光器：1:32 的 17.5 dB 通过；1:64 的 20.9 dB 超出，不可行。"}
+  ]'></div>
+
+  <div class="recall">
+    <div class="rt">回忆 + 计算练习</div>
+    <p>换一组数字，自己算一遍（不要翻上面）：</p>
+    <p>新楼到主机房 <strong>1.0 km</strong> 主干，楼内 <strong>0.2 km</strong>；
+    <strong>1 个熔接点</strong>、<strong>4 个活动连接器</strong>；上行 1310 nm、Class B+（28 dB）；
+    预留 <strong>3 dB</strong> 设计余量、计入 <strong>1 dB</strong> 光路代价。</p>
+    <p>问：① 固定损耗（含余量）是多少？② 留给分光器的预算还有多少？③ 1:16 和 1:32 哪个可行？</p>
+    <textarea placeholder="写下你的计算过程……"></textarea>
+    <button type="button">看参考答案</button>
+    <div class="reveal">
+      <p><strong>① 固定损耗：</strong></p>
+      <p>光纤：1.2 km × 0.4 = 0.48 dB<br>
+      熔接：1 × 0.3 = 0.30 dB<br>
+      连接器：4 × 0.5 = 2.00 dB<br>
+      光路代价：1.00 dB<br>
+      设计余量：3.00 dB<br>
+      合计 = <strong>6.78 dB</strong></p>
+      <p><strong>② 留给分光器：</strong>28 − 6.78 = <strong>21.22 dB</strong></p>
+      <p><strong>③ 结论：</strong>1:16（14.1 dB）和 1:32（17.5 dB）都小于 21.22 dB，<strong>两个都可行</strong>；
+      1:32 还剩约 3.7 dB 余量。如果想上 1:64（20.9 dB），也刚好能过，但余量只剩约 0.3 dB，风险高，不建议。</p>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">07</span> 本课推荐阅读（Primary Source）</h2>
+
+  <div class="reading">
+    <span class="t">权威原文 · 中英对照</span>
+    <p><strong>ITU-T G.984.2（GPON PMD 层）</strong>——光功率预算等级（Class B+ 28 dB、C+ 32 dB、D 35 dB）与
+    ODN 参数的原始出处；配合 <strong>ITU-T G.671</strong> 的分光器/连接器/熔接损耗表。</p>
+    <p>我已把两篇标准的关键段落整理成<strong>中英对照双语 PDF</strong>（上下排）：</p>
+    <p>👉 <a href="../reference/0002-itu-power-budget-bilingual.pdf">reference/0002-itu-power-budget-bilingual.pdf</a>
+    &nbsp;·&nbsp; 原文：<a href="https://www.itu.int/rec/T-REC-G.984.2/en" target="_blank">G.984.2</a> ·
+    <a href="https://www.itu.int/rec/T-REC-G.671/en" target="_blank">G.671</a></p>
+  </div>
+
+  <div class="reading">
+    <span class="t">速查</span>
+    <p>所有损耗表和判定公式都在：<a href="../reference/0002-odn-power-budget-cheatsheet.html">reference/0002-odn-power-budget-cheatsheet.html</a></p>
+  </div>
+
+  <div class="footer">
+    <div class="next">
+      <span class="t">下一课</span>
+      <p>下一步进入选型。<strong>Lesson 03 · PON 制式与选型</strong>：GPON / XGS-PON / 50G-PON 怎么选、F5G 是什么，并回答“分光比 vs 带宽”这个取舍。</p>
+    </div>
+    <div class="links">
+      <a href="../index.html">课程主页</a>
+      <a href="./0001-what-is-all-optical-campus.html">← Lesson 01</a>
+      <a href="./0002-odn-and-power-budget.html">本课</a>
+      <a href="../reference/0002-odn-power-budget-cheatsheet.html">损耗速查表</a>
+      <a href="../GLOSSARY.md">术语表</a>
+      <a href="../ROADMAP.md">路线图</a>
+    </div>
+  </div>
+
+</div>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/recall.js"></script>
+<script src="../assets/pon-flow.js"></script>
+</body>
+</html>

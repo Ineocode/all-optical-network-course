@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>全光网络架构 · 课程主页</title>
+<link rel="stylesheet" href="./assets/lesson.css">
+<style>
+  .page { max-width: 56rem; }
+  .mission {
+    border-left: 3px solid var(--accent);
+    background: var(--surface-2);
+    padding: 1rem 1.3rem; border-radius: var(--radius);
+    margin: 1.4rem 0 2rem;
+  }
+  .mission p { margin: 0.35rem 0; }
+  .week { margin: 2.2rem 0 0.6rem; display:flex; align-items:baseline; gap:0.8rem; }
+  .week h2 { border:none; padding:0; margin:0; font-size:19px; }
+  .week .tag { font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--accent-strong); }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; margin:0.8rem 0 0.4rem; }
+  @media (max-width:660px){ .grid{grid-template-columns:1fr;} }
+  a.card {
+    display:block; text-decoration:none; color:inherit;
+    border:1px solid var(--border-subtle); border-left:3px solid var(--border-strong);
+    border-radius:var(--radius); background:var(--surface-1);
+    padding:0.85rem 1.05rem; transition:border-color 120ms, background 120ms;
+  }
+  a.card:hover { border-color:var(--accent); border-left-color:var(--accent); background:var(--surface-2); }
+  a.card .n { font-family:var(--mono); font-size:11px; letter-spacing:.1em; color:var(--accent-strong); }
+  a.card .h { font-weight:700; font-size:16px; margin:0.15rem 0 0.3rem; letter-spacing:-0.01em; }
+  a.card .w { font-size:13.5px; color:var(--text-secondary); line-height:1.55; }
+  a.card .s { font-family:var(--mono); font-size:10.5px; color:var(--success); margin-top:0.4rem; display:block; }
+  .reflist { display:grid; grid-template-columns:1fr 1fr; gap:0.5rem 1.6rem; margin:0.8rem 0; font-size:15px; }
+  @media (max-width:660px){ .reflist{grid-template-columns:1fr;} }
+  .reflist a { text-decoration:none; }
+  .reflist a:hover { text-decoration:underline; }
+  .reflist .k { font-family:var(--mono); font-size:11px; color:var(--text-tertiary); margin-right:0.4rem; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="masthead">
+    <p class="course-label">全光网络架构 · 课程主页</p>
+    <h1>全光院区网络：从原理到建设方案</h1>
+    <p class="meta">
+      <span>9 课 · 3 周</span>
+      <span>每天 45 分钟</span>
+      <span>面向医院新楼建设</span>
+    </p>
+  </header>
+
+  <div class="mission">
+    <p><strong>为什么学：</strong>医院新楼要在传统三层以太网与全光园区网络（POL / F5G）之间做选择并落地。
+    目标不是"了解概念"，而是能<strong>参与并主导方案设计</strong>——判断哪些区域走全光、怎么组网、选什么制式、怎么配 OLT/ONU。</p>
+    <p><strong>学完能做什么：</strong>画出院区级拓扑、算光功率与分光比、选制式、产出一份可提交的《新楼全光网络建设方案》。</p>
+  </div>
+
+  <h2><span class="no">01</span> 课程路线图</h2>
+  <p>按"原理 → 设计 → 落地"三周推进，每课一个看得见的小成果，最后一课汇成方案。</p>
+
+  <div class="week"><h2>第 1 周 · 原理</h2><span class="tag">为什么 &amp; 能不能通 &amp; 选什么</span></div>
+  <div class="grid">
+    <a class="card" href="./lessons/0001-what-is-all-optical-campus.html">
+      <span class="n">LESSON 01</span>
+      <div class="h">全光院区：把三层压成两层</div>
+      <div class="w">讲清 POL 与传统三层以太网的根本区别，判断医院各区域适配性</div>
+      <span class="s">✓ 已完成</span>
+    </a>
+    <a class="card" href="./lessons/0002-odn-and-power-budget.html">
+      <span class="n">LESSON 02</span>
+      <div class="h">ODN 与光功率预算</div>
+      <div class="w">算出分光比与光功率预算，判断一个点位能否开通</div>
+      <span class="s">✓ 已完成</span>
+    </a>
+    <a class="card" href="./lessons/0003-pon-standards-and-selection.html">
+      <span class="n">LESSON 03</span>
+      <div class="h">PON 制式与选型</div>
+      <div class="w">GPON / XGS-PON / 50G-PON 怎么选，理解 F5G 与收敛比</div>
+      <span class="s">✓ 已完成</span>
+    </a>
+  </div>
+
+  <div class="week"><h2>第 2 周 · 设计</h2><span class="tag">怎么连 &amp; 接什么 &amp; 稳不稳</span></div>
+  <div class="grid">
+    <a class="card" href="./lessons/0004-topology-and-protection.html">
+      <span class="n">LESSON 04</span>
+      <div class="h">分层与拓扑</div>
+      <div class="w">OLT 放哪、ODN 怎么分、双归属与 Type B/C 保护怎么做</div>
+      <span class="s">✓ 已完成</span>
+    </a>
+    <a class="card" href="./lessons/0005-hospital-scenario-design.html">
+      <span class="n">LESSON 05</span>
+      <div class="h">医院场景设计</div>
+      <div class="w">病房/门诊/手术/影像/物联网接入，三张网隔离与 QoS</div>
+      <span class="s">✓ 已完成</span>
+    </a>
+    <a class="card" href="./lessons/0006-reliability-security-ops.html">
+      <span class="n">LESSON 06</span>
+      <div class="h">可靠性与运维</div>
+      <div class="w">ONU 认证、AES 加密、网管、光功率监测与运维清单</div>
+      <span class="s">✓ 已完成</span>
+    </a>
+  </div>
+
+  <div class="week"><h2>第 3 周 · 落地</h2><span class="tag">怎么配 &amp; 怎么交付</span></div>
+  <div class="grid">
+    <a class="card" href="./lessons/0007-olt-onu-service-model.html">
+      <span class="n">LESSON 07</span>
+      <div class="h">OLT/ONU 与业务模型</div>
+      <div class="w">板卡、PON 口、ONU 注册、T-CONT/GEM/业务流的关系</div>
+      <span class="s">✓ 已完成</span>
+    </a>
+    <a class="card" href="./lessons/0008-hands-on-configuration.html">
+      <span class="n">LESSON 08</span>
+      <div class="h">上手配置</div>
+      <div class="w">PON 口 → ONU 注册 → 业务 VLAN 端到端（华为 OLT 示例）</div>
+      <span class="s">✓ 已完成</span>
+    </a>
+    <a class="card" href="./lessons/0009-build-the-proposal.html">
+      <span class="n">LESSON 09</span>
+      <div class="h">产出建设方案</div>
+      <div class="w">把九课所学装订成一份可提交的方案（两组项目数据带练）</div>
+      <span class="s">✓ 已完成</span>
+    </a>
+  </div>
+
+  <h2><span class="no">02</span> 参考文档库</h2>
+  <p>每课配一张速查表；涉及英文一手资料的课另配<strong>中英对照双语 PDF</strong>。</p>
+
+  <h3>速查表</h3>
+  <div class="reflist">
+    <a href="./reference/0001-architecture-comparison-cheatsheet.html"><span class="k">R01</span>架构对比 + PON 制式</a>
+    <a href="./reference/0002-odn-power-budget-cheatsheet.html"><span class="k">R02</span>ODN 损耗 + 光功率预算</a>
+    <a href="./reference/0003-pon-standards-cheatsheet.html"><span class="k">R03</span>制式表 + 带宽账 + 选型矩阵</a>
+    <a href="./reference/0004-topology-and-protection-cheatsheet.html"><span class="k">R04</span>OLT 部署 + 分光 + Type B/C</a>
+    <a href="./reference/0005-hospital-design-cheatsheet.html"><span class="k">R05</span>三张网 + 分区接入 + QoS</a>
+    <a href="./reference/0006-reliability-security-ops-cheatsheet.html"><span class="k">R06</span>可靠性 + 安全 + 运维</a>
+    <a href="./reference/0007-service-model-cheatsheet.html"><span class="k">R07</span>业务模型 + 六步配置</a>
+    <a href="./reference/0008-huawei-olt-cli-cheatsheet.html"><span class="k">R08</span>华为 OLT 配置命令</a>
+    <a href="./reference/0009-proposal-template.html"><span class="k">R09</span>建设方案可填写模板</a>
+  </div>
+
+  <h3>中英对照双语 PDF</h3>
+  <div class="reflist">
+    <a href="./reference/0001-passive-optical-lan-bilingual.pdf"><span class="k">R01</span>POL 入门（Huawei）</a>
+    <a href="./reference/0002-itu-power-budget-bilingual.pdf"><span class="k">R02</span>ITU-T G.984.2 / G.671 光功率</a>
+    <a href="./reference/0003-xgspon-campus-case-bilingual.pdf"><span class="k">R03</span>NAU XGS-PON 全光校园案例</a>
+    <a href="./reference/0004-itu-protection-bilingual.pdf"><span class="k">R04</span>ITU-T G.984.1 PON 保护</a>
+    <a href="./reference/0005-hospital-ftto-bilingual.pdf"><span class="k">R05</span>Omdia：FTTO for hospitals</a>
+    <a href="./reference/0006-itu-security-bilingual.pdf"><span class="k">R06</span>ITU-T G.984.3 安全与认证</a>
+    <a href="./reference/0007-itu-service-model-bilingual.pdf"><span class="k">R07</span>ITU-T G.984.3 业务模型</a>
+  </div>
+
+  <h2><span class="no">03</span> 学习辅助</h2>
+  <div class="reflist">
+    <a href="./GLOSSARY.md"><span class="k">◎</span>术语表（Glossary）</a>
+    <a href="./RESOURCES.md"><span class="k">◎</span>一手资料清单（Resources）</a>
+    <a href="./MISSION.md"><span class="k">◎</span>学习任务（Mission）</a>
+    <a href="./ROADMAP.md"><span class="k">◎</span>路线图（Markdown 版）</a>
+  </div>
+
+  <div class="tip">
+    <span class="t">怎么用这门课</span>
+    按 Lesson 01 → 09 顺序学；每课先读知识、再做测验与回忆练习（回忆比重读更有效），
+    然后用配套速查表复习。涉及英文一手资料的课，读中英对照双语 PDF。
+  </div>
+
+  <div class="footer">
+    <div class="links">
+      <a href="./lessons/0001-what-is-all-optical-campus.html">从第 1 课开始 →</a>
+      <a href="./GLOSSARY.md">术语表</a>
+      <a href="./RESOURCES.md">资料清单</a>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

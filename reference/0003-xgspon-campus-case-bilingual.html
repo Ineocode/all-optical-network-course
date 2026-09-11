@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>中英对照 · XGS-PON 全光校园案例（南京农业大学）</title>
+<style>
+  @page { size: A4; margin: 17mm 18mm 15mm; }
+  :root{
+    --ink:#141413; --sub:#4a4842; --line:#dcd9cf; --accent:#b3542f; --soft:#f6f4ee;
+    --en: "Charter", "Georgia", "Times New Roman", serif;
+    --cn: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{font-family:var(--cn); color:var(--ink); font-size:10.4pt; line-height:1.6;}
+  .doc{max-width:174mm;margin:0 auto;}
+  header{border-bottom:2px solid var(--ink);padding-bottom:5mm;margin-bottom:5mm;}
+  .kicker{font-family:var(--cn);font-size:8pt;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:700;margin:0 0 3mm;}
+  h1{font-family:var(--en);font-size:16.5pt;line-height:1.24;margin:0 0 2.5mm;font-weight:700;}
+  h1 .cn{display:block;font-family:var(--cn);font-size:11.5pt;font-weight:600;color:var(--sub);margin-top:1.5mm;}
+  .byline{font-size:8.6pt;color:var(--sub);margin:0;}
+  .note{background:var(--soft);border-left:3px solid var(--accent);padding:2.6mm 4mm;font-size:8.6pt;color:var(--sub);margin:0 0 5mm;}
+  h2.sec{font-size:10.8pt;font-family:var(--cn);border-bottom:1px solid var(--line);padding-bottom:1.4mm;margin:6mm 0 3.5mm;color:var(--ink);}
+  .para{border-top:1px solid var(--line);padding:3.5mm 0 5mm;}
+  .para:first-of-type{border-top:none;}
+  .pair{margin:0 0 5.2mm;}
+  .pair:last-child{margin-bottom:0;}
+  .terms{font-size:8.8pt;color:var(--sub);margin-top:6mm;border-top:2px solid var(--ink);padding-top:3.5mm;break-inside:avoid;}
+  .terms table{border-collapse:collapse;width:100%;}
+  .terms td{border-bottom:1px solid var(--line);padding:1.4mm 2mm;vertical-align:top;}
+  .terms td:first-child{font-family:var(--en);color:var(--ink);white-space:nowrap;width:34%;}
+  .en{font-family:var(--en);font-size:10.2pt;line-height:1.5;color:var(--ink);margin:0;}
+  .cn{font-size:10.1pt;line-height:1.6;color:var(--sub);margin:0.5mm 0 0;padding-left:3.2mm;border-left:2px solid #e6cfc4;}
+  .cn strong{color:var(--accent);}
+  .kv{border:1px solid var(--line);border-radius:6px;padding:2.5mm 4mm;font-size:9pt;color:var(--sub);margin:0 0 5mm;background:var(--soft);}
+  .kv b{color:var(--ink);}
+  footer{margin-top:5mm;border-top:1px solid var(--line);padding-top:2.6mm;font-size:7.8pt;color:#8b897f;}
+
+  @media print { .home-nav { display: none; } }
+  .home-nav { font-size: 9pt; margin: 0 0 4mm; }
+  .home-nav a { color: #b3542f; text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <header>
+    <p class="kicker">中英对照双语资料 · 全光网络架构课程 Reference 0003</p>
+    <h1>Sowing the Seeds of the Future: Optical Fiber Radically Improves the Digital Level of NAU's Campus
+      <span class="cn">播下未来的种子：光纤如何彻底提升南京农业大学的数字化水平</span>
+    </h1>
+    <p class="byline">Huawei Case Study · 南京农业大学（NAU）全光校园改造 ·
+      原文：<a href="https://e.huawei.com/en/case-studies/enterprise-transmission-access/campus-optix-college-nanjing">e.huawei.com</a></p>
+  </header>
+
+  <p class="home-nav"><a href="../index.html">← 返回课程主页</a></p>
+
+  <p class="note">
+    <strong>阅读说明：</strong>每句英文下方紧跟中文译文（Trancy 式上下排）。
+    这是本课程的<strong>选型落地案例</strong>：一张真实的 XGS-PON + Wi-Fi 6 全光校园网。
+    译文由 AI 生成，仅供学习参考；如遇歧义，以英文原文为准。
+  </p>
+
+  <div class="kv">
+    <b>案例要素：</b>制式 XGS-PON（10G/10G 对称）· 无线 Wi-Fi 6（802.11ax）·
+    架构 OLT + 无源分光器 SPL + ONU + 面板 AP（两层）· 地点：南农卫岗校区南苑学生宿舍 ·
+    背景：2020 年远程教学流量激增，原交换机网络无法支撑
+  </div>
+
+  <h2 class="sec">正文 / Body</h2>
+
+  <div class="para">
+    <div class="pair"><p class="en">Behind all of its achievements, NAU's faculty, staff, and tens of thousands of students are the foundation for its success, with all of them aspiring to the university's motto: integrity, simplicity, diligence, and benevolence.</p>
+      <p class="cn">在所有这些成就背后，南农的教职员工和数万名学生是其成功的基石，他们共同践行着校训：诚朴勤仁。</p></div>
+    <div class="pair"><p class="en">And another vital support, of course, is NAU's infrastructure, including an upgraded campus network constructed with cutting-edge Information and Communications Technology (ICT).</p>
+      <p class="cn">当然，另一个重要支撑是南农的基础设施，其中包括用前沿信息通信技术（ICT）建设的升级版校园网络。</p></div>
+  </div>
+
+  <div class="para">
+    <div class="pair"><p class="en">Accelerating informatization has become a major goal for universities in China, using ICT to improve teaching levels and gain a competitive advantage for future educational development.</p>
+      <p class="cn">加快信息化已成为中国高校的主要目标——用 ICT 提升教学水平，并在未来教育发展中取得竞争优势。</p></div>
+    <div class="pair"><p class="en">Deploying a safe, reliable, cost-effective, and sustainable campus network was therefore high on NAU's wish-list.</p>
+      <p class="cn">因此，部署一张安全、可靠、经济且可持续的校园网络，是南农的首要诉求之一。</p></div>
+    <div class="pair"><p class="en">Indeed, in 2019, it signed a strategic cooperation agreement with Huawei.</p>
+      <p class="cn">事实上，2019 年南农就与华为签署了战略合作协议。</p></div>
+    <div class="pair"><p class="en">Powered by its latest ICT innovations, products, and solutions, Huawei subsequently provided ICT infrastructure and a top-level design to help NAU build a safe and eco-friendly smart campus.</p>
+      <p class="cn">依托最新的 ICT 创新、产品和方案，华为随后提供了 ICT 基础设施与顶层设计，帮助南农建设安全、环保的智慧校园。</p></div>
+  </div>
+
+  <div class="para">
+    <div class="pair"><p class="en">But, as 2020 arrived, remote learning rapidly became the new norm and NAU experienced a sharp increase in demand for concurrent online access.</p>
+      <p class="cn">但到了 2020 年，远程教学迅速成为常态，南农的并发在线访问需求急剧上升。</p></div>
+    <div class="pair"><p class="en">Unsurprisingly, the legacy network was unable to keep up and cope with resulting traffic surges, forcing NAU's hand to upgrade the network — fast.</p>
+      <p class="cn">不出所料，原有网络无法跟上、也难以应对随之而来的流量洪峰，迫使南农必须尽快升级网络。</p></div>
+    <div class="pair"><p class="en">The structure of the legacy switch-based campus network was also overly complex, making it difficult to maintain and manage.</p>
+      <p class="cn">原有基于交换机的校园网络结构也过于复杂，维护和管理都很困难。</p></div>
+    <div class="pair"><p class="en">Wi-Fi interference also severely impacted the user experience.</p>
+      <p class="cn">Wi-Fi 干扰也严重影响了用户体验。</p></div>
+    <div class="pair"><p class="en">Yan Xianglin, the Vice President in charge of NAU's informatization, led a comprehensive evaluation, ultimately choosing to build a future-proofed all-optical network in the Nanyuan student dormitory on the university's Weigang campus.</p>
+      <p class="cn">负责南农信息化工作的副校长闫祥林牵头进行了全面评估，最终决定在卫岗校区南苑学生宿舍建设一张面向未来的全光网络。</p></div>
+    <div class="pair"><p class="en">With this project, NAU was cast as a pioneer of 10-Gigabit-Capable Symmetric Passive Optical Networks (XGS-PONs), underpinned by Wi-Fi 6 all-optical network architecture.</p>
+      <p class="cn">通过这个项目，南农成为<strong>万兆对称无源光网络（XGS-PON）</strong>的先行者，其底座是 Wi-Fi 6 全光网络架构。</p></div>
+  </div>
+
+  <div class="para">
+    <div class="pair"><p class="en">Devices featured in the solution include an Optical Line Terminal (OLT) aggregation device, SPL passive optical splitter, Optical Network Unit (ONU) for multi-service access, and panel Access Points (APs).</p>
+      <p class="cn">方案中的设备包括：光线路终端（OLT）汇聚设备、SPL 无源分光器、用于多业务接入的光网络单元（ONU），以及面板式无线接入点（AP）。</p></div>
+    <div class="pair"><p class="en">All-optical deployment for the wired network achieves high-bandwidth access and full-service convergence.</p>
+      <p class="cn">有线网络的全光部署实现了高带宽接入与全业务融合。</p></div>
+    <div class="pair"><p class="en">XGS-PON technology not only provides high bandwidth for symmetric upstream and downstream access, but also simplifies Operations, Administration, and Maintenance (OAM).</p>
+      <p class="cn">XGS-PON 技术不仅为对称的上下行接入提供高带宽，还简化了运维管理（OAM）。</p></div>
+    <div class="pair"><p class="en">Meanwhile, wireless APs — adopting the 802.11ax (Wi-Fi 6) standard — provide high bandwidth and low latency, with the ability to communicate with multiple devices concurrently, greatly reducing network congestion.</p>
+      <p class="cn">同时，采用 802.11ax（Wi-Fi 6）标准的无线 AP 提供高带宽、低时延，并能与多台设备并发通信，大幅缓解网络拥塞。</p></div>
+  </div>
+
+  <div class="para">
+    <div class="pair"><p class="en">Based on XGS-PON technology, Huawei launched its OptiXstar series terminals, optical devices that provide 10 Gbit/s symmetric upstream and downstream bandwidths, addressing traditional issues in terms of bidirectional communication.</p>
+      <p class="cn">基于 XGS-PON 技术，华为推出了 OptiXstar 系列终端，这些光终端提供 <strong>10 Gbit/s 上下行对称</strong>带宽，解决了传统网络在双向通信上的问题。</p></div>
+    <div class="pair"><p class="en">In addition, featured Wi-Fi 6 capabilities provide low latency to effectively support latency-sensitive applications, such as online course selection and in-school activities.</p>
+      <p class="cn">此外，其 Wi-Fi 6 能力提供低时延，可有效支撑选课、校内活动等时延敏感应用。</p></div>
+  </div>
+
+  <div class="para">
+    <div class="pair"><p class="en">Huawei's passive optical Local Area Network (LAN) adopts a simple two-layer architecture, connecting the aggregation equipment room and student dormitories directly through optical fibers.</p>
+      <p class="cn">华为无源光局域网（POL）采用简单的<strong>两层架构</strong>，用光纤直接把汇聚机房与学生宿舍连接起来。</p></div>
+    <div class="pair"><p class="en">This has laid a solid foundation for the future development of cloud-based networks for NAU.</p>
+      <p class="cn">这为南农未来向云化网络发展奠定了坚实基础。</p></div>
+    <div class="pair"><p class="en">Copper cables can cover no more than 100 meters, while optical fibers easily reach 20 kilometers, more than enough to cover the entire NAU campus.</p>
+      <p class="cn">铜缆最远只能覆盖 <strong>100 米</strong>，而光纤可轻松达到 <strong>20 公里</strong>，足以覆盖整个南农校园。</p></div>
+    <div class="pair"><p class="en">In addition, compared with active aggregation switches on copper networks, passive optical splitters reduce active fault points, significantly simplifying and improving Operations and Maintenance (O&M).</p>
+      <p class="cn">此外，与铜缆网络中的有源汇聚交换机相比，无源分光器减少了有源故障点，显著简化和改善了运维（O&M）。</p></div>
+  </div>
+
+  <div class="para">
+    <div class="pair"><p class="en">Upgrading a traditional copper network means that cables have to be replaced: this is a laborious, lengthy job.</p>
+      <p class="cn">升级传统铜缆网络意味着必须更换线缆：这是一项费时费力的工程。</p></div>
+    <div class="pair"><p class="en">Nonetheless, with the arrival of COVID-19, upgrading bandwidth became a matter of extreme urgency and copper networks proved unable to scale up with anything approaching ease.</p>
+      <p class="cn">然而，随着新冠疫情的到来，带宽升级变得极其紧迫，而铜缆网络根本无法轻松扩容。</p></div>
+    <div class="pair"><p class="en">Optical networks, however, offer almost unlimited bandwidth and are very easy to upgrade.</p>
+      <p class="cn">相比之下，光网络提供近乎无限的带宽，且升级非常容易。</p></div>
+    <div class="pair"><p class="en">All that's required is for devices at both ends to be upgraded and network evolution is complete, a smooth process that only takes a few days.</p>
+      <p class="cn">只需升级两端设备，网络演进即可完成——整个过程顺畅，仅需几天。</p></div>
+  </div>
+
+  <div class="para">
+    <div class="pair"><p class="en">Traditional copper networks rely on numerous power rooms and access devices to function.</p>
+      <p class="cn">传统铜缆网络的运行依赖大量弱电间和接入设备。</p></div>
+    <div class="pair"><p class="en">This generates plenty of heat and requires air conditioning systems to remain cool, posing fire safety hazards.</p>
+      <p class="cn">这会产生大量热量，需要空调降温，并带来消防安全隐患。</p></div>
+    <div class="pair"><p class="en">In comparison, an all-optical solution uses passive optical splitters, which minimize the physical hardware footprint as well as mitigating the risk of fire.</p>
+      <p class="cn">相比之下，全光方案使用无源分光器，既最小化了硬件占地，也降低了火灾风险。</p></div>
+  </div>
+
+  <div class="terms">
+    <h2 class="sec" style="margin-top:2mm;">关键术语中英对照 / Key Terms</h2>
+    <table>
+      <tr><td>OLT (Optical Line Terminal)</td><td>光线路终端，PON 局端设备（有源）</td></tr>
+      <tr><td>ONU (Optical Network Unit)</td><td>光网络单元，用户侧设备（有源）</td></tr>
+      <tr><td>SPL (passive optical splitter)</td><td>无源分光器，ODN 中把光均分为多路（无源、不供电）</td></tr>
+      <tr><td>XGS-PON</td><td>万兆对称无源光网络：上下行各 10 Gbit/s（ITU-T G.9807.1）</td></tr>
+      <tr><td>two-layer architecture</td><td>两层架构：OLT + ODN + ONU，取代核心-汇聚-接入三层</td></tr>
+      <tr><td>POL (Passive Optical LAN)</td><td>无源光局域网，PON 在企业/院区局域网场景的落地形态</td></tr>
+      <tr><td>AP (Access Point), 802.11ax</td><td>无线接入点；802.11ax 即 Wi-Fi 6</td></tr>
+      <tr><td>full-service convergence</td><td>全业务融合：数据、语音、视频等多种业务跑在一张网上</td></tr>
+      <tr><td>OAM / O&M</td><td>运行、管理与维护（Operations, Administration and Maintenance）</td></tr>
+      <tr><td>future-proofed</td><td>面向未来、可长期演进的</td></tr>
+    </table>
+  </div>
+
+  <footer>
+    原文版权归 Huawei Technologies Co., Ltd. 所有，此处仅作学习用途（fair use）。
+    译文由本教学工作区的 AI 老师生成，供对照阅读，准确性以原文为准。
+  </footer>
+
+</div>
+</body>
+</html>

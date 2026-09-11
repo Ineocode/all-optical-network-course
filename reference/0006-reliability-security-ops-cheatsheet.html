@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>速查表 · 可靠性与运维</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<style>
+  .page { max-width: 52rem; }
+  .sheet h2 { margin-top: 2.2rem; }
+  td:first-child { white-space: nowrap; }
+  .ref-head { display:flex; justify-content:space-between; align-items:baseline; gap:1rem; flex-wrap:wrap; }
+</style>
+</head>
+<body>
+<div class="page sheet">
+
+  <header class="masthead">
+    <div class="ref-head">
+      <p class="course-label">速查表 · Reference 0006</p>
+      <p class="meta">配套 Lesson 06 · 打印友好</p>
+    </div>
+    <h1>可靠性 · 安全 · 运维速查</h1>
+    <p class="meta"><span>一手来源：ITU-T G.984.1 §14 · G.984.3 §12 + App. VI · G.988</span></p>
+  </header>
+
+  <h2><span class="no">01</span> 可靠性五层</h2>
+  <table>
+    <thead><tr><th>层次</th><th>检查项</th></tr></thead>
+    <tbody>
+      <tr><td>设备冗余</td><td>OLT 双主控、双电源、关键板卡冗余</td></tr>
+      <tr><td>链路冗余</td><td>Type B / Type C、双归属、核心交换机双机</td></tr>
+      <tr><td>电源</td><td>双路市电 + UPS；ONU 侧 PoF / 本地备电</td></tr>
+      <tr><td>环境</td><td>空调、防雷接地、主备走线物理分离</td></tr>
+      <tr><td>切换指标</td><td>GPON 应支持 50 ms 保护时间（G.984.1 §14.3）</td></tr>
+    </tbody>
+  </table>
+  <p class="cite">传统电话业务：丢帧超过 120 ms 会断话，需重新呼叫（G.984.1 §14.3）。案例：贵州省人民医院 50 ms 内切换。</p>
+
+  <h2><span class="no">02</span> PON 安全：威胁与对策</h2>
+  <table>
+    <thead><tr><th>威胁</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>下行广播被窃听</td><td>PON 下行广播给同口所有 ONU；恶意用户重编程 ONU 可监听他人下行（G.984.3 §12.1）</td></tr>
+      <tr><td>伪造 ONU 接入</td><td>无认证时陌生 ONU 可能被误认上线</td></tr>
+      <tr><td>管理面盗用</td><td>密码/注册 ID 泄漏后被冒充</td></tr>
+    </tbody>
+  </table>
+  <table>
+    <thead><tr><th>对策</th><th>标准做法</th></tr></thead>
+    <tbody>
+      <tr><td>下行加密</td><td>AES，CTR 模式，密钥 128 bit；密钥交换与定期切换（G.984.3 §12.2–12.4）</td></tr>
+      <tr><td>ONU 认证</td><td>序列号（SN）/ PLOAM 密码 / 注册 ID（LOID）/ MAC 地址入库（G.984.3 App. VI）</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="no">03</span> 管理与监测</h2>
+  <table>
+    <thead><tr><th>能力</th><th>靠什么</th></tr></thead>
+    <tbody>
+      <tr><td>OLT 远程管理/配置 ONU</td><td>OMCI（ITU-T G.988）：业务模板、属性、告警、性能</td></tr>
+      <tr><td>统一网管</td><td>统一平台；最好与既有以太网同界面</td></tr>
+      <tr><td>光功率监测</td><td>ONU 收光 / OLT 收光；分光器无源不可管 → 需 OTDR / 现场测光</td></tr>
+      <tr><td>告警</td><td>LOS 失光、LOF 失帧、光功率越限、ONU 掉线</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="no">04</span> 运维三阶段</h2>
+  <table>
+    <thead><tr><th>阶段</th><th>动作</th></tr></thead>
+    <tbody>
+      <tr><td>开局</td><td>规划（点位/分光比/预算）→ 施工（熔接/成端/标识）→ 验收（逐点测光功率 + 打业务）</td></tr>
+      <tr><td>日常</td><td>监控告警 → 巡检光功率趋势 → 备份配置 → 维护 ONU 台账与认证白名单</td></tr>
+      <tr><td>故障</td><td>看网管告警 → 判断 ONU/跳纤/ODN → 现场测光或 OTDR 定位 → 更换 → 复盘更新台账</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="no">05</span> 方案自检清单</h2>
+  <ol class="checklist" data-checklist="lesson-0006-reliability">
+    <li>关键区是否 Type C、普通区 Type B？</li>
+    <li>OLT 是否双电源、双主控、上行双归核心？</li>
+    <li>主备走线是否物理分离（不共管沟）？</li>
+    <li>下行 AES 加密是否开启并在验收中核对？</li>
+    <li>ONU 是否全部认证（SN/密码/LOID），禁止即插即用？</li>
+    <li>是否有统一网管（OMCI）与光功率监测手段？</li>
+    <li>是否有 OTDR / 现场测光预案（分光器不可管）？</li>
+    <li>是否建立 ONU 台账与配置备份制度？</li>
+  </ol>
+
+  <div class="footer">
+    <div class="links">
+      <a href="../index.html">课程主页</a>
+      <a href="../lessons/0006-reliability-security-ops.html">Lesson 06</a>
+      <a href="./0004-topology-and-protection-cheatsheet.html">L4 速查表</a>
+      <a href="./0005-hospital-design-cheatsheet.html">L5 速查表</a>
+      <a href="../GLOSSARY.md">术语表</a>
+    </div>
+  </div>
+
+</div>
+<script src="../assets/checklist.js"></script>
+</body>
+</html>

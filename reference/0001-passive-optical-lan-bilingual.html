@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>中英对照 · An Intriguing Networking Choice: Passive Optical LAN (POL)</title>
+<style>
+  @page { size: A4; margin: 17mm 18mm 15mm; }
+  :root{
+    --ink:#141413; --sub:#4a4842; --line:#dcd9cf; --accent:#b3542f; --soft:#f6f4ee;
+    --en: "Charter", "Georgia", "Times New Roman", serif;
+    --cn: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{font-family:var(--cn); color:var(--ink); font-size:10.4pt; line-height:1.6;}
+  .doc{max-width:174mm;margin:0 auto;}
+  header{border-bottom:2px solid var(--ink);padding-bottom:5mm;margin-bottom:5mm;}
+  .kicker{font-family:var(--cn);font-size:8pt;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:700;margin:0 0 3mm;}
+  h1{font-family:var(--en);font-size:18pt;line-height:1.24;margin:0 0 2.5mm;font-weight:700;}
+  h1 .cn{display:block;font-family:var(--cn);font-size:12pt;font-weight:600;color:var(--sub);margin-top:1.5mm;}
+  .byline{font-size:8.8pt;color:var(--sub);margin:0;}
+  .note{background:var(--soft);border-left:3px solid var(--accent);padding:2.6mm 4mm;font-size:8.6pt;color:var(--sub);margin:0 0 5mm;}
+  h2.sec{font-size:10.5pt;font-family:var(--cn);border-bottom:1px solid var(--line);padding-bottom:1.4mm;margin:6mm 0 3.5mm;color:var(--ink);}
+
+  /* —— 句级上下排：一句英文，紧跟一句中文 —— */
+  .para{border-top:1px solid var(--line);padding:3.5mm 0 5mm;break-inside:auto;}
+  .para:first-of-type{border-top:none;}
+  /* 一组 = 一句英文 + 紧跟一句中文；组内贴紧，组间留大间距 */
+  .pair{margin:0 0 5.2mm;}
+  .pair:last-child{margin-bottom:0;}
+  .en{font-family:var(--en);font-size:10.3pt;line-height:1.5;color:var(--ink);margin:0;}
+  .cn{font-size:10.1pt;line-height:1.6;color:var(--sub);margin:0.5mm 0 0;padding-left:3.2mm;border-left:2px solid #e6cfc4;}
+  .cn strong,.en strong{font-weight:700;}
+  .cn strong{color:var(--accent);}
+
+  .terms{font-size:8.8pt;color:var(--sub);margin-top:6mm;border-top:2px solid var(--ink);padding-top:3.5mm;break-inside:avoid;}
+  .terms table{border-collapse:collapse;width:100%;}
+  .terms td{border-bottom:1px solid var(--line);padding:1.4mm 2mm;vertical-align:top;}
+  .terms td:first-child{font-family:var(--en);color:var(--ink);white-space:nowrap;width:33%;}
+  footer{margin-top:5mm;border-top:1px solid var(--line);padding-top:2.6mm;font-size:7.8pt;color:#8b897f;}
+  a{color:var(--accent);text-decoration:none;}
+
+  @media print { .home-nav { display: none; } }
+  .home-nav { font-size: 9pt; margin: 0 0 4mm; }
+  .home-nav a { color: #b3542f; text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <header>
+    <p class="kicker">中英对照双语资料 · 全光网络架构课程 Reference 0001</p>
+    <h1>An Intriguing Networking Choice: Passive Optical LAN (POL)
+      <span class="cn">一个耐人寻味的选择：无源光局域网（POL）</span>
+    </h1>
+    <p class="byline">S. J. Schuchart Jr. · Huawei Enterprise Blog · 2020-01-17 ·
+      原文：<a href="https://e.huawei.com/en/blogs/enterprise-transmission-access/passive-optical-lan">e.huawei.com/en/blogs/enterprise-transmission-access/passive-optical-lan</a></p>
+  </header>
+
+  <p class="home-nav"><a href="../index.html">← 返回课程主页</a></p>
+
+  <p class="note">
+    <strong>阅读说明：</strong>每句英文下方紧跟中文译文（沉浸式翻译 / Trancy 式上下排）。
+    译文由 AI 生成，仅供学习参考；如遇歧义，以英文原文为准。中文加粗为译者标注的关键句。
+  </p>
+
+  <h2 class="sec">正文 / Body</h2>
+
+  <!-- P1 -->
+  <div class="para">
+    <div class="pair"><p class="en">The networking journey is always one of change.</p>
+      <p class="cn">网络的发展历程永远伴随着变化。</p></div>
+    <div class="pair"><p class="en">Yet there are some technologies that we've used for literally decades that are showing signs of being less than up to the challenges of growing bandwidth and device density.</p>
+      <p class="cn">然而，有些我们已经使用了数十年的技术，正逐渐显示出难以应对不断增长的带宽和设备密度。</p></div>
+    <div class="pair"><p class="en">Indeed, new services such as Wi-Fi 6 are driving the need for more bandwidth, especially on the backhaul.</p>
+      <p class="cn">事实上，Wi-Fi 6 等新业务正在推动对更高带宽的需求，尤其是在回传（backhaul）侧。</p></div>
+    <div class="pair"><p class="en">Copper Ethernet cables are a great example of where a great technology is beginning to run into the harsh limits of physics.</p>
+      <p class="cn">铜缆以太网就是一个很好的例子：一项伟大的技术正开始撞上物理规律的天花板。</p></div>
+    <div class="pair"><p class="en">To achieve even 10 Gigabit speeds excessive care has to be taken with thick, less flexible cables and distance limits of 100 meters for properly installed cabling systems (Cat6a or Cat7).</p>
+      <p class="cn">即便只是想达到 10 Gb 速率，也必须对粗硬、不易弯折的线缆格外小心；而且规范安装的布线系统（Cat6a 或 Cat7）有 <strong>100 米</strong>的距离限制。</p></div>
+    <div class="pair"><p class="en">With bandwidth rising to 40Gbps and 100Gbps and beyond, it becomes a matter of much discussion on how we support networks going forward, especially in new construction.</p>
+      <p class="cn">当带宽迈向 40Gbps、100Gbps 乃至更高，如何支撑未来的网络——尤其是在新建建筑中——就成了一个值得反复讨论的问题。</p></div>
+    <div class="pair"><p class="en">Nobody wants the expense of upgrading a building's network cabling within a few years of finishing it.</p>
+      <p class="cn">没有人愿意在一栋楼刚建成没几年，就再花钱升级它的网络布线。</p></div>
+  </div>
+
+  <!-- P2 -->
+  <div class="para">
+    <div class="pair"><p class="en">One of the interesting alternatives out there is called POL or Passive Optical LAN.</p>
+      <p class="cn">有意思的替代方案之一叫做 POL，即无源光局域网（Passive Optical LAN）。</p></div>
+    <div class="pair"><p class="en">POL is a subset of optical networking technology under the greater umbrella of PON (Passive Optical Network).</p>
+      <p class="cn">POL 是更大的 <strong>PON（无源光网络，Passive Optical Network）</strong>技术伞下的一个子集。</p></div>
+    <div class="pair"><p class="en">These technologies are tested and have been in use for a long time, mostly in Fiber to the Home installations, metro installations, and large campus installations.</p>
+      <p class="cn">这些技术经过充分验证、已被使用很久，主要用于光纤到户（FTTH）部署、城域部署和大型院区部署。</p></div>
+    <div class="pair"><p class="en">We are not going to go into all the variations of PON, there are a bewildering array, but confine the discussion to POL and enterprise use cases.</p>
+      <p class="cn">我们不打算展开 PON 的全部变种——它们多得让人眼花缭乱——而只讨论 POL 与企业场景。</p></div>
+    <div class="pair"><p class="en">POL itself has been around for quite a while too, but never really took off, but there is reason to believe that now POL could become a great alternative to traditional designs for enterprises.</p>
+      <p class="cn">POL 本身也已存在相当长时间，但一直没有真正流行起来；不过现在有理由相信，POL 可能成为企业传统设计的一个优秀替代方案。</p></div>
+  </div>
+
+  <!-- P3 -->
+  <div class="para">
+    <div class="pair"><p class="en">Let's dive down a little bit into what we mean by POL.</p>
+      <p class="cn">我们来稍微深入看看 POL 到底指什么。</p></div>
+    <div class="pair"><p class="en">POL uses passive optical cabling, single mode fiber.</p>
+      <p class="cn">POL 使用无源的光缆，即<strong>单模光纤</strong>。</p></div>
+    <div class="pair"><p class="en">Passive means that only the source and receiver require electrical power.</p>
+      <p class="cn">无源（passive）的意思是：<strong>只有光源（发送端）和接收端需要电力</strong>。</p></div>
+    <div class="pair"><p class="en">The optical splitters in between are unpowered, which makes them less expensive, less prone to failure, and do not require battery backups.</p>
+      <p class="cn">中间的光分路器不供电，这使它们更便宜、更不易故障，也不需要后备电池。</p></div>
+    <div class="pair"><p class="en">Plus, they can save considerable power vs. active solutions.</p>
+      <p class="cn">此外，相比有源方案，它们还能节省可观的电力。</p></div>
+    <div class="pair"><p class="en">POL networks can be used for several purposes, such as carrying data, video, and phone services on separate strands of the same optical cable.</p>
+      <p class="cn">POL 网络可用于多种用途，比如在同一根光缆的不同纤芯上分别承载数据、视频和电话业务。</p></div>
+  </div>
+
+  <!-- P4 -->
+  <div class="para">
+    <div class="pair"><p class="en">The first question most people ask when they understand POL is a simple "why" while looking at the optical links available on campus switches.</p>
+      <p class="cn">大多数人在理解 POL 后问的第一个问题都很简单——"为什么？"，同时看着院区交换机上已有的那些光口。</p></div>
+    <div class="pair"><p class="en">The answer to that comes down to a simpler optical system, upgradability and reliability.</p>
+      <p class="cn">答案归结为：更简单的光系统、可升级性和可靠性。</p></div>
+    <div class="pair"><p class="en">POL networks do not have the failures associated with pluggable optical transceivers, which are both expensive and fragile.</p>
+      <p class="cn">POL 网络没有可插拔光模块（pluggable optical transceivers）带来的那些故障——它们既昂贵又脆弱。</p></div>
+    <div class="pair"><p class="en">Lastly, the POL network is upgradable in place far in excess of what can be done with copper, with new speeds available with minimal costs compared to traditional networking designs.</p>
+      <p class="cn">最后，POL 网络的<strong>原地升级</strong>能力远超铜缆：相比传统网络设计，能以极小的成本获得新的速率。</p></div>
+  </div>
+
+  <!-- P5 -->
+  <div class="para">
+    <div class="pair"><p class="en">There is more as well.</p>
+      <p class="cn">还有更多好处。</p></div>
+    <div class="pair"><p class="en">In marine or marine adjacent environments, POL offers a non-corroding alternative that is impervious to the salt air.</p>
+      <p class="cn">在海洋或近海环境中，POL 提供了一种不会腐蚀、不受盐雾影响的替代方案。</p></div>
+    <div class="pair"><p class="en">Plus, POL can be used at distances up to 20km.</p>
+      <p class="cn">此外，POL 可用于最远 <strong>20 公里</strong>的距离。</p></div>
+    <div class="pair"><p class="en">This makes POL a great choice for if you are administering a campus for connecting buildings, setting up video security, and connecting campus-wide Wi-Fi.</p>
+      <p class="cn">这使 POL 成为管理院区时的绝佳选择：连接楼宇、部署视频安防、连接覆盖全院区的 Wi-Fi。</p></div>
+    <div class="pair"><p class="en">POL makes these functions easier to both install and to maintain long term.</p>
+      <p class="cn">POL 让这些功能在安装和长期维护上都更容易。</p></div>
+    <div class="pair"><p class="en">Companies are also increasingly aware of operational efficiencies.</p>
+      <p class="cn">企业也越来越意识到运营效率。</p></div>
+    <div class="pair"><p class="en">POL networking, due to its simple nature is much easier to administer, even on a large campus.</p>
+      <p class="cn">由于结构简单，POL 网络即使在大院区里也更容易管理。</p></div>
+    <div class="pair"><p class="en">Companies considering POL should select a vendor that either sells both the POL and Ethernet solution and has management under a single pane of glass or select a POL vendor that has done the necessary integration with your existing Ethernet networking solution.</p>
+      <p class="cn">考虑 POL 的企业应当选择这样的厂商：要么同时提供 POL 和以太网方案、且能在单一管理界面（single pane of glass）下统一管理；要么选择已经与你现有以太网方案完成必要集成的 POL 厂商。</p></div>
+  </div>
+
+  <!-- P6 -->
+  <div class="para">
+    <div class="pair"><p class="en">The ripest targets for POL are generally new construction and historical structures.</p>
+      <p class="cn">POL 最适合的目标通常是<strong>新建建筑和历史建筑</strong>。</p></div>
+    <div class="pair"><p class="en">For new construction, planning and installing an optical fiber network that should have a functional life of decades is an easy choice.</p>
+      <p class="cn">对新建建筑来说，规划并安装一套使用寿命可达数十年的光纤网络是个轻松的选择。</p></div>
+    <div class="pair"><p class="en">For historical structures where there can be no or extremely minimal changes to the structure, POL offers a long life and fairly small cabling to minimize the compromises that need to be taken.</p>
+      <p class="cn">对历史建筑，要求结构上几乎不能改动，POL 长寿命、线缆细小的优势能把妥协降到最低。</p></div>
+    <div class="pair"><p class="en">Existing brownfield environments can be retrofitted for POL, but often the costs of installing optical cabling in spaces not designed for optical can add costs.</p>
+      <p class="cn">存量的既有环境（brownfield）也可以改造为 POL，但在并非为光纤设计过的空间里布放光缆，往往会增加成本。</p></div>
+    <div class="pair"><p class="en">From a vertical perspective, education institutions, hotels, hospitals and large corporate campuses are all good candidates for POL.</p>
+      <p class="cn">从行业角度看，<strong>教育机构、酒店、医院和大型企业园区</strong>都是 POL 的良好候选。</p></div>
+    <div class="pair"><p class="en">Even if building retrofitting isn't an option, intra-building and broad campus use cases for POL are compelling.</p>
+      <p class="cn">即便建筑改造不可行，楼内和广泛院区场景下的 POL 应用也很有吸引力。</p></div>
+    <div class="pair"><p class="en">Customers from various industries value different merits from POL.</p>
+      <p class="cn">不同行业的客户看重 POL 的不同优点。</p></div>
+    <div class="pair"><p class="en">For instance, on university campuses, there challenging environments, including dormitories, offices, libraries, canteens and labs.</p>
+      <p class="cn">例如在大学校园里，宿舍、办公室、图书馆、食堂和实验室都是很有挑战的环境；</p></div>
+    <div class="pair"><p class="en">With POL, all services can be bundled into one.</p>
+      <p class="cn">有了 POL，所有业务可以合并到一张网上。</p></div>
+    <div class="pair"><p class="en">In hospitality, cable television can be carried as well as data and phone services.</p>
+      <p class="cn">在酒店业，除了数据和电话业务，还可以承载有线电视。</p></div>
+    <div class="pair"><p class="en">POL is efficient in space and energy usage, making it attractive to large campuses and buildings.</p>
+      <p class="cn">POL 在空间和能耗上都更高效，这使其对大型院区和建筑很有吸引力。</p></div>
+  </div>
+
+  <!-- P7 -->
+  <div class="para">
+    <div class="pair"><p class="en">Companies should investigate POL as an alternative to traditional designs as a way to introduce long term savings for increasing bandwidth needs, greater operational efficiencies, and lower operating costs.</p>
+      <p class="cn">企业应把 POL 作为传统设计的替代方案去调研，用它来实现长期节省——应对不断增长的带宽需求、更高的运营效率和更低的运营成本。</p></div>
+    <div class="pair"><p class="en">They should not, however, use any POL system that isn't managed with the same tools that their primary network is managed with.</p>
+      <p class="cn">但是，<strong>他们不应采用任何无法用其主网络相同工具进行管理的 POL 系统。</strong></p></div>
+  </div>
+
+  <div class="terms">
+    <h2 class="sec" style="margin-top:2mm;">关键术语中英对照 / Key Terms</h2>
+    <table>
+      <tr><td>POL (Passive Optical LAN)</td><td>无源光局域网：PON 技术在企业/院区局域网场景的落地形态</td></tr>
+      <tr><td>PON (Passive Optical Network)</td><td>无源光网络：点到多点（P2MP）的光接入网</td></tr>
+      <tr><td>Passive</td><td>无源：中间分路器不供电；只有发送端与接收端需供电</td></tr>
+      <tr><td>Optical splitter</td><td>光分路器/分光器：把一路光均分为 N 路的无源器件</td></tr>
+      <tr><td>Single mode fiber</td><td>单模光纤</td></tr>
+      <tr><td>Pluggable optical transceivers</td><td>可插拔光模块</td></tr>
+      <tr><td>Backhaul</td><td>回传（通常指接入到汇聚/核心的上行链路）</td></tr>
+      <tr><td>Brownfield</td><td>存量/既有环境（相对于新建 greenfield）</td></tr>
+      <tr><td>Single pane of glass</td><td>单一管理界面：一套网管统管全网</td></tr>
+    </table>
+  </div>
+
+  <footer>
+    原文版权归 Huawei Technologies Co., Ltd. 及作者所有，此处仅作学习用途（fair use）。
+    译文由本教学工作区的 AI 老师生成，供对照阅读，准确性以原文为准。
+  </footer>
+
+</div>
+</body>
+</html>

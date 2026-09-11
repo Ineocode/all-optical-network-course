@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>中英对照 · FTTO for hospitals（Omdia）</title>
+<style>
+  @page { size: A4; margin: 17mm 18mm 15mm; }
+  :root{
+    --ink:#141413; --sub:#4a4842; --line:#dcd9cf; --accent:#b3542f; --soft:#f6f4ee;
+    --en: "Charter", "Georgia", "Times New Roman", serif;
+    --cn: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{font-family:var(--cn); color:var(--ink); font-size:10.4pt; line-height:1.6;}
+  .doc{max-width:174mm;margin:0 auto;}
+  header{border-bottom:2px solid var(--ink);padding-bottom:5mm;margin-bottom:5mm;}
+  .kicker{font-family:var(--cn);font-size:8pt;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:700;margin:0 0 3mm;}
+  h1{font-family:var(--en);font-size:16pt;line-height:1.24;margin:0 0 2.5mm;font-weight:700;}
+  h1 .cn{display:block;font-family:var(--cn);font-size:11.5pt;font-weight:600;color:var(--sub);margin-top:1.5mm;}
+  .byline{font-size:8.6pt;color:var(--sub);margin:0;}
+  .note{background:var(--soft);border-left:3px solid var(--accent);padding:2.6mm 4mm;font-size:8.6pt;color:var(--sub);margin:0 0 5mm;}
+  h2.sec{font-size:10.8pt;font-family:var(--cn);border-bottom:1px solid var(--line);padding-bottom:1.4mm;margin:6mm 0 3.5mm;color:var(--ink);}
+  .para{border-top:1px solid var(--line);padding:3.5mm 0 5mm;}
+  .para:first-of-type{border-top:none;}
+  .pair{margin:0 0 5.2mm;}
+  .pair:last-child{margin-bottom:0;}
+  .en{font-family:var(--en);font-size:10.2pt;line-height:1.5;color:var(--ink);margin:0;}
+  .cn{font-size:10.1pt;line-height:1.6;color:var(--sub);margin:0.5mm 0 0;padding-left:3.2mm;border-left:2px solid #e6cfc4;}
+  .cn strong{color:var(--accent);}
+  .terms{font-size:8.8pt;color:var(--sub);margin-top:6mm;border-top:2px solid var(--ink);padding-top:3.5mm;break-inside:avoid;}
+  .terms table{border-collapse:collapse;width:100%;}
+  .terms td{border-bottom:1px solid var(--line);padding:1.4mm 2mm;vertical-align:top;}
+  .terms td:first-child{font-family:var(--en);color:var(--ink);white-space:nowrap;width:36%;}
+  footer{margin-top:5mm;border-top:1px solid var(--line);padding-top:2.6mm;font-size:7.8pt;color:#8b897f;}
+
+  @media print { .home-nav { display: none; } }
+  .home-nav { font-size: 9pt; margin: 0 0 4mm; }
+  .home-nav a { color: #b3542f; text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <header>
+    <p class="kicker">中英对照双语资料 · 全光网络架构课程 Reference 0005</p>
+    <h1>FTTO for Hospitals
+      <span class="cn">面向医院的 FTTO：为什么医院需要全光网络</span>
+    </h1>
+    <p class="byline">Stephen Wilson · Senior Principal Analyst, Omdia · Huawei Enterprise Blog ·
+      原文：<a href="https://e.huawei.com/en/blogs/2025/solutions/enterprise-optical-network/ftto-hospital">e.huawei.com</a></p>
+  </header>
+
+  <p class="home-nav"><a href="../index.html">← 返回课程主页</a></p>
+
+  <p class="note">
+    <strong>阅读说明：</strong>每句英文下方紧跟中文译文（Trancy 式上下排）。
+    这是第三方分析机构（Omdia）对医院 FTTO 的分析，本课的硬数字多来自此文。
+    译文由 AI 生成，仅供学习参考；如遇歧义，以英文原文为准。
+  </p>
+
+  <h2 class="sec">一、医院的带宽需求 / Demanding network requirements</h2>
+  <div class="para">
+    <div class="pair"><p class="en">Hospitals have demanding network requirements that FTTO solutions are well suited to meet.</p>
+      <p class="cn">医院有严苛的网络需求，而 FTTO 方案非常适合满足这些需求。</p></div>
+    <div class="pair"><p class="en">The bandwidth requirements for networks in hospitals can be high, and having a future-proof and high-capacity FTTO network matches these needs.</p>
+      <p class="cn">医院网络的带宽需求可能很高，而一套面向未来、高容量的 FTTO 网络正好契合这些需求。</p></div>
+    <div class="pair"><p class="en">For example, medical imaging can produce large amounts of data, which means high-bandwidth networks are a must.</p>
+      <p class="cn">例如，医学影像会产生大量数据，这意味着高带宽网络是必需品。</p></div>
+    <div class="pair"><p class="en">With traditional copper-based LAN networks, high network latency means it could take 30 seconds to read 1,000 medical images.</p>
+      <p class="cn">在传统铜缆局域网上，高网络时延意味着读取 1000 张医学影像可能要用 <strong>30 秒</strong>。</p></div>
+    <div class="pair"><p class="en">However, with FTTO this can be drastically reduced to less than 1 second.</p>
+      <p class="cn">而采用 FTTO，这一时间可以大幅缩短到<strong>不到 1 秒</strong>。</p></div>
+  </div>
+
+  <h2 class="sec">二、高容量与高并发 / Capacity and concurrency</h2>
+  <div class="para">
+    <div class="pair"><p class="en">Hospitals also require high-capacity networks since they are large institutions with many employees and patients who, for example, may be using public Wi-Fi networks within the hospital.</p>
+      <p class="cn">医院也需要高容量网络，因为它们是拥有大量员工和患者的大型机构——例如，患者可能在院内使用公共 Wi-Fi。</p></div>
+    <div class="pair"><p class="en">This is a typical high-concurrency scenario in which more bandwidth will be required.</p>
+      <p class="cn">这是一个典型的高并发场景，需要更多带宽。</p></div>
+    <div class="pair"><p class="en">Moreover, there will also be a need for medical devices such as X-ray machines to be directly connected with fiber in order to guarantee more stable and ultra-high bandwidth.</p>
+      <p class="cn">此外，像 X 光机这样的医疗设备还需要直接用光纤连接，以保证更稳定、超高的带宽。</p></div>
+  </div>
+
+  <h2 class="sec">三、远程医疗 / Telemedicine</h2>
+  <div class="para">
+    <div class="pair"><p class="en">In addition, across different types of healthcare environments telemedicine is being used, for instance, to perform patient consultations remotely.</p>
+      <p class="cn">此外，在各种医疗场景中，远程医疗正被用于远程问诊等用途。</p></div>
+    <div class="pair"><p class="en">This could involve HD videoconferencing, which increases bandwidth requirements.</p>
+      <p class="cn">这可能涉及高清视频会议，从而推高带宽需求。</p></div>
+    <div class="pair"><p class="en">As part of Omdia's IT Enterprise Insights: Healthcare survey, respondents across all kinds of healthcare establishments were asked about their organization's use of telemedicine in 2023, and the responses indicate that usage is already common.</p>
+      <p class="cn">在 Omdia《IT Enterprise Insights: Healthcare》调研中，各类医疗机构受访者被问及所在机构 2023 年远程医疗的使用情况，结果显示其使用已相当普遍。</p></div>
+    <div class="pair"><p class="en">Furthermore, usage will only grow over time, and in the same survey 61% of respondents said their usage of telemedicine would be at or above 25% of their practice in 2028.</p>
+      <p class="cn">而且，使用量只会随时间增长：同一调研中，<strong>61%</strong> 的受访者表示到 2028 年其远程医疗使用量将达到业务量的 25% 或以上。</p></div>
+  </div>
+
+  <h2 class="sec">四、更简单的架构 / Simplified architecture</h2>
+  <div class="para">
+    <div class="pair"><p class="en">FTTO can also offer simplicity benefits because traditional copper-based LAN networks require many additional equipment rooms because such networks can only provide their maximum bandwidth up to a distance of 100m.</p>
+      <p class="cn">FTTO 还能带来架构简化的好处：传统铜缆局域网最远只能在 100 米内提供最大带宽，因此需要大量额外的设备间。</p></div>
+    <div class="pair"><p class="en">FTTO deployments can avoid this additional challenge.</p>
+      <p class="cn">FTTO 部署可以避免这一额外难题。</p></div>
+    <div class="pair"><p class="en">This distance limitation for traditional copper-based LAN networks is likely to be particularly problematic in hospitals because the many areas, such as patient wards and waiting areas, that the network needs to connect are likely to be spread out across the whole hospital building.</p>
+      <p class="cn">这一距离限制在医院里尤其麻烦，因为网络需要连接的病房、候诊区等许多区域往往分散整栋楼。</p></div>
+    <div class="pair"><p class="en">A further reason why FTTO networks can deliver greater simplicity is that they require less cabling than traditional copper-based networks.</p>
+      <p class="cn">FTTO 更简单的另一个原因是：相比传统铜缆网络，它需要的布线更少。</p></div>
+    <div class="pair"><p class="en">As a result there are fewer points of failure than for traditional copper-based LAN networks, which require much more cabling because they can only provide their maximum speed up to distances of 100m.</p>
+      <p class="cn">因此，故障点比传统铜缆局域网更少——后者因为只能在 100 米内提供最高速率而需要多得多的布线。</p></div>
+    <div class="pair"><p class="en">The greater volume of cabling for copper-based LAN networks also makes such architectures much more complex, and it is more challenging to find the location of faults.</p>
+      <p class="cn">铜缆局域网更大的布线量也让架构复杂得多，故障定位也更困难。</p></div>
+  </div>
+
+  <h2 class="sec">五、总拥有成本与升级 / TCO and upgrade</h2>
+  <div class="para">
+    <div class="pair"><p class="en">One important benefit of FTTO is that it is a future-proof solution that can offer longer-term savings in total cost of ownership.</p>
+      <p class="cn">FTTO 的一个重要优势是：它是面向未来的方案，能在总拥有成本上带来长期节省。</p></div>
+    <div class="pair"><p class="en">Bandwidth requirements today are high, and they may also increase further in the future.</p>
+      <p class="cn">如今的带宽需求已经很高，未来还可能进一步增长。</p></div>
+    <div class="pair"><p class="en">FTTO is well placed to cost-effectively meet this increase in bandwidth because such networks can be upgraded to 10G PON and even 50G PON without the need to replace cables.</p>
+      <p class="cn">FTTO 能经济有效地应对带宽增长：这类网络可以升级到 <strong>10G PON 甚至 50G PON</strong>，而<strong>无需更换光缆</strong>。</p></div>
+    <div class="pair"><p class="en">The lifetime of fiber cables is around 30 years.</p>
+      <p class="cn">光缆的寿命约为 <strong>30 年</strong>。</p></div>
+    <div class="pair"><p class="en">However, traditional copper-based LAN networks need recabling as bandwidths increase, and this could be extremely costly and complex for hospital deployments.</p>
+      <p class="cn">而传统铜缆局域网随着带宽提升必须重新布线，这对医院部署而言可能极其昂贵且复杂。</p></div>
+    <div class="pair"><p class="en">For example, the Wuhan Union Hospital, which has deployed an FTTO network, has a proton therapy center for cancer treatment.</p>
+      <p class="cn">例如，已部署 FTTO 网络的武汉协和医院设有用于癌症治疗的质子治疗中心。</p></div>
+    <div class="pair"><p class="en">Because of the radiation from the treatment, network cables need to be buried within very thick concrete, but if a traditional copper-based LAN had been deployed it would then have been very difficult to replace this cabling to accommodate the new treatment.</p>
+      <p class="cn">由于治疗产生的辐射，网络线缆必须埋在很厚的混凝土中；如果当初部署的是传统铜缆局域网，要更换这些线缆来适配新治疗将非常困难。</p></div>
+    <div class="pair"><p class="en">Proton therapy for cancer treatment remains very new, but over time it is likely to be adopted by more hospitals, and hospital staff need to plan hospital network construction in advance.</p>
+      <p class="cn">质子治疗仍然很新，但随着时间推移可能被更多医院采用，医院人员需要提前规划网络建设。</p></div>
+  </div>
+
+  <h2 class="sec">六、集中运维与可靠性 / Centralized O&amp;M and reliability</h2>
+  <div class="para">
+    <div class="pair"><p class="en">A further cost-saving benefit of FTTO is that network operations can be centralized, which reduces operating costs and means that any new OLTs and ONUs can be online without delay in case any of these devices needs to be replaced.</p>
+      <p class="cn">FTTO 另一个省钱的优点是运维可以集中化，从而降低运营成本；一旦需要更换 OLT 或 ONU，新设备可以立即上线、不耽误时间。</p></div>
+    <div class="pair"><p class="en">FTTO networks can be managed from a unified platform and can support intelligent operation and maintenance and network visualization, which means fault detection can easily be implemented.</p>
+      <p class="cn">FTTO 网络可以从统一平台管理，支持智能运维与网络可视化，故障检测容易实现。</p></div>
+    <div class="pair"><p class="en">This helps to ensure hospital networks provide high reliability, minimizing disruption to patient care.</p>
+      <p class="cn">这有助于确保医院网络提供高可靠性，把对患者诊疗的干扰降到最低。</p></div>
+    <div class="pair"><p class="en">Another example of an FTTO network providing high network reliability is the Guizhou Provincial People's Hospital.</p>
+      <p class="cn">另一个体现 FTTO 高可靠性的例子是贵州省人民医院。</p></div>
+    <div class="pair"><p class="en">In this example, high reliability is provided because the network supports full-link protection, dual-homing redundancy, and rapid switchover within 50ms.</p>
+      <p class="cn">在该案例中，高可靠性来自网络支持<strong>全链路保护、双归属冗余，以及 50 毫秒内的快速切换</strong>。</p></div>
+  </div>
+
+  <div class="terms">
+    <h2 class="sec" style="margin-top:2mm;">关键术语中英对照 / Key Terms</h2>
+    <table>
+      <tr><td>FTTO (Fiber to the Office)</td><td>光纤到办公室/房间的部署形态</td></tr>
+      <tr><td>copper-based LAN</td><td>基于铜缆的局域网（相对全光）</td></tr>
+      <tr><td>latency</td><td>时延</td></tr>
+      <tr><td>high-concurrency scenario</td><td>高并发场景</td></tr>
+      <tr><td>telemedicine</td><td>远程医疗</td></tr>
+      <tr><td>total cost of ownership (TCO)</td><td>总拥有成本</td></tr>
+      <tr><td>future-proof</td><td>面向未来、可长期演进的</td></tr>
+      <tr><td>full-link protection</td><td>全链路保护</td></tr>
+      <tr><td>dual-homing redundancy</td><td>双归属冗余</td></tr>
+      <tr><td>switchover</td><td>（保护）切换</td></tr>
+      <tr><td>unified platform / network visualization</td><td>统一管理平台 / 网络可视化</td></tr>
+    </table>
+  </div>
+
+  <footer>
+    原文版权归 Omdia 及 Huawei Technologies Co., Ltd. 所有，此处仅作学习用途（fair use）。
+    译文由本教学工作区的 AI 老师生成，供对照阅读，准确性以原文为准。
+  </footer>
+
+</div>
+</body>
+</html>

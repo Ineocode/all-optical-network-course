@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 06 · 可靠性与运维</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+<div class="page">
+
+  <header class="masthead">
+    <p class="course-label"><a href="../index.html">← 课程主页</a> · 全光网络架构 · Lesson 06</p>
+    <h1>可靠性与运维：保护只是第一步</h1>
+    <p class="meta">
+      <span>2026-09-11</span>
+      <span>约 45 分钟</span>
+      <span>前置：Lesson 05</span>
+    </p>
+  </header>
+
+  <div class="win">
+    <span class="label">本课成果 · Win</span>
+    <p>你能拿出一份<strong>可靠性方案 + 运维要点清单</strong>：知道 PON 特有的安全风险在哪、
+    ONU 怎么认证、下行怎么加密、网管和光功率怎么监测、出了故障按什么顺序查。</p>
+  </div>
+
+  <p><a href="./0004-topology-and-protection.html">Lesson 04</a>给了你 Type B/C 保护，
+  <a href="./0005-hospital-scenario-design.html">Lesson 05</a>分了业务网。
+  但保护只解决"断链"，这课补上另外三件同样要命的事：<strong>安全、可管理、可运维</strong>。</p>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">01</span> 可靠性是端到端的，不只是保护倒换</h2>
+
+  <p>把"可靠"拆成五层，任何一层缺了都会成为单点：</p>
+
+  <table>
+    <thead><tr><th>层次</th><th>要检查什么</th></tr></thead>
+    <tbody>
+      <tr><td>设备冗余</td><td>OLT 双主控、双电源、关键板卡冗余</td></tr>
+      <tr><td>链路冗余</td><td>Type B / Type C 保护、双归属、核心交换机双机</td></tr>
+      <tr><td>电源</td><td>双路市电 + UPS；ONU 侧是否需 PoF / 本地备电</td></tr>
+      <tr><td>环境</td><td>机房空调、防雷接地、走线物理分离（主备不共管沟）</td></tr>
+      <tr><td>切换指标</td><td>故障切换要多快？会不会断业务？</td></tr>
+    </tbody>
+  </table>
+
+  <div class="win">
+    <span class="label">切换时间有标准答案</span>
+    <p>ITU-T G.984.1 第 14.3 节：T1/E1 业务要求 <strong>50 ms</strong> 的保护时间，GPON 应支持 50 ms 保护。
+    对传统电话业务，<strong>丢帧超过 120 ms 就会断话</strong>，需要重新呼叫。</p>
+  </div>
+
+  <p class="cite">实战参照：贵州省人民医院的全光网支持全链路保护 + 双归属冗余，切换 <strong>50 ms 内</strong>完成（Omdia 医院 FTTO 分析）。</p>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">02</span> PON 特有的安全风险：被改装的 ONU</h2>
+
+  <p>这是全光园区<strong>最容易被忽略</strong>的一点，也是标准专门开一章（G.984.3 第 12 章）的原因：</p>
+
+  <blockquote>
+    PON 的下行数据是<strong>广播</strong>给该 PON 口下所有 ONU 的。如果有恶意用户重新编程自己的 ONU，
+    就可以<strong>监听到所有用户的下行数据</strong>——这就是"窃听威胁"，PON 安全机制正是为对抗它而设计。
+    <span class="cite">（G.984.3 §12.1 大意）</span>
+  </blockquote>
+
+  <p>看窃听威胁怎么发生：开启 <strong>AES</strong> 时下行是密文，"恶意 ONU"读不懂；
+  点按钮关闭 AES，它就能直接读取同一 PON 口下所有用户的下行数据。</p>
+  <div class="ponmap" data-mode="security"></div>
+
+  <table>
+    <thead><tr><th>风险</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>下行广播 + 合法 ONU 被改造</td><td>同一个 PON 口下的其他用户可能看到你的下行流量</td></tr>
+      <tr><td>伪造 ONU 接入</td><td>没有认证的话，陌生 ONU 可能被 OLT 误认并上线</td></tr>
+      <tr><td>管理面被盗用</td><td>ONU 密码/注册 ID 泄漏后被冒充</td></tr>
+    </tbody>
+  </table>
+
+  <h3>两个对策：加密 + 认证</h3>
+  <table>
+    <thead><tr><th>对策</th><th>标准做法</th></tr></thead>
+    <tbody>
+      <tr><td><strong>下行加密</strong></td><td>AES-128、CTR 模式；密钥由 OLT 与 ONU 之间交换并定期切换（G.984.3 §12.2、§12.3/12.4）</td></tr>
+      <tr><td><strong>ONU 认证</strong></td><td>基于序列号（SN）、PLOAM 密码、注册 ID（LOID）；也允许 MAC 地址入库等方式（G.984.3 附录 VI）</td></tr>
+    </tbody>
+  </table>
+
+  <div class="warn">
+    <span class="t">医院必做</span>
+    内网跑的是患者隐私与诊疗数据，<strong>AES 必须开启</strong>；ONU 一律做认证，禁止"即插即用"式放行。
+    这两条写进方案与招标技术要求里，验收时逐条核对。
+  </div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">03</span> 可管理：网管、OMCI 与光功率监测</h2>
+
+  <p>全光园区"省心"的前提，是有一套能看见每个 ONU 的网管：</p>
+
+  <table>
+    <thead><tr><th>能力</th><th>靠什么</th></tr></thead>
+    <tbody>
+      <tr><td>OLT 远程管理 / 配置 ONU</td><td><strong>OMCI（ITU-T G.988）</strong>：业务模板、属性、告警、性能统计</td></tr>
+      <tr><td>统一网管</td><td>统一平台管理 OLT / ONU，最好与既有以太网<strong>同一界面</strong>（见 <a href="./0001-what-is-all-optical-campus.html">L1</a> 的提醒）</td></tr>
+      <tr><td>光功率监测</td><td>读 ONU 收光 / OLT 收光；无源分光器本身不可管理，需要额外手段</td></tr>
+      <tr><td>告警</td><td>LOS 失光、LOF 失帧、光功率越限、ONU 掉线</td></tr>
+    </tbody>
+  </table>
+
+  <div class="tip">
+    <span class="t">一个必须知道的运维难点</span>
+    分光器是<strong>无源的、不可管理的</strong>。某条支路光衰变大或断裂时，网管只能看到"这个 ONU 掉线/收光低"，
+    定位到具体是哪一段需要 <strong>OTDR 或现场光功率测量</strong>。方案里要预留这个手段，否则故障会查很久。
+  </div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">04</span> 可运维：一张三阶段的运维清单</h2>
+
+  <table>
+    <thead><tr><th>阶段</th><th>要做的事</th></tr></thead>
+    <tbody>
+      <tr><td><strong>开局</strong></td><td>规划（点位/分光比/预算）→ 施工（熔接、成端、标识）→ 验收（逐点测光功率、打业务）</td></tr>
+      <tr><td><strong>日常</strong></td><td>监控告警 → 巡检光功率趋势 → 备份配置 → 管理 ONU 台账与认证白名单</td></tr>
+      <tr><td><strong>故障</strong></td><td>先看网管告警（掉线/收光低）→ 判断是 ONU、跳纤还是 ODN → 现场测光/OTDR 定位 → 更换 → 复盘并更新台账</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">05</span> 技能练习</h2>
+
+  <div class="quiz" data-quiz='[
+   {"q":"PON 下行数据是广播的，由此带来的主要安全威胁是？",
+    "options":["上行数据被其他 ONU 窃听","被改装的 ONU 窃听下行数据","分光器被远程篡改","OLT 遭到大规模 DDoS"],
+    "answer":1,
+    "explain":"G.984.3 §12.1 的威胁模型：下行广播给同 PON 口下所有 ONU，恶意用户重新编程自己的 ONU 就能监听他人下行数据——这正是 PON 安全机制要对抗的窃听威胁。"},
+   {"q":"ITU-T G.984.3 规定 PON 使用的加密算法与模式是？",
+    "options":["DES 电子密码本模式","AES-256 CBC 模式","RSA 非对称加密","AES-128 CTR 模式"],
+    "answer":3,
+    "explain":"G.984.3 §12.2：算法为 AES，采用计数器（CTR）模式，密钥长度固定为 128 bit。"},
+   {"q":"下列哪一项“不是” G.984.3 附录 VI 提到的 ONU 认证方式？",
+    "options":["基于 IP 地址认证","基于序列号认证","基于 PLOAM 密码认证","基于 MAC 地址入库"],
+    "answer":0,
+    "explain":"附录 VI 列出：序列号认证、PLOAM 密码认证，以及 MAC 地址入库等其它方式；IP 地址认证不在其中。"},
+   {"q":"OMCI（ITU-T G.988）在全光园区里主要解决什么问题？",
+    "options":["提高分光比上限","降低光功率损耗","OLT 远程管理与配置 ONU","加密下行广播数据"],
+    "answer":2,
+    "explain":"OMCI 是 OLT 远程管理 ONU 的接口：业务模板、属性、告警与性能统计，都是靠它下发和采集。"},
+   {"q":"ITU-T 要求 GPON 为 T1/E1 业务支持的保护切换时间是？",
+    "options":["10 ms","50 ms","120 ms","500 ms"],
+    "answer":1,
+    "explain":"G.984.1 §14.3：T1/E1 业务要求 50 ms 保护时间，GPON 应支持 50 ms；另外传统电话业务丢帧超过 120 ms 会断话。"}
+  ]'></div>
+
+  <div class="recall">
+    <div class="rt">回忆练习 · 写运维要点清单</div>
+    <p>不看上面，用自己的话写出这份清单（每项一句话）：</p>
+    <p><strong>(a)</strong> 可靠性五层各要检查什么？<br>
+    <strong>(b)</strong> 安全上必须做哪两件事？为什么？<br>
+    <strong>(c)</strong> 开局 / 日常 / 故障三个阶段各做哪三件事？</p>
+    <textarea placeholder="写下你的运维要点清单……"></textarea>
+    <button type="button">看参考答案</button>
+    <div class="reveal">
+      <p><strong>(a) 可靠性五层：</strong>设备冗余（双主控/双电源）、链路冗余（Type B/C + 双归属 + 核心双机）、电源（双路市电 + UPS）、环境（空调/防雷接地/主备走线分离）、切换指标（GPON 应支持 50 ms）。</p>
+      <p><strong>(b) 两件事：</strong>① 下行 AES 加密（CTR 模式、128 bit）——因为 PON 下行是广播，被改装的 ONU 可窃听他人数据；② ONU 认证（序列号 / PLOAM 密码 / 注册 ID）——防止伪造 ONU 接入。医院内网涉及患者隐私，两者都必须开。</p>
+      <p><strong>(c) 三阶段：</strong>开局——规划、施工（熔接/成端/标识）、验收（逐点测光功率+打业务）；日常——监控告警、巡检光功率趋势、备份配置与 ONU 台账；故障——看网管告警判断范围、现场测光/OTDR 定位（分光器无源不可管）、更换后复盘更新台账。</p>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">06</span> 本课推荐阅读（Primary Source）</h2>
+
+  <div class="reading">
+    <span class="t">权威原文 · 中英对照</span>
+    <p><strong>ITU-T G.984.3 第 12 章《Security》与附录 VI《Authentication》</strong>——
+    PON 威胁模型、AES 加密机制、ONU 认证方式的原始出处。</p>
+    <p>已整理成<strong>中英对照双语 PDF</strong>（上下排）：</p>
+    <p>👉 <a href="../reference/0006-itu-security-bilingual.pdf">reference/0006-itu-security-bilingual.pdf</a>
+    &nbsp;·&nbsp; 原文：<a href="https://www.itu.int/rec/T-REC-G.984.3/en" target="_blank">G.984.3</a> ·
+    <a href="https://www.itu.int/rec/T-REC-G.988/en" target="_blank">G.988 (OMCI)</a></p>
+  </div>
+
+  <div class="reading">
+    <span class="t">速查</span>
+    <p>可靠性五层 + 安全要点 + 运维三阶段清单：<a href="../reference/0006-reliability-security-ops-cheatsheet.html">reference/0006-reliability-security-ops-cheatsheet.html</a></p>
+  </div>
+
+  <div class="footer">
+    <div class="next">
+      <span class="t">下一课</span>
+      <p>设计阶段到这里收官，下一课开始“上手”。<strong>Lesson 07 · OLT/ONU 与业务模型</strong>：OLT 板卡、PON 口、ONU 注册、业务流、VLAN、DBA 之间的关系，先读懂一张 OLT 业务配置模型图，为动手配置打底。</p>
+    </div>
+    <div class="links">
+      <a href="../index.html">课程主页</a>
+      <a href="./0005-hospital-scenario-design.html">← Lesson 05</a>
+      <a href="./0006-reliability-security-ops.html">本课</a>
+      <a href="../reference/0006-reliability-security-ops-cheatsheet.html">可靠性与运维速查表</a>
+      <a href="../GLOSSARY.md">术语表</a>
+      <a href="../ROADMAP.md">路线图</a>
+    </div>
+  </div>
+
+</div>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/recall.js"></script>
+<script src="../assets/pon-flow.js"></script>
+</body>
+</html>

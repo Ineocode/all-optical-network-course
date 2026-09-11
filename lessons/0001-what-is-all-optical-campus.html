@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 01 · 全光院区：把三层压成两层</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+<div class="page">
+
+  <header class="masthead">
+    <p class="course-label"><a href="../index.html">← 课程主页</a> · 全光网络架构 · Lesson 01</p>
+    <h1>全光院区：把三层交换压成两层无源</h1>
+    <p class="meta">
+      <span>2026-09-11</span>
+      <span>约 45 分钟</span>
+      <span>前置：传统院区网络</span>
+    </p>
+  </header>
+
+  <div class="win">
+    <span class="label">本课成果 · Win</span>
+    <p>你能用<strong>一张图 + 三句话</strong>讲清"全光院区（POL）"与传统三层以太网的根本区别，
+    并对医院新楼里不同类型的区域做出"该不该走全光"的初步判断。</p>
+  </div>
+
+  <p>你熟悉传统院区网络，也学过光纤和光传输——这正是学全光院区最好的起点。
+  这第一课不碰配置，只做一件事：<strong>把脑子里的"网络拓扑"从三层换成两层</strong>。
+  换不过来，后面选型、分光、配置都会别扭。</p>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">01</span> 先破一个坑：中文"全光网络"有两个意思</h2>
+
+  <p>你搜"全光网络"会看到两拨完全不同的内容，先分清楚，否则会越看越乱：</p>
+
+  <div class="compare">
+    <div class="a">
+      <h4>A · 电信传输的"全光网"（AON）</h4>
+      <p>骨干/城域里用 <strong>OXC、ROADM</strong> 做全光交换，让信号在中间节点尽量不做"光→电→光"转换。
+      关键词是<em>波长、光交叉、长途传输</em>。这是通信工程课本里"光传输"的延伸。</p>
+    </div>
+    <div class="b">
+      <h4>B · 院区全光网络（POL）</h4>
+      <p>用 <strong>PON</strong> 技术把楼里的局域网改成"OLT + 无源分光器 + ONU"，用光纤替代铜缆。
+      关键词是<em>无源、分光器、一纤到房间</em>。这才是你新楼要做的。</p>
+    </div>
+  </div>
+
+  <div class="warn">
+    <span class="t">记住这个区分</span>
+    本工作区说"全光网络"，除非特别注明，都指 <strong>B：基于 PON 的全光院区</strong>（POL / FTTO / F5G 全光院区）。
+    A 只在需要对比术语时出现。
+  </div>
+
+  <p>官方定义可以直接引用：<strong>全光园区网络</strong>（All-Optical Campus Network，在院区语境下我们叫它"全光院区"）是"用 GPON、XGS-PON、Wi-Fi 7 等技术构建的园区网络，
+  可承载数据、语音、视频等多种业务，具有架构简单、易演进、智能运维、高可靠的特点"
+  <sup><a href="https://e.huawei.com/en/documents/solutions/enterprise-optical-network/06128ee0848f46318d5a0609e5215d1a" target="_blank">[华为白皮书]</a></sup>。
+  中国在 2019 年就发布了第一个工程标准《无源光局域网工程技术标准》（T/CECA 20002-2019）
+  <sup><a href="https://www.huawei.com/cn/news/2019/6/first-pol-engineering-technical-standard-china" target="_blank">[华为新闻]</a></sup>——
+  说明这不是概念，而是有设计、施工、验收规范的成熟工程。</p>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">02</span> 核心：三层有源 → 两层无源</h2>
+
+  <p>你在老院区画的图，大概是这样的（<span style="color:var(--blue)">蓝色 = 有源设备</span>）：</p>
+
+  <div class="diagram">
+    <div class="dt">传统三层以太网（老院区）</div>
+    <div class="layer active"><span class="tag">核心层</span><div class="body">核心交换机 ×2　<em>有源 · 机房</em></div></div>
+    <div class="flow-arrow">↓</div>
+    <div class="layer active"><span class="tag">汇聚层</span><div class="body">楼栋汇聚交换机　<em>有源 · 每栋/每层弱电间</em></div></div>
+    <div class="flow-arrow">↓</div>
+    <div class="layer active"><span class="tag">接入层</span><div class="body">接入交换机　<em>有源 · 每个弱电间</em></div></div>
+    <div class="flow-arrow">↓ 铜缆（Cat6a/Cat7）</div>
+    <div class="layer"><span class="tag">终端</span><div class="body">PC / AP / 电话 / 医疗设备　<em>距离 ≤ 100 m</em></div></div>
+    <div class="legend">
+      <span class="k-active"><i></i>有源设备：每一层都要供电、散热、配 UPS、占弱电间</span>
+    </div>
+  </div>
+
+  <p>全光院区把中间两层<strong>有源</strong>设备拿掉，换成一层<strong>无源</strong>的 ODN
+  （<span style="color:var(--accent-strong)">橘色虚线 = 无源</span>）：</p>
+
+  <div class="diagram">
+    <div class="dt">全光院区 POL / FTTO（新楼）</div>
+    <div class="layer active"><span class="tag">OLT</span><div class="body">光线路终端（局端）　<em>有源 · 主机房 · 一个 PON 口带很多 ONU</em></div></div>
+    <div class="flow-arrow">↓ 单模光纤（点到多点 P2MP）</div>
+    <div class="layer passive"><span class="tag">ODN</span><div class="body">无源分光器 1:N + 光纤 + 配线　<em>无源 · 不供电 · 可放楼层弱电间/楼道</em></div></div>
+    <div class="flow-arrow">↓ 光纤</div>
+    <div class="layer active"><span class="tag">ONU</span><div class="body">光网络单元（用户侧）　<em>有源 · 房间里 · 出网口/电话/AP/物联网</em></div></div>
+    <div class="flow-arrow">↓</div>
+    <div class="layer"><span class="tag">终端</span><div class="body">PC / AP / 电话 / 医疗设备　<em>距离最远可达 20 km</em></div></div>
+    <div class="legend">
+      <span class="k-active"><i></i>有源：OLT 与 ONU</span>
+      <span class="k-passive"><i></i>无源：ODN（只有源与收端要供电）</span>
+    </div>
+  </div>
+
+  <p>把上面的静态图"跑"起来看一遍——光信号从 OLT 出发，经过无源分光器后<strong>广播</strong>给该 PON 口下的每一个 ONU：</p>
+  <div class="ponmap" data-mode="architecture"></div>
+
+  <div class="win">
+    <span class="label">三句话版本（背下来）</span>
+    <p>① 传统院区是"核心-汇聚-接入"三层<strong>有源</strong>交换机，全光院区是"OLT - ODN - ONU"两层，
+    中间那层<strong>无源</strong>。<br>
+    ② 铜缆到终端的距离上限是 <strong>100 m</strong>，光纤可以到 <strong>20 km</strong>。<br>
+    ③ 无源的意思是"中间的分光器不供电"——<strong>OLT 和 ONU 仍然是有源的、仍然要供电</strong>。</p>
+  </div>
+
+  <p class="cite">来源：Huawei, "An Intriguing Networking Choice: Passive Optical LAN (POL)", 2020
+  —— 已整理为中英对照：<a href="../reference/0001-passive-optical-lan-bilingual.pdf">reference/0001-passive-optical-lan-bilingual.pdf</a></p>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">03</span> 为什么"新楼"是全光最合适的靶子</h2>
+
+  <p>那篇被反复引用的 POL 入门文章直接点名：<strong>新建建筑（new construction）和历史建筑</strong>是最适合
+  POL 的两类场景——新建建筑不用背铜缆存量包袱，一次布光纤能用几十年
+  <sup><a href="https://e.huawei.com/en/blogs/enterprise-transmission-access/passive-optical-lan" target="_blank">[POL 原文]</a></sup>。
+  医院、酒店、高校、大型企业园区被列为最佳垂直行业，医院排在前面。</p>
+
+  <p>华为的医院全光方案给出了几个可以拿去汇报的硬数字
+  <sup><a href="https://e.huawei.com/en/solutions/enterprise-optical-network/campus-optix/medical-campus-optical-network" target="_blank">[华为医疗方案]</a></sup>：</p>
+
+  <table>
+    <thead><tr><th>场景</th><th>全光带来的变化</th></tr></thead>
+    <tbody>
+      <tr><td>一纤到房间</td><td>数据/电话/电视/AP/物联网多种业务走一根光纤，<strong>布线量降低约 80%</strong></td></tr>
+      <tr><td>数字病理 / AI 阅片</td><td>50G PON + AI：切片上传 <strong>129 s → 15 s</strong>，报告生成 1 小时 → 5 分钟</td></tr>
+      <tr><td>手术 / 关键业务</td><td>Type C 双链路保护，一条链路故障业务不断；XGS-PON Pro 单纤 <strong>12.5G</strong></td></tr>
+      <tr><td>内外网隔离</td><td>硬隔离切片（TDM），内网/外网/设备网在同一张网上安全共存</td></tr>
+    </tbody>
+  </table>
+
+  <p>国内已有成规模落地案例：深圳大学附属华南医院（广东省首个 F5G 全光医院）、武汉市中心医院杨春湖院区、
+  武汉协和医院质子治疗中心等 <span class="cite">（详见华为医疗方案页的 Case Studies）</span>。
+  这些案例的价值在于：**你不是第一个吃螃蟹的人**，方案有先例、验收有标准、运维有经验可借。</p>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">04</span> 别只听好话：全光的代价与边界</h2>
+
+  <p>厂商材料只讲优点。做方案的人必须知道代价，否则会被集成商牵着走：</p>
+
+  <table>
+    <thead><tr><th>代价 / 边界</th><th>对你意味着什么</th></tr></thead>
+    <tbody>
+      <tr><td>ONU 仍然有源、要供电</td><td>每个房间仍要解决供电（可选 PoF 光纤供电，但要额外预算）</td></tr>
+      <tr><td>分光器是共享介质</td><td>一个 PON 口下所有 ONU <strong>共享</strong>带宽，分光比/收敛比要算，不能拍脑袋 1:64</td></tr>
+      <tr><td>无源分光器"看不见"</td><td>分光器不可管理，某条支路断了不好定位，需要光功率监测 / OTDR 手段</td></tr>
+      <tr><td>不能各管一套</td><td>POL 必须和既有以太网用<strong>同一套网管</strong>，否则运维会碎成两块（原文明确强调）</td></tr>
+      <tr><td>利旧受限</td><td>老院区铜缆多、改造贵；全光的性价比主要在新楼和跨楼场景</td></tr>
+    </tbody>
+  </table>
+
+  <div class="tip">
+    <span class="t">判断口诀</span>
+    <strong>新建 · 点位密 · 跨楼层/跨楼 · 多业务合一 · 距离超 100 m</strong> → 优先全光。
+    单点功率很大（大功率 PoE）、已有大量铜缆且不能动、只有零星几个点位 → 保留传统以太网更划算。
+  </div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">05</span> 技能练习</h2>
+
+  <p>合上上面的内容，尽量凭记忆作答——<strong>回忆比重读更能记住</strong>。</p>
+
+  <div class="quiz" data-quiz='[
+   {"q":"中文技术圈说的“全光网络”，在院区场景指的是哪一种？",
+    "options":["基于 PON 的无源光局域网","基于 OXC 的全光交换骨干","基于 SDH 的多业务传输网","基于 WDM 的城域传送网络"],
+    "answer":0,
+    "explain":"院区说的“全光”是 POL——用 PON 把局域网做成 OLT + 无源 ODN + ONU；OXC/ROADM 那条是电信传输的 AON。"},
+   {"q":"全光院区把三层压成两层，哪一段是“全部无源”的？",
+    "options":["ONU 与终端设备之间的部分","OLT 与 ONU 之间的 ODN","OLT 与核心交换之间的部分","ONU 与分光器之间的部分"],
+    "answer":1,
+    "explain":"无源指的是 OLT 与 ONU 之间的 ODN（分光器、光纤、配线）。OLT 和 ONU 自身都是有源设备、都要供电。"},
+   {"q":"关于分光器（Splitter），下列哪一句是对的？",
+    "options":["需要独立供电才能正常工作","不用供电也不会产生损耗","不用供电但会带来插入损耗","需要供电且会产生插入损耗"],
+    "answer":2,
+    "explain":"分光器无源、不耗电，但会把光功率均分成多路，产生插入损耗——分光比越大损耗越大，这正是下一课光功率预算的核心。"},
+   {"q":"医院新楼里，哪一类区域最适合优先考虑全光？",
+    "options":["点位密集、跨楼层的新建病房区","已有铜缆、不宜改造的老院区","单台设备功率极大的影像机房","只放一台交换机的独立配电间"],
+    "answer":0,
+    "explain":"新建、点位密集、跨楼层、多业务，是全光性价比最高的组合；存量铜缆、单点大功率 PoE、零星点位则应保留以太网。"},
+   {"q":"下列哪一项是全光的“代价/边界”，而不是优点？",
+    "options":["一根光纤可承载多种业务","无源分光器省电不易坏","无源分光器故障定位更难","光纤传输距离可达二十公里"],
+    "answer":2,
+    "explain":"分光器无源、不可管理，某条支路故障时定位比有源交换机困难，需要光功率监测/OTDR。其余三项都是优点。"}
+  ]'></div>
+
+  <div class="recall">
+    <div class="rt">回忆练习 · 换个方式再记一遍</div>
+    <p>先不要往回翻。在纸上（或下面的框里）：</p>
+    <p><strong>(a)</strong> 用不超过三句话，写出全光院区与传统三层以太网的根本区别；<br>
+    <strong>(b)</strong> 画出 OLT → ODN → ONU 的两层示意图，并标出哪里是有源、哪里是无源；<br>
+    <strong>(c)</strong> 写下你医院新楼里<strong>两个</strong>应该走全光的区域和<strong>一个</strong>应该保留以太网的区域，各说一句理由。</p>
+    <textarea placeholder="在这里写，或者写在纸上……"></textarea>
+    <button type="button">看参考答案</button>
+    <div class="reveal">
+      <p><strong>(a)</strong> 传统院区是核心-汇聚-接入三层有源交换机、靠铜缆到桌面（≤100 m）；
+      全光院区是 OLT-ODN-ONU 两层，中间 ODN 无源，靠光纤到房间（可达 20 km），一根光纤承载多种业务。</p>
+      <p><strong>(b)</strong> OLT（有源，机房）→ ODN（无源：分光器+光纤）→ ONU（有源，房间）→ 终端；有源/无源的分界线就在 OLT 之后、ONU 之前。</p>
+      <p><strong>(c)</strong> 示例：病房楼（点位密集、跨楼层、要接监护/呼叫/电视/AP）、门诊楼（房间多、业务杂）→ 全光；
+      中心机房或已装修好的老楼零星点位 → 保留以太网。只要你理由沾上"新建/密集/跨楼/多业务/超 100 m"就有说服力。</p>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">06</span> 本课推荐阅读（Primary Source）</h2>
+
+  <div class="reading">
+    <span class="t">先读这个 · 中英对照</span>
+    <p><strong>《An Intriguing Networking Choice: Passive Optical LAN (POL)》</strong>
+    —— S. J. Schuchart Jr.，Huawei，2020-01-17。</p>
+    <p>约 700 词，是英文世界里把"POL 为什么值得做"讲得最干净的入门文章。
+    本课第 2、3、4 节的很多话都出自它。我已做成<strong>中英对照双语 PDF</strong>，方便你对着原文精读：</p>
+    <p>👉 <a href="../reference/0001-passive-optical-lan-bilingual.pdf">reference/0001-passive-optical-lan-bilingual.pdf</a>
+    &nbsp;·&nbsp; 原文：<a href="https://e.huawei.com/en/blogs/enterprise-transmission-access/passive-optical-lan" target="_blank">e.huawei.com</a></p>
+  </div>
+
+  <div class="reading">
+    <span class="t">想深入一点</span>
+    <p>华为《全光园区网络技术及应用白皮书》——官方定义与架构，第 4 课会用到：
+    <a href="https://e.huawei.com/en/documents/solutions/enterprise-optical-network/06128ee0848f46318d5a0609e5215d1a" target="_blank">e.huawei.com · White Paper</a></p>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">07</span> 下一步</h2>
+
+  <p>你现在有了"两层无源"的心智模型。下一课回答一个必然会问的问题：
+  <strong>一个 PON 口能带多少个房间、光纤能拉多远——怎么算？</strong>
+  这就是<strong>光功率预算与分光比</strong>（Lesson 02）。它会用到你通信工程学的 dB 和光功率，正好是衔接点。</p>
+
+  <div class="footer">
+    <div class="links">
+      <a href="../index.html">课程主页</a>
+      <a href="./0001-what-is-all-optical-campus.html">← 本课</a>
+      <a href="../reference/0001-architecture-comparison-cheatsheet.html">速查表（架构对比）</a>
+      <a href="../GLOSSARY.md">术语表</a>
+      <a href="../ROADMAP.md">9 课路线图</a>
+      <a href="https://www.itu.int/rec/T-REC-G.9807.1/en" target="_blank">ITU-T G.9807.1 (XGS-PON)</a>
+    </div>
+  </div>
+
+</div>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/recall.js"></script>
+<script src="../assets/pon-flow.js"></script>
+</body>
+</html>

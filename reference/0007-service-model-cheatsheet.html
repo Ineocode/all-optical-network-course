@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>速查表 · OLT/ONU 业务模型</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<style>
+  .page { max-width: 52rem; }
+  .sheet h2 { margin-top: 2.2rem; }
+  td:first-child { white-space: nowrap; }
+  .ref-head { display:flex; justify-content:space-between; align-items:baseline; gap:1rem; flex-wrap:wrap; }
+</style>
+</head>
+<body>
+<div class="page sheet">
+
+  <header class="masthead">
+    <div class="ref-head">
+      <p class="course-label">速查表 · Reference 0007</p>
+      <p class="meta">配套 Lesson 07 · 打印友好</p>
+    </div>
+    <h1>OLT/ONU 业务模型速查</h1>
+    <p class="meta"><span>一手来源：ITU-T G.984.3（TC 层）· G.988（OMCI）</span></p>
+  </header>
+
+  <h2><span class="no">01</span> 硬件层次</h2>
+  <table>
+    <thead><tr><th>层次</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>机框 / 子架</td><td>机箱本体，提供槽位与背板</td></tr>
+      <tr><td>板卡</td><td>控制板 / 上行板 / PON 业务板，插在槽位</td></tr>
+      <tr><td>PON 口</td><td>板卡上的端口；一条 PON 口 = 一个 P2MP 域</td></tr>
+      <tr><td>ONU</td><td>用户侧设备（有源）</td></tr>
+      <tr><td>业务口</td><td>ONU 上的网口 / 电话口 / Wi-Fi / 物联网口</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="no">02</span> ONU 上线三阶段（G.984.3）</h2>
+  <table>
+    <thead><tr><th>阶段</th><th>做什么</th></tr></thead>
+    <tbody>
+      <tr><td>① 参数学习</td><td>ONU 学习上行开销参数（如均衡时延）</td></tr>
+      <tr><td>② 序列号发现</td><td>OLT 发发现请求，ONU 上报序列号（SN）——对应"注册/认证"</td></tr>
+      <tr><td>③ 测距</td><td>测量并补偿时延，分配 ONU-ID，ONU 正式上线</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="no">03</span> 四个核心配置对象</h2>
+  <table>
+    <thead><tr><th>对象</th><th>作用</th><th>管什么</th></tr></thead>
+    <tbody>
+      <tr><td>ONU-ID</td><td>ONU 在 PON 上的身份（激活时分配）</td><td>身份</td></tr>
+      <tr><td>T-CONT / Alloc-ID</td><td>上行带宽分配对象；默认 Alloc-ID = ONU-ID，承载 PLOAM + OMCC</td><td>上行带宽</td></tr>
+      <tr><td>GEM port</td><td>代表一条客户端业务流的逻辑连接</td><td>业务封装</td></tr>
+      <tr><td>service-port / 业务流</td><td>把 GEM port 与 VLAN 绑定，业务落地</td><td>业务落地</td></tr>
+    </tbody>
+  </table>
+  <p class="cite">一句话：ONU-ID 认身份 → T-CONT/Alloc-ID 管上行带宽 → GEM port 装业务 → service-port 绑 VLAN 落地。</p>
+
+  <h2><span class="no">04</span> T-CONT 五种类型（G.984.3 表 7-1）</h2>
+  <table>
+    <thead><tr><th>类型</th><th>带宽特性</th><th>适合</th></tr></thead>
+    <tbody>
+      <tr><td>Type 1</td><td>固定带宽，不参与剩余共享</td><td>时延/抖动敏感（语音、TDM）</td></tr>
+      <tr><td>Type 2</td><td>保证带宽，不参与剩余共享</td><td>有速率上限的 on-off 业务</td></tr>
+      <tr><td>Type 3</td><td>保证带宽 + 可共享非保证带宽</td><td>需平均速率保证的突发业务</td></tr>
+      <tr><td>Type 4</td><td>仅尽力而为共享</td><td>不敏感、突发型</td></tr>
+      <tr><td>Type 5</td><td>其它类型组合，通用</td><td>大多数普通业务流</td></tr>
+    </tbody>
+  </table>
+  <p class="cite">DBA（G.984.3 §3.2.4）：OLT 根据各 ONU 活动状态与流量合约，把上行容量分配给各 T-CONT。T-CONT 类型的值不在 PON 接口编码、也不下发 ONU。</p>
+
+  <h2><span class="no">05</span> 业务配置六步</h2>
+  <ol class="checklist" data-checklist="lesson-0007-config-steps">
+    <li>板卡与 PON 口：业务板在位、PON 口启用、光功率正常</li>
+    <li>注册/认证 ONU：SN 或 LOID，拿到 ONU-ID 上线</li>
+    <li>套用能力模板：line profile（T-CONT/DBA）、service profile（GEM/QoS）</li>
+    <li>建 T-CONT / Alloc-ID：选类型、定带宽合约</li>
+    <li>建 GEM port：业务封装，映射到 ONU 与 T-CONT</li>
+    <li>建 service-port 绑 VLAN：业务落到业务口，核心侧放通 VLAN</li>
+  </ol>
+
+  <h2><span class="no">06</span> 医院业务 → T-CONT 映射参考</h2>
+  <table>
+    <thead><tr><th>业务</th><th>建议 T-CONT</th></tr></thead>
+    <tbody>
+      <tr><td>语音 / TDM / 监护</td><td>Type 1–2（确定性）</td></tr>
+      <tr><td>影像 / 诊疗系统</td><td>Type 3–4（高吞吐）</td></tr>
+      <tr><td>办公 / 访客 Wi-Fi</td><td>Type 4–5（尽力而为）</td></tr>
+    </tbody>
+  </table>
+
+  <div class="footer">
+    <div class="links">
+      <a href="../index.html">课程主页</a>
+      <a href="../lessons/0007-olt-onu-service-model.html">Lesson 07</a>
+      <a href="./0006-reliability-security-ops-cheatsheet.html">L6 速查表</a>
+      <a href="./0002-odn-power-budget-cheatsheet.html">L2 速查表</a>
+      <a href="../GLOSSARY.md">术语表</a>
+    </div>
+  </div>
+
+</div>
+<script src="../assets/checklist.js"></script>
+</body>
+</html>

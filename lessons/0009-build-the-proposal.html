@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 09 · 产出全光网络建设方案</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+<div class="page">
+
+  <header class="masthead">
+    <p class="course-label"><a href="../index.html">← 课程主页</a> · 全光网络架构 · Lesson 09（结课）</p>
+    <h1>产出建设方案：把九课所学装订成一份可提交的文件</h1>
+    <p class="meta">
+      <span>2026-09-11</span>
+      <span>约 45 分钟 + 练习</span>
+      <span>前置：Lesson 01–08</span>
+    </p>
+  </header>
+
+  <div class="win">
+    <span class="label">本课成果 · Win</span>
+    <p>你能产出一份《新楼全光网络建设方案》的<strong>完整框架与摘要</strong>，
+    并用两组不同的项目数据各练一遍——从需求一路推到选型、拓扑、保护和投资。</p>
+  </div>
+
+  <p>前八课分别解决了"为什么、能不能通、选什么、怎么连、接什么、稳不稳、怎么配、怎么落"。
+  最后一课只做一件事：<strong>把它们组织成一份别人能看懂、能评审、能据此采购的方案。</strong></p>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">01</span> 方案不是作文：它是一条"数据流水线"</h2>
+
+  <p>工程方案的核心不是文采，而是<strong>每个结论都能回溯到一组输入数据</strong>。把这条流水线跑通，方案自然就出来了：</p>
+
+  <div class="diagram">
+    <div class="dt">从需求到方案的六道工序</div>
+    <div class="layer"><span class="tag">① 需求</span><div class="body">点数、建筑、业务、距离、机房条件、可靠性要求　<em>输入：现场调研</em></div></div>
+    <div class="flow-arrow">↓</div>
+    <div class="layer"><span class="tag">② 光功率</span><div class="body">固定损耗 + 分光器 + 余量 ≤ 预算 → 分光比<strong>上限</strong>　<em>L2</em></div></div>
+    <div class="flow-arrow">↓</div>
+    <div class="layer"><span class="tag">③ 带宽</span><div class="body">Σ承诺带宽 ÷ 线路速率 = 收敛比 → 过带宽门　<em>L3</em></div></div>
+    <div class="flow-arrow">↓</div>
+    <div class="layer"><span class="tag">④ 拓扑</span><div class="body">OLT 放哪、一级/二级分光、保护方式　<em>L4</em></div></div>
+    <div class="flow-arrow">↓</div>
+    <div class="layer"><span class="tag">⑤ 场景</span><div class="body">三张网、分区接入、隔离与 QoS　<em>L5</em></div></div>
+    <div class="flow-arrow">↓</div>
+    <div class="layer"><span class="tag">⑥ 落地</span><div class="body">安全/运维方案 + 设备清单 + 投资估算　<em>L6 · L8</em></div></div>
+  </div>
+
+  <p>把这条流水线"跑"一遍：每一道工序的<strong>输出就是下一道工序的输入</strong>，
+  任何一步算错，后面的选型、清单、投资都会跟着错：</p>
+  <div class="ponmap" data-mode="pipeline"
+       data-stages="需求|光功率|带宽|拓扑|场景|落地"
+       data-note="六道工序：每步输出=下步输入"></div>
+
+  <div class="tip">
+    <span class="t">评审最常问的三个问题</span>
+    "分光比为什么是 1:32？""为什么选 XGS-PON 不选 GPON？""关键业务断了怎么办？"
+    ——分别在②③④里，用数字回答。
+  </div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">02</span> 方案目录模板（照着填）</h2>
+
+  <table>
+    <thead><tr><th>章节</th><th>写什么</th><th>数据来源</th></tr></thead>
+    <tbody>
+      <tr><td>1 项目概述</td><td>建设背景、范围（哪栋楼/多少点）、目标</td><td>需求调研</td></tr>
+      <tr><td>2 需求分析</td><td>点位表、业务类型、带宽需求、距离、机房条件、可靠性等级</td><td>①</td></tr>
+      <tr><td>3 设计依据</td><td>引用标准：T/CECA 20002-2019、ITU-T G.984/G.9807.1/G.671、GB 相关规范</td><td>RESOURCES</td></tr>
+      <tr><td>4 总体架构</td><td>OLT-ODN-ONU 两层架构、与既有网络/核心的衔接</td><td>L1 · L4</td></tr>
+      <tr><td>5 制式与选型</td><td>GPON/XGS-PON/50G-PON 选择及理由；分光比；带宽账</td><td>②③</td></tr>
+      <tr><td>6 光缆与 ODN</td><td>一/二级分光、分光器位置、光纤路由、光功率预算表</td><td>L2 · L4</td></tr>
+      <tr><td>7 场景设计</td><td>病房/门诊/手术/影像/物联网接入；三张网与隔离；QoS</td><td>L5</td></tr>
+      <tr><td>8 可靠性与安全</td><td>Type B/C、双归属、双电源；ONU 认证、AES、网管</td><td>L6</td></tr>
+      <tr><td>9 运维与验收</td><td>网管方案、光功率监测、验收标准与测试项、运维流程</td><td>L6 · L8</td></tr>
+      <tr><td>10 设备材料清单</td><td>OLT/ONU/分光器/光缆/ODF 数量与规格</td><td>由④⑤汇总</td></tr>
+      <tr><td>11 投资估算</td><td>清单数量 × 单价；分区块汇总（可含 O&amp;M 与搬迁）</td><td>采购询价</td></tr>
+      <tr><td>12 实施计划</td><td>分期、割接方案、培训、风险</td><td>项目管理</td></tr>
+    </tbody>
+  </table>
+
+  <div class="warn">
+    <span class="t">写作三原则</span>
+    ① <strong>用数字说话</strong>：不写"带宽充足"，写"每点承诺 100M，收敛比 0.32"；<br>
+    ② <strong>每个选择给理由</strong>：制式、分光比、保护方式都要有依据；<br>
+    ③ <strong>诚实列代价</strong>：ONU 要供电、分光器不可管、老区改造贵——把边界写清楚，方案才可信。
+  </div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">03</span> 两组项目数据（练手用）</h2>
+
+  <p>下面两组数据刻意做成<strong>两类典型决策</strong>：A 是"预算敏感、普通业务"，B 是"高规格、关键业务"。
+  先自己做 A，再看参考；再做 B。</p>
+
+  <h3>项目 A · 专科楼（12 层，预算敏感）</h3>
+  <table>
+    <thead><tr><th>参数</th><th>取值</th></tr></thead>
+    <tbody>
+      <tr><td>建筑与点位</td><td>12 层，每层约 100 个信息点，共 <strong>1200 点</strong></td></tr>
+      <tr><td>业务</td><td>办公、普通病房、门诊；<strong>无大型影像 / AI</strong></td></tr>
+      <tr><td>单点承诺带宽</td><td>约 100M</td></tr>
+      <tr><td>到中心机房距离</td><td>主干 <strong>0.8 km</strong>，楼内有合格设备间</td></tr>
+      <tr><td>可靠性</td><td>普通业务为主，<strong>Type B</strong> 即可</td></tr>
+      <tr><td>约束</td><td><strong>预算敏感</strong>，希望成熟、便宜</td></tr>
+    </tbody>
+  </table>
+
+  <h3>项目 B · 综合楼（20 层，高规格）</h3>
+  <table>
+    <thead><tr><th>参数</th><th>取值</th></tr></thead>
+    <tbody>
+      <tr><td>建筑与点位</td><td>20 层，每层约 150 点，共 <strong>3000 点</strong></td></tr>
+      <tr><td>业务</td><td>病房、门诊、<strong>手术部（4K 示教）</strong>、<strong>影像中心（PACS/CT/MR）</strong>、<strong>数字病理 AI</strong>、Wi-Fi 7 全覆盖</td></tr>
+      <tr><td>单点带宽</td><td>普通 ≤100M；影像/手术 <strong>1–10G</strong>；Wi-Fi 7 AP 2.5–10G</td></tr>
+      <tr><td>到中心机房距离</td><td>主干 <strong>2.0 km</strong>；楼内<strong>无</strong>现成合格机房</td></tr>
+      <tr><td>可靠性</td><td>手术/影像/病理要 <strong>Type C</strong>，普通 Type B</td></tr>
+      <tr><td>约束</td><td>面向未来 10 年，可接受较高投资</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">04</span> 带练：项目 A 参考解答</h2>
+
+  <ol class="steps">
+    <li>
+      <h3>光功率门（算分光比上限）</h3>
+      <pre>光纤 0.8 km × 0.4 = 0.32 dB　熔接 2×0.3 = 0.6 dB
+连接器 4×0.5 = 2.0 dB　　光路代价 1 dB　　余量 3 dB
+<span class="hl">固定合计 = 6.92 dB</span> → B+ 28 − 6.92 = <span class="hl">21.08 dB</span> 留给分光器
+1:32(17.5) ✓ 舒适　|　1:64(20.9) ✓ 刚好</pre>
+    </li>
+    <li>
+      <h3>带宽门（选制式）</h3>
+      <pre><span class="cmt"># 若选 GPON 2.5G：1:32 → 32×100M = 3.2G &gt; 2.5G → 收敛比 &gt; 1 ✗</span>
+<span class="cmt"># 若选 XGS-PON 10G：1:32 → 3.2G / 10G = 0.32 ✓</span>
+1200 点 ÷ 32 ≈ 38 个 PON 口 → 38 × 10G = 380G ≥ 120G ✓</pre>
+      <p><strong>结论：选 XGS-PON，分光比 1:32。</strong>GPON 在 100M/点 的承诺下过不了带宽门；
+      降到 50M/点 虽可勉强通过，但端口需求翻倍、未来无余量。</p>
+    </li>
+    <li>
+      <h3>拓扑与保护</h3>
+      <p>楼内有合格设备间 → <strong>在新楼设备间放 OLT</strong>，上行双归中心机房核心；
+      ODN 楼内二级分光（楼层 1:4 + 楼栋 1:8 = 1:32）；普通业务 <strong>Type B</strong>。
+      每层约 4 个 PON 口（100÷32≈3.2）。</p>
+    </li>
+    <li>
+      <h3>一句话结论（可写进摘要）</h3>
+      <blockquote>新楼采用 XGS-PON 全光方案，1:32 分光，楼内设 OLT 并双归中心机房，普通业务 Type B 保护；
+      按每点 100M 承诺，收敛比 0.32，光功率预算余量充足（约 3.6 dB），满足未来十年带宽增长。</blockquote>
+    </li>
+  </ol>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">05</span> 带练：项目 B 参考解答</h2>
+
+  <ol class="steps">
+    <li>
+      <h3>分层选型（高规格的关键）</h3>
+      <table>
+        <thead><tr><th>区域</th><th>制式</th><th>分光比</th></tr></thead>
+        <tbody>
+          <tr><td>普通病房 / 门诊（约 2600 点）</td><td>XGS-PON</td><td>1:32</td></tr>
+          <tr><td>影像 / 手术（约 200 点，1–10G）</td><td>XGS-PON</td><td>1:4 – 1:8</td></tr>
+          <tr><td>数字病理 AI / Wi-Fi 7（约 50–100 点）</td><td>50G-PON</td><td>1:4</td></tr>
+        </tbody>
+      </table>
+    </li>
+    <li>
+      <h3>光功率门（2.0 km 主干）</h3>
+      <pre>光纤 2.0 km × 0.4 = 0.8 dB　熔接 2×0.3 = 0.6 dB
+连接器 4×0.5 = 2.0 dB　代价 1 dB　余量 3 dB
+<span class="hl">固定合计 = 7.4 dB</span> → 28 − 7.4 = 20.6 dB
+1:32(17.5) ✓　|　1:64(20.9) ✗（超 0.3 dB）</pre>
+      <p>所以普通区最多 1:32；影像区本就要求小分光比，两者不冲突。</p>
+    </li>
+    <li>
+      <h3>OLT 位置与保护</h3>
+      <p>3000 点、2.0 km 主干 → <strong>在楼内新建合格设备间放 OLT</strong>，上行双归中心机房核心、双电源；
+      手术/影像/病理全程 <strong>Type C</strong>（双 OLT/双板卡 + 双路径 + 双 ONU），普通区 Type B。</p>
+    </li>
+    <li>
+      <h3>一句话结论</h3>
+      <blockquote>综合楼采用"XGS-PON 为主 + 50G-PON 承载影像与 AI"的混合架构：
+      普通区 1:32、影像/手术 1:4–1:8；楼内设 OLT 并双归核心；关键业务 Type C 全路径保护；
+      主干 2.0 km 下 1:32 仍满足光功率预算，支持 Wi-Fi 7 与数字病理等大带宽场景。</blockquote>
+    </li>
+  </ol>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">06</span> 技能练习</h2>
+
+  <div class="quiz" data-quiz='[
+   {"q":"写方案时，确定分光比之前必须先完成哪一步？",
+    "options":["先算设备清单与投资","先算光功率预算得到上限","先写实施与割接计划","先定运维与验收标准"],
+    "answer":1,
+    "explain":"分光比受光功率限制，必须先按 L2 的方法算固定损耗 + 分光器 + 余量 ≤ 预算，得到分光比上限；之后才用带宽收敛比做校验。"},
+   {"q":"项目 A（1200 点、每点 100M、预算敏感）为什么更推荐 XGS-PON？",
+    "options":["GPON 不支持 1:32 分光","GPON 端口更贵且缺板卡","GPON 过不了带宽门","GPON 无法做 Type B"],
+    "answer":2,
+    "explain":"GPON 一个 PON 口 2.5G，1:32 下承诺带宽 3.2G 已超过线路速率（收敛比 &gt; 1）；XGS-PON 10G 下收敛比仅 0.32。"},
+   {"q":"项目 B 中影像/手术区为什么要把分光比收紧到 1:4–1:8？",
+    "options":["为了通过光功率预算上限","为了降低 OLT 板卡数量","为了与普通区保持一致","为满足单点 1–10G 带宽"],
+    "answer":3,
+    "explain":"影像与手术单点需要 1–10G，大分光比会让每个 ONU 分到的带宽过小；收紧分光比同时让光功率更宽裕。"},
+   {"q":"方案评审最容易追问的三个问题，对应本课程哪三课？",
+    "options":["分光比、制式、保护（L2/L3/L4）","光缆、机柜、电源（L1/L2/L3）","配置、命令、保存（L7/L8/L9）","点位、造价、工期（L5/L6/L7）"],
+    "answer":0,
+    "explain":"“分光比为什么是 1:32”（L2 光功率）、“为什么选 XGS-PON”（L3 带宽/制式）、“关键业务断了怎么办”（L4 保护）——每个都要用数字回答。"},
+   {"q":"一份可信的方案，对“全光的代价/边界”应该怎么处理？",
+    "options":["只讲优点、不提代价","把代价藏在附录里","诚实列出并给出对策","交给厂商去说明"],
+    "answer":2,
+    "explain":"ONU 要供电、分光器不可管、老区改造贵等都是真实边界；主动列出并给出对策（如 PoF、光功率监测、分区实施）方案才可信。"}
+  ]'></div>
+
+  <div class="recall">
+    <div class="rt">结课练习 · 写出你的方案摘要</div>
+    <p>选 <strong>项目 A 或 B</strong>（强烈建议两个都做），写一段不超过 150 字的"方案摘要"，必须包含：
+    制式与理由、分光比、OLT 位置、保护方式、一个用数字支撑的结论。</p>
+    <textarea placeholder="方案摘要……"></textarea>
+    <button type="button">看摘要模板</button>
+    <div class="reveal">
+      <p><strong>摘要模板：</strong>"本方案对【建筑/点位】采用【制式】全光网络，分光比【1:N】，
+      依据是【光功率预算余量 X dB + 收敛比 Y】；OLT 设于【位置】并双归核心；
+      对【关键区域】采用 Type C、其余 Type B；方案可支持【未来需求】，并已列出【代价/边界】及对策。"</p>
+      <p class="cite">评判标准：是否每个结论都有数字支撑、是否针对性回应了两组数据的不同约束（预算 vs 关键业务）。</p>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">07</span> 交付物与下一步</h2>
+
+  <div class="reading">
+    <span class="t">可填写的方案模板</span>
+    <p>把 12 章目录做成了一张可打印的填空骨架，含两组数据与计算留白：
+    <a href="../reference/0009-proposal-template.html">reference/0009-proposal-template.html</a></p>
+  </div>
+
+  <div class="reading">
+    <span class="t">回看（复习用）</span>
+    <p>· 全部速查表：<a href="../ROADMAP.md">ROADMAP.md</a>　· 术语：<a href="../GLOSSARY.md">GLOSSARY.md</a>　· 资料清单：<a href="../RESOURCES.md">RESOURCES.md</a></p>
+  </div>
+
+  <div class="footer">
+    <div class="next">
+      <span class="t">进阶方向</span>
+      <p>课程到这里结束，但方案工作才刚开始。想继续深入的方向：50G-PON 技术细节、OTDR 实测与故障定位、招标技术要求编写。</p>
+    </div>
+    <div class="links">
+      <a href="../index.html">课程主页</a>
+      <a href="./0008-hands-on-configuration.html">← Lesson 08</a>
+      <a href="./0009-build-the-proposal.html">本课</a>
+      <a href="../reference/0009-proposal-template.html">方案模板</a>
+      <a href="../ROADMAP.md">路线图</a>
+      <a href="../GLOSSARY.md">术语表</a>
+    </div>
+  </div>
+
+</div>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/recall.js"></script>
+<script src="../assets/pon-flow.js"></script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>中英对照 · ITU-T G.984.1 第 14 章：PON 保护</title>
+<style>
+  @page { size: A4; margin: 17mm 18mm 15mm; }
+  :root{
+    --ink:#141413; --sub:#4a4842; --line:#dcd9cf; --accent:#b3542f; --soft:#f6f4ee;
+    --en: "Charter", "Georgia", "Times New Roman", serif;
+    --cn: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{font-family:var(--cn); color:var(--ink); font-size:10.4pt; line-height:1.6;}
+  .doc{max-width:174mm;margin:0 auto;}
+  header{border-bottom:2px solid var(--ink);padding-bottom:5mm;margin-bottom:5mm;}
+  .kicker{font-family:var(--cn);font-size:8pt;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:700;margin:0 0 3mm;}
+  h1{font-family:var(--en);font-size:16.5pt;line-height:1.24;margin:0 0 2.5mm;font-weight:700;}
+  h1 .cn{display:block;font-family:var(--cn);font-size:11.5pt;font-weight:600;color:var(--sub);margin-top:1.5mm;}
+  .byline{font-size:8.6pt;color:var(--sub);margin:0;}
+  .note{background:var(--soft);border-left:3px solid var(--accent);padding:2.6mm 4mm;font-size:8.6pt;color:var(--sub);margin:0 0 5mm;}
+  h2.sec{font-size:10.8pt;font-family:var(--cn);border-bottom:1px solid var(--line);padding-bottom:1.4mm;margin:6mm 0 3.5mm;color:var(--ink);}
+  .para{border-top:1px solid var(--line);padding:3.5mm 0 5mm;}
+  .para:first-of-type{border-top:none;}
+  .pair{margin:0 0 5.2mm;}
+  .pair:last-child{margin-bottom:0;}
+  .en{font-family:var(--en);font-size:10.2pt;line-height:1.5;color:var(--ink);margin:0;}
+  .cn{font-size:10.1pt;line-height:1.6;color:var(--sub);margin:0.5mm 0 0;padding-left:3.2mm;border-left:2px solid #e6cfc4;}
+  .cn strong{color:var(--accent);}
+  table{border-collapse:collapse;width:100%;margin:2mm 0 1mm;font-size:9.3pt;}
+  th,td{border-bottom:1px solid var(--line);padding:1.5mm 2mm;text-align:left;vertical-align:top;}
+  th{background:var(--soft);font-weight:700;}
+  td .zh{color:var(--sub);font-size:8.8pt;display:block;}
+  .cap{font-size:8.6pt;color:var(--sub);margin:1mm 0 3mm;}
+  .terms{margin-top:5mm;border-top:2px solid var(--ink);padding-top:3.5mm;font-size:8.8pt;color:var(--sub);}
+  footer{margin-top:5mm;border-top:1px solid var(--line);padding-top:2.6mm;font-size:7.8pt;color:#8b897f;}
+
+  @media print { .home-nav { display: none; } }
+  .home-nav { font-size: 9pt; margin: 0 0 4mm; }
+  .home-nav a { color: #b3542f; text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <header>
+    <p class="kicker">中英对照双语资料 · 全光网络架构课程 Reference 0004</p>
+    <h1>ITU-T G.984.1, Clause 14: Protection on the PON Section
+      <span class="cn">ITU-T G.984.1 第 14 章：PON 段的保护</span>
+    </h1>
+    <p class="byline">ITU-T G.984.1 (03/2008) ·
+      原文：<a href="https://www.itu.int/rec/T-REC-G.984.1/en">itu.int/rec/T-REC-G.984.1</a></p>
+  </header>
+
+  <p class="home-nav"><a href="../index.html">← 返回课程主页</a></p>
+
+  <p class="note">
+    <strong>阅读说明：</strong>每句英文下方紧跟中文译文（Trancy 式上下排）。
+    本文件仅为学习目的摘录 ITU-T 建议书第 14 章的关键条款，版权归 ITU 所有，完整内容请查阅原文。
+    译文由 AI 生成，准确性以 ITU 原文为准。
+  </p>
+
+  <h2 class="sec">14 · 概述 / General</h2>
+  <div class="para">
+    <div class="pair"><p class="en">From the viewpoint of administration of the access network, the protection architecture of GPON is considered to enhance the reliability of the access networks.</p>
+      <p class="cn">从接入网管理的角度看，GPON 的保护架构被用来增强接入网的可靠性。</p></div>
+    <div class="pair"><p class="en">However, protection shall be considered as an optional mechanism because its implementation depends on the realization of economical systems.</p>
+      <p class="cn">然而，保护应被视为一种<strong>可选机制</strong>，因为是否实现取决于系统在经济性上的可行性。</p></div>
+    <div class="pair"><p class="en">Further information on protection switching can be found in [ITU-T G.808.1].</p>
+      <p class="cn">关于保护倒换的更多信息，可参见 [ITU-T G.808.1]。</p></div>
+    <div class="pair"><p class="en">This clause presents some possible duplex configurations and related requirements as examples of protected GPON systems.</p>
+      <p class="cn">本章给出若干可能的双份（duplex）配置及相关要求，作为受保护 GPON 系统的示例。</p></div>
+  </div>
+
+  <h2 class="sec">14.1 · 切换类型 / Possible switching types</h2>
+  <div class="para">
+    <div class="pair"><p class="en">There are two types of protection switching, both of which are analogous to those of SDH systems: i) automatic switching; and ii) forced switching.</p>
+      <p class="cn">保护倒换有两种类型，都与 SDH 系统类似：i) <strong>自动切换</strong>；ii) <strong>强制切换</strong>。</p></div>
+    <div class="pair"><p class="en">The first type is triggered by fault detection, such as loss of signal, loss of frame, signal degrade (BER becomes worse than the predetermined threshold), and so on.</p>
+      <p class="cn">第一种由故障检测触发，例如<strong>信号丢失（LOS）、帧丢失（LOF）、信号劣化（BER 超过预定阈值）</strong>等。</p></div>
+    <div class="pair"><p class="en">The second type is activated by administrative events, such as fibre rerouting, fibre replacement, etc.</p>
+      <p class="cn">第二种由管理性事件激活，例如光纤改道、光纤更换等。</p></div>
+    <div class="pair"><p class="en">Both types should be possible in a GPON system, if required, even though they are optional functions.</p>
+      <p class="cn">如有需要，GPON 系统应能支持这两种切换，尽管它们都是可选功能。</p></div>
+    <div class="pair"><p class="en">The switching mechanism is generally realized by the OAM function, therefore, the required OAM information field should be reserved in the OAM frame.</p>
+      <p class="cn">切换机制通常由 OAM 功能实现，因此应在 OAM 帧中预留所需的 OAM 信息字段。</p></div>
+  </div>
+
+  <h2 class="sec">14.2.1 · 双份配置示例 / Configuration examples</h2>
+  <div class="para">
+    <div class="pair"><p class="en">Type A: A deprecated configuration that duplicated only the optical fibres.</p>
+      <p class="cn"><strong>Type A</strong>：一种已废弃的配置，只对光纤做双份。</p></div>
+    <div class="pair"><p class="en">Type B: The second configuration (Figure 4a) doubles the OLTs and the optical fibres between the OLTs and the optical splitter, and the splitter has two input/output ports on the OLT side.</p>
+      <p class="cn"><strong>Type B</strong>：第二种配置（图 4a）对 <strong>OLT</strong> 以及 <strong>OLT 到分光器之间的光纤</strong>做双份，分光器在 OLT 侧有<strong>两个输入/输出端口</strong>。</p></div>
+    <div class="pair"><p class="en">This configuration reduces the cost of duplexing the ONUs, although only the OLT side can be recovered.</p>
+      <p class="cn">这种配置降低了 ONU 侧双份的成本，但<strong>只能恢复 OLT 侧</strong>。</p></div>
+    <div class="pair"><p class="en">Type C: The third configuration (Figure 4b) doubles not only the OLT side facilities but also the ONU side.</p>
+      <p class="cn"><strong>Type C</strong>：第三种配置（图 4b）不仅对 OLT 侧设施做双份，<strong>也对 ONU 侧做双份</strong>。</p></div>
+    <div class="pair"><p class="en">In this configuration, recovery from failure at any point is possible by switching to the standby facilities.</p>
+      <p class="cn">在这种配置下，<strong>任意一点</strong>发生故障，都可以通过切换到备用设施来恢复。</p></div>
+    <div class="pair"><p class="en">Therefore, the full duplex cost enables high reliability.</p>
+      <p class="cn">因此，全双份的代价换来了高可靠性。</p></div>
+    <div class="pair"><p class="en">Type D: A deprecated configuration that allowed the mixing of duplicated and non-duplicated ONUs, essentially providing a combination of types B and C protection.</p>
+      <p class="cn"><strong>Type D</strong>：一种已废弃的配置，允许双份与非双份 ONU 混用，本质上是 Type B 与 Type C 保护的组合。</p></div>
+    <div class="pair"><p class="en">Note that in both of these types of protection schemes, the PON line terminations do not need to reside in a single OLT equipment.</p>
+      <p class="cn">注意：在这两类保护方案中，PON 线路终端<strong>不必位于同一台 OLT 设备内</strong>。</p></div>
+    <div class="pair"><p class="en">In fact, they may be located in physically diverse locations (dual parenting).</p>
+      <p class="cn">事实上，它们可以位于物理上分离的位置（即<strong>双归属，dual parenting</strong>）。</p></div>
+  </div>
+
+  <h2 class="sec">14.2.2 · 特性 / Characteristics</h2>
+  <div class="para">
+    <div class="pair"><p class="en">Type B: This configuration requires cold standby of the spare circuit in the OLT side.</p>
+      <p class="cn"><strong>Type B</strong>：该配置要求 OLT 侧的备用电路处于<strong>冷备</strong>状态。</p></div>
+    <div class="pair"><p class="en">In this case, signal loss or even frame loss is, in general, inevitable in the switching period.</p>
+      <p class="cn">在这种情况下，切换期间通常不可避免地会发生<strong>信号丢失甚至帧丢失</strong>。</p></div>
+    <div class="pair"><p class="en">However, all the connections supported between the service node and the terminal equipment should be held after this switching.</p>
+      <p class="cn">不过，切换完成后，业务节点与终端设备之间承载的所有连接都应保持。</p></div>
+    <div class="pair"><p class="en">Type C: In this case, the hot standby of the spare receiver circuits is possible in both ONU and OLT sides.</p>
+      <p class="cn"><strong>Type C</strong>：在这种情况下，ONU 侧与 OLT 侧的备用接收电路都可以<strong>热备</strong>。</p></div>
+    <div class="pair"><p class="en">In addition, hitless switching (without frame loss) is also possible in this configuration.</p>
+      <p class="cn">此外，该配置还可以实现<strong>无损切换（hitless，不丢帧）</strong>。</p></div>
+  </div>
+
+  <h2 class="sec">14.3 · 要求 / Requirements</h2>
+  <div class="para">
+    <div class="pair"><p class="en">1) The protection switching function should be optional.</p>
+      <p class="cn">1) 保护倒换功能应为可选。</p></div>
+    <div class="pair"><p class="en">2) Both automatic protection switching and forced switching are possible in the GPON system, if required, even though they are optional functions.</p>
+      <p class="cn">2) 如有需要，GPON 系统应能同时支持自动保护倒换和强制切换，尽管它们都是可选功能。</p></div>
+  </div>
+
+  <h2 class="sec">保护类型速览 / Protection types at a glance</h2>
+  <table>
+    <thead><tr><th>Type</th><th>Duplicated <span class="zh">双份范围</span></th><th>Recoverable <span class="zh">可恢复范围</span></th><th>Switching <span class="zh">切换</span></th></tr></thead>
+    <tbody>
+      <tr><td>A</td><td>Fibres only <span class="zh">仅光纤</span></td><td colspan="2">Deprecated <span class="zh">已废弃</span></td></tr>
+      <tr><td><strong>B</strong></td><td>OLT side + fibres to splitter <span class="zh">OLT 侧 + 到分光器的光纤</span></td><td>OLT side only <span class="zh">仅 OLT 侧</span></td><td>Cold standby, possible loss <span class="zh">冷备，可能丢信号/丢帧</span></td></tr>
+      <tr><td><strong>C</strong></td><td>OLT side + ONU side <span class="zh">OLT 侧 + ONU 侧</span></td><td>Any point <span class="zh">任意一点</span></td><td>Hot standby, hitless <span class="zh">热备，无损</span></td></tr>
+      <tr><td>D</td><td>Mix of B and C <span class="zh">B 与 C 混合</span></td><td colspan="2">Deprecated <span class="zh">已废弃</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="terms">
+    <strong>关键术语 / Key terms：</strong>
+    protection switching 保护倒换 · automatic / forced switching 自动/强制切换 ·
+    loss of signal (LOS) 信号丢失 · loss of frame (LOF) 帧丢失 · signal degrade 信号劣化 ·
+    cold standby 冷备 · hot standby 热备 · hitless switching 无损切换 ·
+    duplex 双份 · dual parenting 双归属 · PON LT (line termination) PON 线路终端
+  </div>
+
+  <footer>
+    Source: ITU-T Recommendation G.984.1 (03/2008), Clause 14. © ITU. Excerpted for educational use.
+    译文由本教学工作区的 AI 老师生成，准确性以 ITU 原文为准。
+  </footer>
+
+</div>
+</body>
+</html>

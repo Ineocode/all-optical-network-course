@@ -1,0 +1,11 @@
+# 研究草稿：ITU 标准 PDF、抓取脚本与临时文件（体积大、非课程内容）
+.research/
+
+# 系统 / 编辑器
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+.idea/
+.vscode/
+*.log

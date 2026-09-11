@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>中英对照 · ITU-T G.984.3：PON 安全与 ONU 认证</title>
+<style>
+  @page { size: A4; margin: 17mm 18mm 15mm; }
+  :root{
+    --ink:#141413; --sub:#4a4842; --line:#dcd9cf; --accent:#b3542f; --soft:#f6f4ee;
+    --en: "Charter", "Georgia", "Times New Roman", serif;
+    --cn: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{font-family:var(--cn); color:var(--ink); font-size:10.4pt; line-height:1.6;}
+  .doc{max-width:174mm;margin:0 auto;}
+  header{border-bottom:2px solid var(--ink);padding-bottom:5mm;margin-bottom:5mm;}
+  .kicker{font-family:var(--cn);font-size:8pt;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:700;margin:0 0 3mm;}
+  h1{font-family:var(--en);font-size:16pt;line-height:1.24;margin:0 0 2.5mm;font-weight:700;}
+  h1 .cn{display:block;font-family:var(--cn);font-size:11.5pt;font-weight:600;color:var(--sub);margin-top:1.5mm;}
+  .byline{font-size:8.6pt;color:var(--sub);margin:0;}
+  .note{background:var(--soft);border-left:3px solid var(--accent);padding:2.6mm 4mm;font-size:8.6pt;color:var(--sub);margin:0 0 5mm;}
+  h2.sec{font-size:10.8pt;font-family:var(--cn);border-bottom:1px solid var(--line);padding-bottom:1.4mm;margin:6mm 0 3.5mm;color:var(--ink);}
+  .para{border-top:1px solid var(--line);padding:3.5mm 0 5mm;}
+  .para:first-of-type{border-top:none;}
+  .pair{margin:0 0 5.2mm;}
+  .pair:last-child{margin-bottom:0;}
+  .en{font-family:var(--en);font-size:10.2pt;line-height:1.5;color:var(--ink);margin:0;}
+  .cn{font-size:10.1pt;line-height:1.6;color:var(--sub);margin:0.5mm 0 0;padding-left:3.2mm;border-left:2px solid #e6cfc4;}
+  .cn strong{color:var(--accent);}
+  .terms{font-size:8.8pt;color:var(--sub);margin-top:6mm;border-top:2px solid var(--ink);padding-top:3.5mm;break-inside:avoid;}
+  .terms table{border-collapse:collapse;width:100%;}
+  .terms td{border-bottom:1px solid var(--line);padding:1.4mm 2mm;vertical-align:top;}
+  .terms td:first-child{font-family:var(--en);color:var(--ink);white-space:nowrap;width:38%;}
+  footer{margin-top:5mm;border-top:1px solid var(--line);padding-top:2.6mm;font-size:7.8pt;color:#8b897f;}
+
+  @media print { .home-nav { display: none; } }
+  .home-nav { font-size: 9pt; margin: 0 0 4mm; }
+  .home-nav a { color: #b3542f; text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <header>
+    <p class="kicker">中英对照双语资料 · 全光网络架构课程 Reference 0006</p>
+    <h1>ITU-T G.984.3: Security (Clause 12) and ONU Authentication (Appendix VI)
+      <span class="cn">ITU-T G.984.3：安全（第 12 章）与 ONU 认证（附录 VI）</span>
+    </h1>
+    <p class="byline">ITU-T G.984.3 (01/2014) ·
+      原文：<a href="https://www.itu.int/rec/T-REC-G.984.3/en">itu.int/rec/T-REC-G.984.3</a></p>
+  </header>
+
+  <p class="home-nav"><a href="../index.html">← 返回课程主页</a></p>
+
+  <p class="note">
+    <strong>阅读说明：</strong>每句英文下方紧跟中文译文（Trancy 式上下排）。
+    本文件仅为学习目的摘录 ITU-T 建议书的关键条款，版权归 ITU 所有，完整内容请查阅原文。
+    译文由 AI 生成，准确性以 ITU 原文为准。
+  </p>
+
+  <h2 class="sec">12 · 概述 / Security</h2>
+  <div class="para">
+    <div class="pair"><p class="en">This clause discusses the data security issues that PON raises.</p>
+      <p class="cn">本章讨论 PON 带来的数据安全问题。</p></div>
+    <div class="pair"><p class="en">It discusses the threat model that the security is intended to counter.</p>
+      <p class="cn">它讨论安全机制所要对抗的威胁模型。</p></div>
+    <div class="pair"><p class="en">It then discusses the basic key exchange and activation method.</p>
+      <p class="cn">随后讨论基本的密钥交换与激活方法。</p></div>
+  </div>
+
+  <h2 class="sec">12.1 · 基本威胁模型 / Basic threat model</h2>
+  <div class="para">
+    <div class="pair"><p class="en">The basic concern in PON is that the downstream data is broadcast to all ONUs attached to the PON.</p>
+      <p class="cn">PON 的基本隐患是：<strong>下行数据会广播给接入该 PON 的所有 ONU</strong>。</p></div>
+    <div class="pair"><p class="en">If a malicious user were to re-programme his ONU, then the malicious user could listen to all the downstream data of all the users.</p>
+      <p class="cn">如果恶意用户重新编程自己的 ONU，就能<strong>监听所有用户的下行数据</strong>。</p></div>
+    <div class="pair"><p class="en">It is this 'eavesdropping threat' that the PON security system is intended to counter.</p>
+      <p class="cn">PON 安全机制要对抗的正是这种"<strong>窃听威胁</strong>"。</p></div>
+    <div class="pair"><p class="en">Other, more exotic threats are not considered practically important because, in order to attempt these attacks, the user would have to expend more resources than it would be worth.</p>
+      <p class="cn">其他更"高级"的威胁被认为没有实际意义，因为发起这类攻击要耗费超过其收益的资源。</p></div>
+    <div class="pair"><p class="en">Furthermore, the PON itself has the unique property in that it is highly directional.</p>
+      <p class="cn">此外，PON 有一个独特性质：它具有很强的方向性。</p></div>
+    <div class="pair"><p class="en">So any ONU cannot observe the upstream traffic from the other ONUs on the PON.</p>
+      <p class="cn">因此，任何一个 ONU 都无法观察到同一 PON 上其他 ONU 的上行流量。</p></div>
+    <div class="pair"><p class="en">This allows privileged information (such as security keys) to be passed upstream in the clear.</p>
+      <p class="cn">这使得机密信息（例如安全密钥）可以以明文在上行方向传递。</p></div>
+    <div class="pair"><p class="en">While there are threats that could jeopardize this situation, such as an attacker tapping the common fibres of the PON, these again are not considered realistic, since the attacker would have to do so in public spaces, and would probably impair the very PON being tapped.</p>
+      <p class="cn">虽然存在威胁可能破坏这一前提（例如攻击者搭线窃听 PON 的公共光纤），但这同样被认为不现实：攻击者必须在公共空间操作，而且很可能把正在窃听的 PON 本身弄坏。</p></div>
+  </div>
+
+  <h2 class="sec">12.2 · 加密系统 / Encryption system</h2>
+  <div class="para">
+    <div class="pair"><p class="en">The encryption algorithm to be used is the advanced encryption standard (AES).</p>
+      <p class="cn">采用的加密算法是高级加密标准（<strong>AES</strong>）。</p></div>
+    <div class="pair"><p class="en">It is a block cipher that operates on 16-byte (128-bit) blocks of data.</p>
+      <p class="cn">它是一种分组密码，处理 16 字节（128 位）的数据块。</p></div>
+    <div class="pair"><p class="en">It accepts 128, 192 and 256 bit keys.</p>
+      <p class="cn">它可接受 128、192 和 256 位密钥。</p></div>
+    <div class="pair"><p class="en">This algorithm is described in documents published by the National Institute of Standards and Technology (NIST) in the United States of America.</p>
+      <p class="cn">该算法在美国国家标准与技术研究院（NIST）发布的文件中描述。</p></div>
+    <div class="pair"><p class="en">There are several modes of operation for this standard; however, only the 'counter' (CTR) mode shall be used.</p>
+      <p class="cn">该标准有多种工作模式，但只应使用"<strong>计数器</strong>"（<strong>CTR</strong>）模式。</p></div>
+    <div class="pair"><p class="en">The cipher generates a stream of 16-byte pseudo-random cipher blocks which are exclusive-OR'ed with the input clear-text to produce the output of cipher-text.</p>
+      <p class="cn">密码器生成一串 16 字节的伪随机密码块，与输入明文异或，得到输出密文。</p></div>
+    <div class="pair"><p class="en">The cipher-text is exclusive-OR'ed with the same pseudo-random cipher blocks to regenerate the clear-text.</p>
+      <p class="cn">密文再与相同的伪随机密码块异或，即可还原明文。</p></div>
+    <div class="pair"><p class="en">Also, the key length is fixed at 128 bits.</p>
+      <p class="cn">此外，密钥长度<strong>固定为 128 位</strong>。</p></div>
+    <div class="pair"><p class="en">Larger keys may be supported in the future, but this usage is currently unspecified.</p>
+      <p class="cn">未来可能支持更长的密钥，但当前该用法尚未规定。</p></div>
+  </div>
+
+  <h2 class="sec">附录 VI.1 · 基于序列号的认证 / Authentication by serial number</h2>
+  <div class="para">
+    <div class="pair"><p class="en">This method assumes that the association between the serial number (and, optionally, the PLOAM password) of the ONU and the specific subscriber is already established at the OLT either through pre-provisioning or in the course of previous activations.</p>
+      <p class="cn">该方法假定：ONU 的序列号（以及可选的 PLOAM 密码）与特定用户之间的关联，已通过预配置或此前激活过程在 OLT 上建立。</p></div>
+    <div class="pair"><p class="en">Because this method is the most straightforward in terms of PLOAM overhead, it is recommended for ONUs once their initial registration on the PON has been completed.</p>
+      <p class="cn">由于该方法在 PLOAM 开销上最直接，建议在 ONU 完成首次 PON 注册后采用。</p></div>
+    <div class="pair"><p class="en">In addition to the serial number, the PLOAM password, which is pre-provisioned (if fixed and known a priori) or learned at the previous activations (for example, if randomly generated), can be used for verification purposes.</p>
+      <p class="cn">除序列号外，PLOAM 密码也可用于验证：若固定且已知则预配置，若随机生成则在此前激活中学习获得。</p></div>
+  </div>
+
+  <h2 class="sec">附录 VI.2 · 基于 PLOAM 密码的认证 / Authentication by PLOAM password</h2>
+  <div class="para">
+    <div class="pair"><p class="en">This method assumes that a registration ID is assigned to a subscriber at the management level, and provisioned both into the OLT and communicated to installation or repair personnel or even to the subscriber directly.</p>
+      <p class="cn">该方法假定在管理层为用户分配一个注册 ID，并同时配置到 OLT、告知安装或维修人员，甚至直接告知用户。</p></div>
+    <div class="pair"><p class="en">There is a method for entering the registration ID into the ONU in the field.</p>
+      <p class="cn">存在一种在现场把注册 ID 录入 ONU 的方法。</p></div>
+    <div class="pair"><p class="en">Specification of such a method is beyond the scope of this Recommendation.</p>
+      <p class="cn">该方法的规范不属于本建议书的范围。</p></div>
+    <div class="pair"><p class="en">The registration ID populates the ONU's PLOAM password, which is used by the OLT to recognize the ONU.</p>
+      <p class="cn">注册 ID 会填入 ONU 的 PLOAM 密码，OLT 用它来识别 ONU。</p></div>
+    <div class="pair"><p class="en">The OLT may learn the value of the ONU's serial number for possible subsequent use in serial number based authentication.</p>
+      <p class="cn">OLT 可学习该 ONU 的序列号，以便后续用于基于序列号的认证。</p></div>
+  </div>
+
+  <h2 class="sec">附录 VI.3 · 其它认证方式 / Other forms of authentication</h2>
+  <div class="para">
+    <div class="pair"><p class="en">Additional ways to associate an ONU with a given subscriber, for example, the registration of the ONU's media access control (MAC) address in a database, are not precluded.</p>
+      <p class="cn">不排除其它将 ONU 与特定用户关联的方式，例如把 ONU 的媒体访问控制（MAC）地址登记到数据库。</p></div>
+    <div class="pair"><p class="en">However, such possibilities are beyond the scope of this Recommendation.</p>
+      <p class="cn">但这些可能性不属于本建议书的范围。</p></div>
+  </div>
+
+  <div class="terms">
+    <h2 class="sec" style="margin-top:2mm;">关键术语中英对照 / Key Terms</h2>
+    <table>
+      <tr><td>downstream broadcast</td><td>下行广播：PON 下行数据发给同口所有 ONU</td></tr>
+      <tr><td>eavesdropping threat</td><td>窃听威胁</td></tr>
+      <tr><td>AES (Advanced Encryption Standard)</td><td>高级加密标准</td></tr>
+      <tr><td>block cipher</td><td>分组密码</td></tr>
+      <tr><td>CTR (counter) mode</td><td>计数器模式</td></tr>
+      <tr><td>key exchange / key switch-over</td><td>密钥交换 / 密钥切换</td></tr>
+      <tr><td>serial number (SN)</td><td>序列号</td></tr>
+      <tr><td>PLOAM password</td><td>PLOAM 密码（物理层 OAM 通道中的口令）</td></tr>
+      <tr><td>registration ID</td><td>注册 ID（国内常称 LOID 逻辑标识）</td></tr>
+      <tr><td>pre-provisioning</td><td>预配置</td></tr>
+      <tr><td>activation / ranging</td><td>激活 / 测距（ONU 上线过程）</td></tr>
+    </table>
+  </div>
+
+  <footer>
+    Source: ITU-T Recommendation G.984.3 (01/2014), Clause 12 and Appendix VI. © ITU. Excerpted for educational use.
+    译文由本教学工作区的 AI 老师生成，准确性以 ITU 原文为准。
+  </footer>
+
+</div>
+</body>
+</html>

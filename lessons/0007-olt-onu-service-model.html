@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 07 · 认识 OLT/ONU 与业务模型</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+<div class="page">
+
+  <header class="masthead">
+    <p class="course-label"><a href="../index.html">← 课程主页</a> · 全光网络架构 · Lesson 07</p>
+    <h1>业务模型：一条业务是怎么"配"出来的</h1>
+    <p class="meta">
+      <span>2026-09-11</span>
+      <span>约 45 分钟</span>
+      <span>前置：Lesson 06</span>
+    </p>
+  </header>
+
+  <div class="win">
+    <span class="label">本课成果 · Win</span>
+    <p>你能读懂一张 <strong>OLT 业务配置模型图</strong>——知道 OLT 板卡、PON 口、ONU 注册、T-CONT、GEM port、VLAN
+    各自在哪一层，一条业务从"光信号"到"上网"中间经过了哪些配置对象。</p>
+  </div>
+
+  <p><a href="./0006-reliability-security-ops.html">上一课</a>说 OMCI（G.988）负责远程管理 ONU。
+  但 OMCI 到底在"配"什么？这一课把配置这件事拆开——<strong>先看懂模型，下一课才能动手配。</strong></p>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">01</span> 先认清硬件层次：配置"配在哪一层"</h2>
+
+  <p>全光的设备层次比传统交换机多几层，配置前必须先对上号：</p>
+
+  <div class="diagram">
+    <div class="dt">OLT 设备的层次</div>
+    <div class="layer active"><span class="tag">机框 / 子架</span><div class="body">机箱本体，提供槽位与背板　<em>有源 · 机房</em></div></div>
+    <div class="flow-arrow">↓</div>
+    <div class="layer active"><span class="tag">板卡</span><div class="body">控制板 / 上行板 / PON 业务板　<em>插在槽位里</em></div></div>
+    <div class="flow-arrow">↓</div>
+    <div class="layer active"><span class="tag">PON 口</span><div class="body">板卡上的每个 PON 端口　<em>一条 PON 口 = 一个 P2MP 域</em></div></div>
+    <div class="flow-arrow">↓ 光纤 + 分光器（无源）</div>
+    <div class="layer active"><span class="tag">ONU</span><div class="body">光网络单元　<em>有源 · 房间/终端</em></div></div>
+    <div class="flow-arrow">↓</div>
+    <div class="layer"><span class="tag">业务口</span><div class="body">ONU 上的网口 / 电话口 / Wi-Fi / 物联网口</div></div>
+  </div>
+
+  <p>记住这条对应关系：<strong>板卡 → PON 口 → ONU → 业务口</strong>。配置时说的"配在哪个口"，一定要问清是哪一层的口。</p>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">02</span> ONU 上线三部曲</h2>
+
+  <p>ONU 从"插上光纤"到"能用"，标准里叫<strong>激活（activation）</strong>，分三个阶段
+  <sup><a href="https://www.itu.int/rec/T-REC-G.984.3/en" target="_blank">[G.984.3]</a></sup>：</p>
+
+  <ol class="steps">
+    <li><h3>参数学习（parameter learning）</h3><p>ONU 学习上行开销参数（如均衡时延等），为后续通信做准备。</p></li>
+    <li><h3>序列号发现（serial number acquisition）</h3><p>OLT 发发现请求，ONU 上报自己的 <strong>序列号（SN）</strong>。这一步就是配置里"注册/认证"的落点（用 SN、密码或注册 ID）。</p></li>
+    <li><h3>测距（ranging）</h3><p>OLT 测量到 ONU 的距离/时延并补偿，保证不同距离的 ONU 上行不撞车。完成后 ONU 分配到一个 <strong>ONU-ID</strong>，正式上线。</p></li>
+  </ol>
+
+  <div class="tip">
+    <span class="t">配置时的对应关系</span>
+    你在网管里"注册一个 ONU"，本质是在做第 2、3 步：<strong>认证它的身份</strong>（SN/LOID）、
+    <strong>让它拿到 ONU-ID</strong>。所以注册失败一般是 SN 填错、认证信息不匹配，或光功率不够。
+  </div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">03</span> 核心：从 ONU 到业务，四个配置对象</h2>
+
+  <p>ONU 上线后还上没有业务。要让它"能上网/打电话"，需要理解四个对象。这是全光配置的<strong>骨架</strong>：</p>
+
+  <table>
+    <thead><tr><th>对象</th><th>标准定义 / 作用</th><th>管什么</th></tr></thead>
+    <tbody>
+      <tr><td><strong>ONU-ID</strong></td><td>ONU 在 PON 上的身份标识（激活时分配）</td><td>身份</td></tr>
+      <tr><td><strong>Alloc-ID / T-CONT</strong></td><td>T-CONT 是 ONU 内"承载流量、按上行带宽分配处理"的对象；默认 Alloc-ID 等于 ONU-ID</td><td>上行带宽</td></tr>
+      <tr><td><strong>GEM port</strong></td><td>GTC 适配子层上的抽象，代表一条<strong>客户端业务流</strong>的逻辑连接</td><td>业务封装</td></tr>
+      <tr><td><strong>service-port / 业务流</strong></td><td>把 GEM port 与业务 <strong>VLAN</strong> 绑定，让业务真正落地（厂商叫法不同）</td><td>业务落地</td></tr>
+    </tbody>
+  </table>
+
+  <div class="win">
+    <span class="label">一句话记住四层</span>
+    <p><strong>ONU-ID 认身份 → T-CONT（Alloc-ID）管上行带宽 → GEM port 装业务 → service-port 绑 VLAN 落地。</strong></p>
+  </div>
+
+  <div class="warn">
+    <span class="t">两个容易混淆的点</span>
+    ① <strong>Alloc-ID ≠ GEM port</strong>：前者是上行带宽分配用的，后者是业务封装用的，一个 ONU 可以有多个 Alloc-ID 和多个 GEM port。<br>
+    ② 默认 Alloc-ID 与 ONU-ID <strong>相等</strong>，它承载上行 PLOAM 和 OMCI（OMCC）管理通道——所以它不能随便删。
+  </div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">04</span> DBA 与五种 T-CONT：为什么要有类型</h2>
+
+  <p><strong>DBA（动态带宽分配）</strong>是 OLT 根据各 ONU 的<strong>活动状态和配置的流量合约</strong>，
+  把上行 PON 容量分配给各 T-CONT 的过程
+  <sup><a href="https://www.itu.int/rec/T-REC-G.984.3/en" target="_blank">[G.984.3 §3.2.4]</a></sup>。
+  不同的业务要签不同的"合约"，于是有了五种 T-CONT 类型：</p>
+
+  <table>
+    <thead><tr><th>类型</th><th>带宽特性</th><th>适合的业务</th></tr></thead>
+    <tbody>
+      <tr><td>Type 1</td><td>固定带宽，不参与剩余共享</td><td>对时延/抖动敏感：语音、TDM、部分监护</td></tr>
+      <tr><td>Type 2</td><td>保证带宽，不参与剩余共享</td><td>有明确速率上限的 on-off 业务</td></tr>
+      <tr><td>Type 3</td><td>保证带宽 + 可参与非保证共享</td><td>需要平均速率保证的突发业务</td></tr>
+      <tr><td>Type 4</td><td>只参与尽力而为共享</td><td>不敏感、突发型</td></tr>
+      <tr><td>Type 5</td><td>其它类型的组合，通用</td><td>大多数普通业务流的默认选择</td></tr>
+    </tbody>
+  </table>
+  <p class="cite">来源：ITU-T G.984.3 (01/2014) 表 7-1。注意：T-CONT 类型只是方便引用"常见的 Alloc-ID 流量描述符组合"，
+  它的值<strong>不在 PON 接口上编码、也不发给 ONU</strong>。</p>
+
+  <div class="tip">
+    <span class="t">映射到医院业务</span>
+    语音/监护 → Type 1–2（要确定性）；影像/诊疗 → Type 3–4（要高吞吐）；办公/访客 → Type 4–5（尽力而为）。
+    这正是 <a href="./0005-hospital-scenario-design.html">L5 的 QoS 分层</a>在配置层的落地方式。
+  </div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">05</span> 一张图串起来：业务配置六步</h2>
+
+  <ol class="steps">
+    <li><h3>板卡与 PON 口</h3><p>确认业务板卡在位、PON 口启用，光功率正常。</p></li>
+    <li><h3>注册 / 认证 ONU</h3><p>用 SN 或注册 ID（LOID）认证，ONU 获得 ONU-ID 上线。</p></li>
+    <li><h3>套用能力模板</h3><p>厂商通常用 <em>line profile</em>（T-CONT / DBA）与 <em>service profile</em>（GEM / QoS）预设能力，注册时绑定。</p></li>
+    <li><h3>建 T-CONT / Alloc-ID</h3><p>为业务分配合约（选 T-CONT 类型），管上行带宽。</p></li>
+    <li><h3>建 GEM port</h3><p>为业务建立封装通道，映射到对应 ONU 与 T-CONT。</p></li>
+    <li><h3>建 service-port（绑 VLAN）</h3><p>把 GEM port 与业务 VLAN 绑定，业务落到 ONU 的业务口；再到核心侧放通对应 VLAN。</p></li>
+  </ol>
+
+  <div class="tip">
+    <span class="t">记住顺序</span>
+    物理（板卡/PON 口）→ 身份（注册）→ 能力（模板）→ 带宽（T-CONT）→ 封装（GEM）→ 落地（service-port/VLAN）。
+    <strong>下一课就按这个顺序动手配。</strong>
+  </div>
+
+  <p>把业务模型"跑"一遍：一个数据包从 ONU 出发，依次经过
+  <strong>T-CONT/Alloc-ID</strong>（上行带宽）→ <strong>GEM port</strong>（业务封装）→
+  <strong>service-port</strong>（绑 VLAN）→ OLT 上行：</p>
+  <div class="ponmap" data-mode="model"></div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">06</span> 技能练习</h2>
+
+  <div class="quiz" data-quiz='[
+   {"q":"ONU 上行带宽分配所处理的基本对象是？",
+    "options":["GEM port","T-CONT（传输容器）","ONU 的业务网口","OLT 的板卡槽位"],
+    "answer":1,
+    "explain":"T-CONT 是 ONU 内承载流量、按上行带宽分配处理的对象；Alloc-ID 是它的带宽分配标识，默认 Alloc-ID 等于 ONU-ID。"},
+   {"q":"GEM port 在业务模型中扮演什么角色？",
+    "options":["ONU 的物理端口编号","上行带宽的分配单位","一条客户端业务流的逻辑连接","OLT 与核心之间的链路"],
+    "answer":2,
+    "explain":"G.984.3 定义 GEM port 是 GTC 适配子层上的抽象，代表与特定客户端业务流关联的逻辑连接——即“装业务”的那一层。"},
+   {"q":"ONU 的默认 Alloc-ID 是如何确定的？",
+    "options":["等于该 ONU 的 ONU-ID","等于 service-port 编号","由管理员随机指定","等于 GEM port 编号"],
+    "answer":0,
+    "explain":"默认 Alloc-ID 随 ONU-ID 隐式分配、二者相等，用来承载上行 PLOAM 与 OMCI 管理通道，且不能被随便删除或更改。"},
+   {"q":"对时延与抖动敏感、需要固定带宽的业务，适合哪种 T-CONT？",
+    "options":["Type 2","Type 3","Type 4","Type 1"],
+    "answer":3,
+    "explain":"Type 1 只有固定带宽成分、不参与剩余带宽共享，适合对时延/抖动敏感的业务（如语音、TDM）；Type 4 是纯尽力而为。"},
+   {"q":"把 GEM port 与业务 VLAN 绑定、让业务真正落地的对象通常是？",
+    "options":["line profile","service profile","service-port（业务流）","ONU-ID"],
+    "answer":2,
+    "explain":"service-port（厂商叫法不同）把 GEM port 与 VLAN 绑定，业务才落到 ONU 的业务口；line/service profile 是能力模板，ONU-ID 是身份。"}
+  ]'></div>
+
+  <div class="recall">
+    <div class="rt">回忆练习 · 画出业务配置模型</div>
+    <p>先不看上面。用你的话写出这两件事：</p>
+    <p><strong>(a)</strong> ONU 上线的三个阶段是什么？配置里的"注册 ONU"对应哪一步？<br>
+    <strong>(b)</strong> 一条业务从 ONU 到落地，经过哪四个配置对象？再用六步写出配置顺序。</p>
+    <textarea placeholder="写下你的答案……"></textarea>
+    <button type="button">看参考答案</button>
+    <div class="reveal">
+      <p><strong>(a) 上线三阶段：</strong>参数学习 → 序列号发现（SN 上报）→ 测距（分配 ONU-ID）。"注册 ONU"对应序列号发现 + 测距：认证身份（SN/LOID）并让 ONU 拿到 ONU-ID 上线。</p>
+      <p><strong>(b) 四个对象：</strong>ONU-ID（身份）→ T-CONT / Alloc-ID（上行带宽）→ GEM port（业务封装）→ service-port / VLAN（业务落地）。</p>
+      <p><strong>六步顺序：</strong>① 板卡与 PON 口 → ② 注册认证 ONU → ③ 套用能力模板（line/service profile）→ ④ 建 T-CONT/Alloc-ID → ⑤ 建 GEM port → ⑥ 建 service-port 绑 VLAN，并在核心侧放通。</p>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">07</span> 本课推荐阅读（Primary Source）</h2>
+
+  <div class="reading">
+    <span class="t">权威原文 · 中英对照</span>
+    <p><strong>ITU-T G.984.3</strong>：T-CONT / Alloc-ID / GEM port / DBA 的定义、T-CONT 五种类型（表 7-1）、
+    ONU 激活三阶段——业务模型的原始出处。</p>
+    <p>已整理成<strong>中英对照双语 PDF</strong>（上下排）：</p>
+    <p>👉 <a href="../reference/0007-itu-service-model-bilingual.pdf">reference/0007-itu-service-model-bilingual.pdf</a>
+    &nbsp;·&nbsp; 原文：<a href="https://www.itu.int/rec/T-REC-G.984.3/en" target="_blank">G.984.3</a></p>
+  </div>
+
+  <div class="reading">
+    <span class="t">速查</span>
+    <p>硬件层次 + 上线三阶段 + 四对象 + T-CONT 类型 + 六步配置：<a href="../reference/0007-service-model-cheatsheet.html">reference/0007-service-model-cheatsheet.html</a></p>
+  </div>
+
+  <div class="footer">
+    <div class="next">
+      <span class="t">下一课</span>
+      <p>下一课：动手。<strong>Lesson 08 · 上手配置</strong>：把这一课的六步真正配出来（PON 口 → ONU 注册 → 业务 VLAN 端到端），给出可照抄的命令与每一步在干什么。</p>
+    </div>
+    <div class="links">
+      <a href="../index.html">课程主页</a>
+      <a href="./0006-reliability-security-ops.html">← Lesson 06</a>
+      <a href="./0007-olt-onu-service-model.html">本课</a>
+      <a href="../reference/0007-service-model-cheatsheet.html">业务模型速查表</a>
+      <a href="../GLOSSARY.md">术语表</a>
+      <a href="../ROADMAP.md">路线图</a>
+    </div>
+  </div>
+
+</div>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/recall.js"></script>
+<script src="../assets/pon-flow.js"></script>
+</body>
+</html>

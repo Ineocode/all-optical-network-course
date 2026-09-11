@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>中英对照 · ITU-T 标准摘录：ODN 与光功率预算</title>
+<style>
+  @page { size: A4; margin: 17mm 18mm 15mm; }
+  :root{
+    --ink:#141413; --sub:#4a4842; --line:#dcd9cf; --accent:#b3542f; --soft:#f6f4ee;
+    --en: "Charter", "Georgia", "Times New Roman", serif;
+    --cn: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{font-family:var(--cn); color:var(--ink); font-size:10.4pt; line-height:1.6;}
+  .doc{max-width:174mm;margin:0 auto;}
+  header{border-bottom:2px solid var(--ink);padding-bottom:5mm;margin-bottom:5mm;}
+  .kicker{font-family:var(--cn);font-size:8pt;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:700;margin:0 0 3mm;}
+  h1{font-family:var(--en);font-size:17pt;line-height:1.24;margin:0 0 2.5mm;font-weight:700;}
+  h1 .cn{display:block;font-family:var(--cn);font-size:11.5pt;font-weight:600;color:var(--sub);margin-top:1.5mm;}
+  .byline{font-size:8.6pt;color:var(--sub);margin:0;}
+  .note{background:var(--soft);border-left:3px solid var(--accent);padding:2.6mm 4mm;font-size:8.6pt;color:var(--sub);margin:0 0 5mm;}
+  h2.sec{font-size:10.8pt;font-family:var(--cn);border-bottom:1px solid var(--line);padding-bottom:1.4mm;margin:6mm 0 3.5mm;color:var(--ink);}
+  .para{border-top:1px solid var(--line);padding:3.5mm 0 5mm;}
+  .para:first-of-type{border-top:none;}
+  .pair{margin:0 0 5.2mm;}
+  .pair:last-child{margin-bottom:0;}
+  .en{font-family:var(--en);font-size:10.2pt;line-height:1.5;color:var(--ink);margin:0;}
+  .cn{font-size:10.1pt;line-height:1.6;color:var(--sub);margin:0.5mm 0 0;padding-left:3.2mm;border-left:2px solid #e6cfc4;}
+  .cn strong{color:var(--accent);}
+  table{border-collapse:collapse;width:100%;margin:2mm 0 1mm;font-size:9.4pt;}
+  th,td{border-bottom:1px solid var(--line);padding:1.5mm 2mm;text-align:left;vertical-align:top;}
+  th{background:var(--soft);font-weight:700;}
+  th .en2{display:block;font-family:var(--en);font-size:8.6pt;color:var(--sub);}
+  td .zh{color:var(--sub);font-size:8.8pt;display:block;}
+  .cap{font-size:8.6pt;color:var(--sub);margin:1mm 0 3mm;}
+  .terms{margin-top:5mm;border-top:2px solid var(--ink);padding-top:3.5mm;font-size:8.8pt;color:var(--sub);}
+  footer{margin-top:5mm;border-top:1px solid var(--line);padding-top:2.6mm;font-size:7.8pt;color:#8b897f;}
+
+  @media print { .home-nav { display: none; } }
+  .home-nav { font-size: 9pt; margin: 0 0 4mm; }
+  .home-nav a { color: #b3542f; text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <header>
+    <p class="kicker">中英对照双语资料 · 全光网络架构课程 Reference 0002</p>
+    <h1>ITU-T Excerpts: ODN and Optical Power Budget
+      <span class="cn">ITU-T 标准摘录：ODN 与光功率预算</span>
+    </h1>
+    <p class="byline">
+      ITU-T G.984.2 (08/2019) · ITU-T G.671 (11/2025) ·
+      原文：<a href="https://www.itu.int/rec/T-REC-G.984.2/en">itu.int/rec/T-REC-G.984.2</a> ·
+      <a href="https://www.itu.int/rec/T-REC-G.671/en">itu.int/rec/T-REC-G.671</a>
+    </p>
+  </header>
+
+  <p class="home-nav"><a href="../index.html">← 返回课程主页</a></p>
+
+  <p class="note">
+    <strong>阅读说明：</strong>每句英文下方紧跟中文译文（Trancy 式上下排）。表格为中英对照。
+    本文件仅为学习目的摘录 ITU-T 建议书的关键条款与表格，版权归 ITU 所有，完整内容请查阅原文。
+  </p>
+
+  <h2 class="sec">A. ODN 的定义 / Definition of ODN — G.984.2 §3.2.3</h2>
+  <div class="para">
+    <div class="pair"><p class="en">optical distribution network (ODN): In the PON context, a tree of optical fibres in the access network, supplemented with power or wavelength splitters, filters or other passive optical devices.</p>
+      <p class="cn">光分配网（ODN）：在 PON 语境中，指接入网中的一棵<b>光纤树</b>，辅以功率分光器或波长分光器、滤波器，以及其他无源光器件。</p></div>
+  </div>
+
+  <h2 class="sec">B. ODN 物理层参数 / PMD layer parameters of ODN — G.984.2 Table 2a</h2>
+  <table>
+    <thead><tr><th>Parameter <span class="en2">参数</span></th><th>Specification <span class="en2">取值</span></th></tr></thead>
+    <tbody>
+      <tr><td>Fibre type <span class="zh">光纤类型</span></td><td>ITU-T G.652</td></tr>
+      <tr><td>Attenuation range <span class="zh">衰减范围</span></td><td>Class A: 5–20 dB · Class B: 10–25 dB · Class C: 15–30 dB <span class="zh">衰减等级 A/B/C</span></td></tr>
+      <tr><td>Differential optical path loss <span class="zh">差分光路损耗</span></td><td>15 dB</td></tr>
+      <tr><td>Maximum optical path penalty <span class="zh">最大光路代价</span></td><td>1 dB</td></tr>
+      <tr><td>Maximum logical reach <span class="zh">最大逻辑距离</span></td><td>60 km</td></tr>
+      <tr><td>Maximum fibre distance between S/R and R/S <span class="zh">收/发点间最大光纤距离</span></td><td>20 km（可选 10 km）</td></tr>
+      <tr><td>Minimum supported split ratio <span class="zh">最小支持分光比</span></td><td>Restricted by path loss; PON with passive splitters (16, 32 or 64 way split) <span class="zh">由路径损耗决定；16/32/64 路分光</span></td></tr>
+    </tbody>
+  </table>
+
+  <h2 class="sec">C. 为什么是 B+ / Why class B+ — G.984.2 Annex A.1</h2>
+  <div class="para">
+    <div class="pair"><p class="en">The widespread interest in the 2.4 Gbit/s downstream, 1.2 Gbit/s upstream GPON system has provided increased visibility into the feasibility of loss budgets for this system.</p>
+      <p class="cn">对 2.4 Gbit/s 下行、1.2 Gbit/s 上行 GPON 系统的广泛关注，使人们对该系统损耗预算的可行性有了更清晰的认识。</p></div>
+    <div class="pair"><p class="en">This annex describes industry best practices for this rate combination.</p>
+      <p class="cn">本附件描述了针对这一速率组合的行业最佳实践。</p></div>
+    <div class="pair"><p class="en">The notable variations from the loss budgets found elsewhere in this Recommendation include: overall loss budgets midway between class B and class C; different value of optical path penalties; the OLT must support FEC in the downstream.</p>
+      <p class="cn">与本建议书其它部分给出的损耗预算相比，其显著差异包括：总体损耗预算介于 Class B 与 Class C 之间；光路代价取值不同；OLT 必须在下行方向支持 FEC（前向纠错）。</p></div>
+    <div class="pair"><p class="en">These variations can provide increased capabilities for operation of GPON systems.</p>
+      <p class="cn">这些差异可以提升 GPON 系统的运行能力。</p></div>
+    <div class="pair"><p class="en">Therefore, the budgets contained in this annex are recommended over and above all others in this Recommendation for the 2.4/1.2 Gbit/s rate PON.</p>
+      <p class="cn">因此，对于 2.4/1.2 Gbit/s 速率的 PON，本附件给出的预算优先于本建议书中的其它所有预算。</p></div>
+    <div class="pair"><p class="en">This budget is named B+.</p>
+      <p class="cn">这个预算被命名为 <strong>B+</strong>。</p></div>
+  </div>
+
+  <h2 class="sec">D. 光功率预算表 / Loss budgets</h2>
+  <table>
+    <thead><tr><th>Item <span class="en2">项目</span></th><th>Class B+ <span class="en2">(G.984.2 Table A.2)</span></th><th>Class C+ <span class="en2">(G.984.2 Table V.3)</span></th><th>Class D <span class="en2">(Table V.4)</span></th></tr></thead>
+    <tbody>
+      <tr><td>Minimum optical loss @1490/1310 nm <span class="zh">最小光损耗</span></td><td>13 dB</td><td>17 dB</td><td>20 dB</td></tr>
+      <tr><td>Maximum optical loss @1490/1310 nm <span class="zh">最大光损耗</span></td><td><strong>28 dB</strong></td><td><strong>32 dB</strong></td><td><strong>35 dB</strong></td></tr>
+      <tr><td>Maximum fibre length <span class="zh">最大光纤长度</span></td><td>—</td><td>60 km</td><td>60 km</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">注：B+ 的"预算"即最大光损耗（28 dB）；做设计时把各器件损耗相加与该值比较。</p>
+
+  <h2 class="sec">E. 分光器与无源器件损耗 / Splitter and passive component loss — G.671</h2>
+  <div class="para">
+    <div class="pair"><p class="en">Optical branching component (wavelength non-selective) for PONs: N × X where the number of input ports N = 1 or 2 and the number of output ports X = 2, 4, 8, 16, 32 or 64.</p>
+      <p class="cn">用于 PON 的光分支器件（波长非选择性）：N × X，其中输入端口数 N = 1 或 2，输出端口数 X = 2、4、8、16、32 或 64。</p></div>
+    <div class="pair"><p class="en">Branching component should comply with the insertion loss requirements for both WR1 and WR2.</p>
+      <p class="cn">分支器件应同时满足 WR1（1310 nm 窗口）与 WR2（1550 nm 窗口）两个波长范围的插入损耗要求。</p></div>
+  </div>
+  <table>
+    <thead><tr><th>Split ratio <span class="en2">分光比</span></th><th>1:2</th><th>1:4</th><th>1:8</th><th>1:16</th><th>1:32</th><th>1:64</th></tr></thead>
+    <tbody>
+      <tr><td>Max IL, normal reach @WR1 <span class="zh">普通距离最大插入损耗</span></td><td>3.9</td><td>7.4</td><td>10.6</td><td>14.1</td><td>17.5</td><td>20.9</td></tr>
+      <tr><td>Max IL, extended reach @WR1 <span class="zh">扩展距离最大插入损耗</span></td><td>3.8</td><td>7.1</td><td>10.5</td><td>13.7</td><td>17.1</td><td>20.3</td></tr>
+    </tbody>
+  </table>
+  <table>
+    <thead><tr><th>Component <span class="en2">器件</span></th><th>Maximum insertion loss <span class="en2">最大插入损耗</span></th></tr></thead>
+    <tbody>
+      <tr><td>Optical connector, single fibre (§6.7.1) <span class="zh">单芯活动连接器</span></td><td>0.5 dB</td></tr>
+      <tr><td>Optical connector, multifibre (§6.7.2) <span class="zh">多芯活动连接器</span></td><td>1.0 dB</td></tr>
+      <tr><td>Fusion splice, active alignment (§6.14.2) <span class="zh">熔接（主动对准）</span></td><td>0.3 dB</td></tr>
+      <tr><td>Fusion splice, passive alignment (§6.14.3) <span class="zh">熔接（被动对准）</span></td><td>0.5 dB</td></tr>
+      <tr><td>Mechanical splice (§6.14.1) <span class="zh">机械接续</span></td><td>0.5 dB</td></tr>
+    </tbody>
+  </table>
+
+  <div class="terms">
+    <strong>关键术语 / Key terms：</strong>
+    ODN 光分配网 · insertion loss (IL) 插入损耗 · split ratio 分光比 · optical path penalty 光路代价 ·
+    fusion splice 熔接 · optical connector 活动连接器 · ODF 光纤配线架 · Class B+/C+/D 光功率预算等级 ·
+    logical reach 逻辑距离 · FEC 前向纠错
+  </div>
+
+  <footer>
+    Source: ITU-T Recommendations G.984.2 (08/2019) and G.671 (11/2025). © ITU. Excerpted for educational use.
+    译文由本教学工作区的 AI 老师生成，准确性以 ITU 原文为准。
+  </footer>
+
+</div>
+</body>
+</html>

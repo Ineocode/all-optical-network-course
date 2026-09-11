@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>方案模板 · 新楼全光网络建设方案（可填写）</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<style>
+  .page { max-width: 54rem; }
+  .sheet h2 { margin-top: 2.2rem; }
+  td:first-child { white-space: nowrap; }
+  .blank { display:inline-block; min-width: 6rem; border-bottom: 1px solid var(--border-strong); }
+  .fill { width:100%; border:none; border-bottom:1px dotted var(--border-strong); background:transparent; font:inherit; color:inherit; padding:0.15rem 0; }
+  table.calc td { height: 1.9rem; }
+  .ref-head { display:flex; justify-content:space-between; align-items:baseline; gap:1rem; flex-wrap:wrap; }
+  @media print { .fill { border-bottom: 1px solid #bbb; } }
+</style>
+</head>
+<body>
+<div class="page sheet">
+
+  <header class="masthead">
+    <div class="ref-head">
+      <p class="course-label">方案模板 · Reference 0009</p>
+      <p class="meta">配套 Lesson 09 · 打印填写</p>
+    </div>
+    <h1>《新楼全光网络建设方案》模板</h1>
+    <p class="meta"><span>从需求 → 选型 → 拓扑 → 保护 → 清单 → 投资</span></p>
+  </header>
+
+  <div class="tip">
+    <span class="t">用法</span>
+    打印本页，或直接在电脑上填。每一项怎么填、数据从哪来，见对应 lesson。卡住的地方来问老师。
+  </div>
+
+  <h2><span class="no">01</span> 方案摘要（先写这段，全文的骨架）</h2>
+  <p style="line-height:2.4">
+    本方案对 <input class="fill" style="width:18%" placeholder="建筑/点位"> 采用
+    <input class="fill" style="width:12%" placeholder="制式"> 全光网络，分光比
+    <input class="fill" style="width:8%" placeholder="1:N">，依据是光功率预算余量
+    <input class="fill" style="width:8%" placeholder="X dB"> 与收敛比
+    <input class="fill" style="width:8%" placeholder="Y">；OLT 设于
+    <input class="fill" style="width:16%" placeholder="位置"> 并双归核心；对
+    <input class="fill" style="width:14%" placeholder="关键区域"> 采用 Type C、其余 Type B。
+  </p>
+
+  <h2><span class="no">02</span> 需求分析</h2>
+  <table class="calc">
+    <thead><tr><th>项目</th><th>填写</th></tr></thead>
+    <tbody>
+      <tr><td>建筑面积 / 层数</td><td><input class="fill" placeholder=""></td></tr>
+      <tr><td>信息点总数</td><td><input class="fill" placeholder=""></td></tr>
+      <tr><td>业务类型</td><td><input class="fill" placeholder="病房 / 门诊 / 手术 / 影像 / 物联网…"></td></tr>
+      <tr><td>单点承诺带宽</td><td><input class="fill" placeholder="普通 __ M；影像 __ G"></td></tr>
+      <tr><td>到主机房距离</td><td><input class="fill" placeholder="__ km"></td></tr>
+      <tr><td>楼内机房条件</td><td><input class="fill" placeholder="有/无 合格设备间（供电/UPS/空调/安防）"></td></tr>
+      <tr><td>可靠性要求</td><td><input class="fill" placeholder="哪些区要 Type C"></td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="no">03</span> 光功率预算（L2）</h2>
+  <table class="calc">
+    <thead><tr><th>项目</th><th>数量 × 单位损耗</th><th>= dB</th></tr></thead>
+    <tbody>
+      <tr><td>光纤（1310 nm）</td><td><input class="fill" placeholder="__ km × 0.4"></td><td><input class="fill" placeholder=""></td></tr>
+      <tr><td>熔接</td><td><input class="fill" placeholder="__ × 0.3"></td><td><input class="fill" placeholder=""></td></tr>
+      <tr><td>连接器</td><td><input class="fill" placeholder="__ × 0.5"></td><td><input class="fill" placeholder=""></td></tr>
+      <tr><td>光路代价</td><td>—</td><td>1.00</td></tr>
+      <tr><td>设计余量</td><td>—</td><td>3.00</td></tr>
+      <tr><td><strong>固定合计</strong></td><td></td><td><input class="fill" placeholder=""></td></tr>
+      <tr><td><strong>可给分光器</strong></td><td>预算 − 固定合计</td><td><input class="fill" placeholder=""></td></tr>
+      <tr><td><strong>选定分光比</strong></td><td>1:16(14.1) / 1:32(17.5) / 1:64(20.9)</td><td><input class="fill" placeholder=""></td></tr>
+    </tbody>
+  </table>
+  <p class="cite">预算取值：Class B+ = 28 dB；C+ = 32 dB；D = 35 dB。XGS-PON 用设备手册的等级值。</p>
+
+  <h2><span class="no">04</span> 带宽与制式决策（L3）</h2>
+  <table class="calc">
+    <thead><tr><th>项目</th><th>计算 / 填写</th></tr></thead>
+    <tbody>
+      <tr><td>总承诺带宽</td><td><input class="fill" placeholder="点数 × 单点带宽 = __"></td></tr>
+      <tr><td>单个 PON 口承诺</td><td><input class="fill" placeholder="分光比 × 单点带宽 = __"></td></tr>
+      <tr><td>收敛比</td><td><input class="fill" placeholder="单口承诺 ÷ 线路速率 = __"></td></tr>
+      <tr><td>所需 PON 口数</td><td><input class="fill" placeholder="点数 ÷ 分光比 ≈ __"></td></tr>
+      <tr><td>选定制式</td><td><input class="fill" placeholder="GPON / XGS-PON / 50G-PON，理由："></td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="no">05</span> 拓扑与保护（L4）</h2>
+  <table class="calc">
+    <thead><tr><th>决策</th><th>填写</th></tr></thead>
+    <tbody>
+      <tr><td>OLT 位置</td><td><input class="fill" placeholder="集中 / 分散 / 混合，理由："></td></tr>
+      <tr><td>分光层级</td><td><input class="fill" placeholder="一级 / 二级，分光器放哪："></td></tr>
+      <tr><td>上行</td><td><input class="fill" placeholder="是否双归核心、双电源"></td></tr>
+      <tr><td>保护方式</td><td><input class="fill" placeholder="关键区 Type C / 普通区 Type B"></td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="no">06</span> 场景与安全运维（L5 / L6）</h2>
+  <table class="calc">
+    <thead><tr><th>项目</th><th>填写</th></tr></thead>
+    <tbody>
+      <tr><td>三张网</td><td><input class="fill" placeholder="内网 / 外网 / 设备网 如何隔离"></td></tr>
+      <tr><td>QoS</td><td><input class="fill" placeholder="优先级排序"></td></tr>
+      <tr><td>安全</td><td><input class="fill" placeholder="ONU 认证方式 + 是否开 AES"></td></tr>
+      <tr><td>运维</td><td><input class="fill" placeholder="网管平台 + 光功率/OTDR 手段 + 台账"></td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="no">07</span> 设备材料清单（汇总）</h2>
+  <table>
+    <thead><tr><th>设备 / 材料</th><th>规格</th><th>数量</th><th>备注</th></tr></thead>
+    <tbody>
+      <tr><td>OLT</td><td>型号 / 板卡配置</td><td></td><td>含双电源</td></tr>
+      <tr><td>PON 业务板</td><td>GPON / XGS-PON / 50G-PON</td><td></td><td>按 PON 口数</td></tr>
+      <tr><td>ONU</td><td>型号（网口/电话/AP/物联网）</td><td></td><td>按点位数</td></tr>
+      <tr><td>分光器</td><td>1:4 / 1:8 / 1:32（PLC）</td><td></td><td>按层级</td></tr>
+      <tr><td>光缆</td><td>单模 G.652，芯数</td><td></td><td>主干 + 楼内</td></tr>
+      <tr><td>ODF / 配线</td><td></td><td></td><td></td></tr>
+      <tr><td>网管</td><td>平台 / 授权</td><td></td><td></td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="no">08</span> 两组练习数据速览</h2>
+  <table>
+    <thead><tr><th></th><th>项目 A · 专科楼</th><th>项目 B · 综合楼</th></tr></thead>
+    <tbody>
+      <tr><td>规模</td><td>12 层 / 1200 点</td><td>20 层 / 3000 点</td></tr>
+      <tr><td>业务</td><td>办公/普通病房/门诊</td><td>+手术(4K)/影像(PACS)/病理 AI/Wi-Fi 7</td></tr>
+      <tr><td>单点带宽</td><td>约 100M</td><td>普通 ≤100M；影像/手术 1–10G</td></tr>
+      <tr><td>到主机房</td><td>0.8 km（楼内有设备间）</td><td>2.0 km（楼内无合格机房）</td></tr>
+      <tr><td>可靠性</td><td>Type B</td><td>关键区 Type C</td></tr>
+      <tr><td>约束</td><td>预算敏感</td><td>面向未来 10 年</td></tr>
+    </tbody>
+  </table>
+  <p class="cite">参考解答见 <a href="../lessons/0009-build-the-proposal.html">Lesson 09</a> 第 4、5 节。</p>
+
+  <h2><span class="no">09</span> 提交前自检清单</h2>
+  <ol class="checklist" data-checklist="lesson-0009-proposal">
+    <li>需求数据是否完整（点数/业务/带宽/距离/机房/可靠性）？</li>
+    <li>光功率预算是否含 1 dB 光路代价与 3 dB 余量？</li>
+    <li>分光比是否同时通过光功率门与带宽门？</li>
+    <li>制式选择是否给了理由（不是"厂商推荐"）？</li>
+    <li>OLT 位置是否说明机房条件与双归？</li>
+    <li>关键区是否 Type C，普通区是否 Type B？</li>
+    <li>三张网隔离、AES、ONU 认证是否写明？</li>
+    <li>是否诚实列出全光的代价/边界与对策？</li>
+    <li>设备清单数量是否与点位/分光比/端口数自洽？</li>
+    <li>投资估算是否分区块、可否追溯到清单？</li>
+  </ol>
+
+  <div class="footer">
+    <div class="links">
+      <a href="../index.html">课程主页</a>
+      <a href="../lessons/0009-build-the-proposal.html">Lesson 09</a>
+      <a href="../ROADMAP.md">路线图</a>
+      <a href="../GLOSSARY.md">术语表</a>
+      <a href="../RESOURCES.md">资料清单</a>
+    </div>
+  </div>
+
+</div>
+<script src="../assets/checklist.js"></script>
+</body>
+</html>

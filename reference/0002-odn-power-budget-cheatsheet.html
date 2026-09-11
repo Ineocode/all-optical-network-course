@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>速查表 · ODN 与光功率预算</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<style>
+  .page { max-width: 52rem; }
+  .sheet h2 { margin-top: 2.2rem; }
+  td:first-child { white-space: nowrap; }
+  .ref-head { display:flex; justify-content:space-between; align-items:baseline; gap:1rem; flex-wrap:wrap; }
+</style>
+</head>
+<body>
+<div class="page sheet">
+
+  <header class="masthead">
+    <div class="ref-head">
+      <p class="course-label">速查表 · Reference 0002</p>
+      <p class="meta">配套 Lesson 02 · 打印友好</p>
+    </div>
+    <h1>ODN 器件损耗 &amp; 光功率预算速查</h1>
+    <p class="meta"><span>一手来源：ITU-T G.984.2 · G.671 · G.652</span></p>
+  </header>
+
+  <h2><span class="no">01</span> 判定公式</h2>
+  <div class="win">
+    <p><strong>总损耗 = 光纤 + 分光器 + 连接器 + 熔接 + 光路代价(1 dB) + 设计余量(3 dB)　≤　预算</strong></p>
+  </div>
+
+  <h2><span class="no">02</span> 光纤衰减（ITU-T G.652，最大值）</h2>
+  <table>
+    <thead><tr><th>波长</th><th>最大衰减</th><th>方向 / 用途</th></tr></thead>
+    <tbody>
+      <tr><td>1310 nm</td><td>0.4 dB/km</td><td>PON 上行（ONU→OLT），通常是限制方向</td></tr>
+      <tr><td>1490 nm</td><td>约 0.4 dB/km（1530–1565 nm 段 0.30）</td><td>PON 下行（OLT→ONU）</td></tr>
+      <tr><td>1550 nm</td><td>0.35 dB/km</td><td>视频叠加 / 长距</td></tr>
+      <tr><td>室内光缆</td><td>≤ 1.0 dB/km（IEC 60794-2-11）</td><td>跳纤、户内短缆，注意不能忽略</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="no">03</span> 分光器插入损耗（ITU-T G.671 §6.6，PON 用，1310 nm 窗口最大值）</h2>
+  <table>
+    <thead><tr><th>分光比</th><th>1:2</th><th>1:4</th><th>1:8</th><th>1:16</th><th>1:32</th><th>1:64</th></tr></thead>
+    <tbody>
+      <tr><td>普通距离 max IL</td><td>3.9</td><td>7.4</td><td>10.6</td><td>14.1</td><td>17.5</td><td>20.9</td></tr>
+      <tr><td>扩展距离 max IL</td><td>3.8</td><td>7.1</td><td>10.5</td><td>13.7</td><td>17.1</td><td>20.3</td></tr>
+    </tbody>
+  </table>
+  <p class="cite">记忆：分光比每翻一倍 ≈ +3 dB。</p>
+
+  <h2><span class="no">04</span> 连接器 / 熔接（ITU-T G.671 §6.7、§6.14，最大值）</h2>
+  <table>
+    <thead><tr><th>接续方式</th><th>最大插入损耗</th></tr></thead>
+    <tbody>
+      <tr><td>单芯活动连接器</td><td>0.5 dB / 个</td></tr>
+      <tr><td>多芯活动连接器</td><td>1.0 dB / 个</td></tr>
+      <tr><td>熔接（主动对准）</td><td>0.3 dB / 点</td></tr>
+      <tr><td>熔接（被动对准）/ 机械接续</td><td>0.5 dB / 点</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="no">05</span> 光功率预算等级（ITU-T G.984.2）</h2>
+  <table>
+    <thead><tr><th>等级</th><th>允许损耗范围</th><th>备注</th></tr></thead>
+    <tbody>
+      <tr><td>ODN Class A</td><td>5 – 20 dB</td><td>ODN 衰减等级（G.982）</td></tr>
+      <tr><td>ODN Class B</td><td>10 – 25 dB</td><td></td></tr>
+      <tr><td>ODN Class C</td><td>15 – 30 dB</td><td></td></tr>
+      <tr><td>Class B+</td><td>13 – <strong>28 dB</strong></td><td>GPON 主流</td></tr>
+      <tr><td>Class C+</td><td>17 – <strong>32 dB</strong></td><td>扩展距离，最大 60 km</td></tr>
+      <tr><td>Class D</td><td>20 – <strong>35 dB</strong></td><td>更长距离</td></tr>
+    </tbody>
+  </table>
+  <p class="cite">其它参数（G.984.2 表 2a）：最大逻辑距离 60 km；S/R 到 R/S 最大光纤距离 20 km（可选 10 km）；差分光路损耗 15 dB；最大光路代价 1 dB。</p>
+  <p class="cite">XGS-PON 使用 N1 / N2 / E1 / E2 等级（G.9807.1），计算方式相同——以 OLT/ONU 数据手册标称的预算值为准。</p>
+
+  <h2><span class="no">06</span> dB 运算三条规则</h2>
+  <table>
+    <thead><tr><th>规则</th><th>含义</th></tr></thead>
+    <tbody>
+      <tr><td>串联相加</td><td>各器件损耗直接相加</td></tr>
+      <tr><td>−3 dB</td><td>功率减半（分光比翻倍）</td></tr>
+      <tr><td>−10 dB</td><td>功率降到 1/10</td></tr>
+      <tr><td>dBm − dBm = dB</td><td>功率差才是"损耗/余量"</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="no">07</span> 工作示例（Class B+）</h2>
+  <table>
+    <thead><tr><th>项目</th><th>数量 × 单位损耗</th><th>= dB</th></tr></thead>
+    <tbody>
+      <tr><td>光纤 1310 nm</td><td>2.3 km × 0.4</td><td>0.92</td></tr>
+      <tr><td>熔接</td><td>2 × 0.3</td><td>0.60</td></tr>
+      <tr><td>连接器</td><td>4 × 0.5</td><td>2.00</td></tr>
+      <tr><td>光路代价</td><td>—</td><td>1.00</td></tr>
+      <tr><td>设计余量</td><td>—</td><td>3.00</td></tr>
+      <tr><td><strong>固定合计</strong></td><td></td><td><strong>7.52</strong></td></tr>
+      <tr><td>可给分光器</td><td>28 − 7.52</td><td><strong>20.48</strong></td></tr>
+    </tbody>
+  </table>
+  <table>
+    <thead><tr><th>分光比</th><th>IL</th><th>能否 ≤ 20.48</th><th>结论</th></tr></thead>
+    <tbody>
+      <tr><td>1:16</td><td>14.1</td><td>✓ 余 6.4</td><td>推荐</td></tr>
+      <tr><td>1:32</td><td>17.5</td><td>✓ 余 3.0</td><td>可用</td></tr>
+      <tr><td>1:64</td><td>20.9</td><td>✗ 超 0.42</td><td>不可行</td></tr>
+    </tbody>
+  </table>
+
+  <div class="footer">
+    <div class="links">
+      <a href="../index.html">课程主页</a>
+      <a href="../lessons/0002-odn-and-power-budget.html">Lesson 02</a>
+      <a href="./0001-architecture-comparison-cheatsheet.html">L1 速查表</a>
+      <a href="../GLOSSARY.md">术语表</a>
+      <a href="../RESOURCES.md">资料清单</a>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

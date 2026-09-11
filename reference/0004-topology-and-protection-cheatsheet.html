@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>速查表 · 全光院区分层与保护</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+<style>
+  .page { max-width: 52rem; }
+  .sheet h2 { margin-top: 2.2rem; }
+  td:first-child { white-space: nowrap; }
+  .ref-head { display:flex; justify-content:space-between; align-items:baseline; gap:1rem; flex-wrap:wrap; }
+</style>
+</head>
+<body>
+<div class="page sheet">
+
+  <header class="masthead">
+    <div class="ref-head">
+      <p class="course-label">速查表 · Reference 0004</p>
+      <p class="meta">配套 Lesson 04 · 打印友好</p>
+    </div>
+    <h1>分层拓扑 &amp; 保护方式速查</h1>
+    <p class="meta"><span>一手来源：ITU-T G.984.1 §14 · G.984.2 · G.671</span></p>
+  </header>
+
+  <h2><span class="no">01</span> OLT 部署模式</h2>
+  <table>
+    <thead><tr><th>模式</th><th>做法</th><th>优点 / 代价</th></tr></thead>
+    <tbody>
+      <tr><td>集中式</td><td>全院区只在中心机房放 OLT</td><td>机房好、运维集中；主干光缆用量大</td></tr>
+      <tr><td>分散式</td><td>每栋楼/片区各放 OLT（或小容量 OLT）</td><td>就近终结、省主干；机房多、运维分散</td></tr>
+      <tr><td>混合式</td><td>中心机房大 OLT + 楼栋小 OLT</td><td>平衡成本与运维，医院常见</td></tr>
+    </tbody>
+  </table>
+  <table>
+    <thead><tr><th>决策因素</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>机房条件</td><td>供电 / UPS / 空调 / 接地 / 安防——OLT 是有源设备</td></tr>
+      <tr><td>光缆路由</td><td>主干从哪走、有无管道桥架</td></tr>
+      <tr><td>ODN 层级</td><td>决定主干光纤用量与分光损耗</td></tr>
+      <tr><td>运维便利</td><td>换板卡/查故障的到场成本</td></tr>
+      <tr><td>可靠性</td><td>是否单点、能否双归核心、是否需 Type C</td></tr>
+    </tbody>
+  </table>
+  <p class="cite">注意：ODN 可达 20 km，院内距离通常不是约束。</p>
+
+  <h2><span class="no">02</span> 一级分光 vs 二级分光</h2>
+  <table>
+    <thead><tr><th></th><th>一级分光（集中）</th><th>二级分光（分散/级联）</th></tr></thead>
+    <tbody>
+      <tr><td>结构</td><td>OLT → 一个 1:N → ONU（并行）</td><td>OLT → 1:M → 1:K → ONU（级联）</td></tr>
+      <tr><td>损耗</td><td>最小（1:32 = 17.5 dB）</td><td>略高（1:8+1:4 = 18.0 dB + 额外接续）</td></tr>
+      <tr><td>主干光纤</td><td>用得多（从分光点拉 N 根）</td><td>用得少（逐级下沉）</td></tr>
+      <tr><td>灵活性</td><td>改动需动集中分光点</td><td>可随楼层/楼栋逐级扩容</td></tr>
+      <tr><td>故障定位</td><td>相对容易</td><td>更复杂（多级无源）</td></tr>
+    </tbody>
+  </table>
+  <p class="cite">原则：主干少分光、楼内就近分光；最终必须回 L2 光功率预算验证。ODN 形态为标准"树形与分支"结构（G.984.2）。</p>
+
+  <h2><span class="no">03</span> PON 保护类型（ITU-T G.984.1 §14.2）</h2>
+  <table>
+    <thead><tr><th>类型</th><th>双份范围</th><th>可恢复范围</th><th>切换</th></tr></thead>
+    <tbody>
+      <tr><td>Type A</td><td>仅光纤</td><td colspan="2">已废弃</td></tr>
+      <tr><td><strong>Type B</strong></td><td>OLT 侧 + OLT 到分光器光纤；分光器 OLT 侧双输入口</td><td>仅 OLT 侧</td><td>冷备，切换期可能丢信号/丢帧</td></tr>
+      <tr><td><strong>Type C</strong></td><td>OLT 侧 + ONU 侧全双份</td><td>任意一点</td><td>热备，无损切换（hitless）</td></tr>
+      <tr><td>Type D</td><td>B 与 C 混合</td><td colspan="2">已废弃</td></tr>
+    </tbody>
+  </table>
+  <table>
+    <thead><tr><th>切换触发方式</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>自动切换</td><td>故障触发：LOS 失光、LOF 失帧、信号劣化（BER 超阈值）</td></tr>
+      <tr><td>强制切换</td><td>人工触发：光纤割接、更换</td></tr>
+    </tbody>
+  </table>
+  <p class="cite">保护为可选功能（G.984.1 §14.3）。PON 线路终端可不在一台设备内，允许物理分离（双归属/dual parenting）。</p>
+
+  <h2><span class="no">04</span> 医院保护选型建议</h2>
+  <table>
+    <thead><tr><th>区域</th><th>建议</th></tr></thead>
+    <tbody>
+      <tr><td>手术室、影像中心（PACS/CT/MR）、数字病理、核心业务</td><td>Type C</td></tr>
+      <tr><td>普通病房、门诊、办公</td><td>Type B</td></tr>
+      <tr><td>后勤、仓库等非关键</td><td>可不做 PON 侧保护，保留上行双归与双电源</td></tr>
+    </tbody>
+  </table>
+  <div class="warn">
+    <span class="t">端到端检查</span>
+    PON 侧 Type B/C 之外，还要确认：OLT 上行双归核心、核心双机、OLT 双电源、主备走线物理分离。
+  </div>
+
+  <h2><span class="no">05</span> 画拓扑时自检清单</h2>
+  <ol class="checklist" data-checklist="lesson-0004-topology">
+    <li>OLT 位置：机房条件是否齐全？上行是否双归核心？</li>
+    <li>ODN：一级还是二级？分光器放中心机房 / 楼栋 / 楼层？</li>
+    <li>光功率：分光比是否通过 L2 的损耗预算（含 3 dB 余量）？</li>
+    <li>带宽：Σ承诺带宽 ÷ 线路速率 的收敛比是否够用？</li>
+    <li>保护：关键区 Type C、普通区 Type B，是否还有单点？</li>
+    <li>走线：主备路径是否物理分离，不共管沟？</li>
+  </ol>
+
+  <div class="footer">
+    <div class="links">
+      <a href="../index.html">课程主页</a>
+      <a href="../lessons/0004-topology-and-protection.html">Lesson 04</a>
+      <a href="./0003-pon-standards-cheatsheet.html">L3 速查表</a>
+      <a href="./0002-odn-power-budget-cheatsheet.html">L2 速查表</a>
+      <a href="../GLOSSARY.md">术语表</a>
+    </div>
+  </div>
+
+</div>
+<script src="../assets/checklist.js"></script>
+</body>
+</html>

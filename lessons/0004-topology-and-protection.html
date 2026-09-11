@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 04 · 全光院区分层与拓扑</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+<div class="page">
+
+  <header class="masthead">
+    <p class="course-label"><a href="../index.html">← 课程主页</a> · 全光网络架构 · Lesson 04</p>
+    <h1>分层与拓扑：OLT 放哪、ODN 怎么分、保护怎么做</h1>
+    <p class="meta">
+      <span>2026-09-11</span>
+      <span>约 45 分钟</span>
+      <span>前置：Lesson 03</span>
+    </p>
+  </header>
+
+  <div class="win">
+    <span class="label">本课成果 · Win</span>
+    <p>你能画出<strong>院区级的 OLT + ODN 拓扑图</strong>：OLT 放在哪、分光器分几级、哪些链路做
+    <strong>Type B / Type C 保护</strong>，并说明每个选择的理由。</p>
+  </div>
+
+  <p><a href="./0003-pon-standards-and-selection.html">上一课</a>结尾留了一个问题：
+  <strong>新楼的 OLT 该放住院楼、门诊楼，还是独立中心机房？</strong>
+  这一课把这个问题连同"ODN 怎么分、哪里要保护"一起讲清楚——开始把方案<strong>画出来</strong>。</p>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">01</span> OLT 放哪：集中式、分散式，还是混合</h2>
+
+  <p>先纠正一个直觉：<strong>距离几乎不是约束</strong>。ODN 是无源的，光纤可达 20 km
+  <sup><a href="../lessons/0001-what-is-all-optical-campus.html">[L1]</a></sup>，
+  院内几公里的跨度对它来说毫无压力。真正决定 OLT 位置的是下面这几件事：</p>
+
+  <table>
+    <thead><tr><th>决策因素</th><th>为什么重要</th></tr></thead>
+    <tbody>
+      <tr><td>机房条件</td><td>OLT 是有源设备，要供电、UPS、空调、接地、安防——不是随便一个弱电间能放</td></tr>
+      <tr><td>光缆路由</td><td>主干光缆从哪走、有没有管道/桥架，决定 OLT 到分光器的物理路径</td></tr>
+      <tr><td>ODN 分光层级</td><td>OLT 越靠前，主干越集中；越靠近用户，主干光纤用量越少</td></tr>
+      <tr><td>运维便利</td><td>换板卡、查故障要人到现场；OLT 集中则运维方便</td></tr>
+      <tr><td>可靠性</td><td>OLT 是不是单点？能否双归属到核心？关键业务要不要 Type C</td></tr>
+    </tbody>
+  </table>
+
+  <h3>三种部署模式</h3>
+  <table>
+    <thead><tr><th>模式</th><th>做法</th><th>优点 / 代价</th></tr></thead>
+    <tbody>
+      <tr><td><strong>集中式</strong></td><td>全院区只在中心机房放 OLT，ODN 拉遍各楼</td><td>机房条件好、运维集中；主干光缆用量大、路由长</td></tr>
+      <tr><td><strong>分散式</strong></td><td>每栋楼/每个片区各放一台 OLT（或小容量 OLT）</td><td>就近终结、省主干光缆；机房点多、运维分散</td></tr>
+      <tr><td><strong>混合式</strong></td><td>中心机房放大 OLT + 楼栋放小 OLT，上行统一汇聚</td><td>平衡成本与运维，医院最常见</td></tr>
+    </tbody>
+  </table>
+
+  <div class="tip">
+    <span class="t">回到 L3 的问题</span>
+    没有唯一正确答案，但有判断顺序：<br>
+    ① 新楼若有合格的设备间（供电/UPS/空调/安防）→ 可在<strong>新楼设备间放一台 OLT</strong>，就近接入、减少主干跳接；<br>
+    ② 若机房条件不足，或全院光缆本就汇聚到中心机房 → <strong>集中放在中心机房</strong>；<br>
+    ③ 无论哪种，OLT 上行都应<strong>双归到核心交换机</strong>，不要让 OLT 成为单点。
+  </div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">02</span> ODN 怎么分：一级分光 vs 二级分光</h2>
+
+  <p>标准里 ODN 的形态就是"点到多点的<strong>树形与分支</strong>结构"
+  <sup><a href="https://www.itu.int/rec/T-REC-G.984.2/en" target="_blank">[G.984.2]</a></sup>。
+  工程上把它落成两种典型做法：</p>
+
+  <div class="compare">
+    <div class="a">
+      <h4>一级分光（集中分光）</h4>
+      <p>OLT → 一个 1:N 分光器 → 各 ONU。<br>
+      结构简单，损耗最小，故障定位相对容易；但分光器集中，<strong>需要从分光点拉出 N 根光纤</strong>，光纤用量大。</p>
+    </div>
+    <div class="b">
+      <h4>二级分光（分散分光）</h4>
+      <p>OLT → 第一级 1:M → 第二级 1:K → ONU。<br>
+      主干只用少量光纤，<strong>可随楼层/楼栋逐级分光</strong>；代价是多了插损和接续点，故障定位更复杂。</p>
+    </div>
+  </div>
+
+  <p>损耗差多少？用 <a href="../reference/0002-odn-power-budget-cheatsheet.html">L2 的分光器表</a>算一下：</p>
+  <table>
+    <thead><tr><th>方案</th><th>插入损耗</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>一级 1:32</td><td>17.5 dB</td><td>G.671 普通距离最大值</td></tr>
+      <tr><td>二级 1:8 + 1:4</td><td>10.6 + 7.4 = <strong>18.0 dB</strong></td><td>比单级多约 0.5 dB，另有额外熔接/连接器损耗</td></tr>
+    </tbody>
+  </table>
+
+  <div class="warn">
+    <span class="t">选择要点</span>
+    <strong>主干少分光、楼内就近分光</strong>是常见原则：主干（跨楼、长距离）用大分光比容易吃掉预算，
+    把分光器下沉到楼层/楼栋，既省光纤又保留灵活性。具体分几级、放哪里，必须回到
+    <a href="./0002-odn-and-power-budget.html">L2 的光功率预算</a>去验证。
+  </div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">03</span> 保护与冗余：Type B 和 Type C</h2>
+
+  <p>PON 本来是一棵树，主干断了会连累一大片。ITU-T G.984.1 第 14 章定义了几种双份（duplex）保护配置
+  <sup><a href="https://www.itu.int/rec/T-REC-G.984.1/en" target="_blank">[G.984.1]</a></sup>：</p>
+
+  <table>
+    <thead><tr><th>类型</th><th>双份的是什么</th><th>能恢复到哪</th><th>切换特性</th></tr></thead>
+    <tbody>
+      <tr><td>Type A</td><td>只双份光纤</td><td colspan="2"><em>已废弃</em></td></tr>
+      <tr><td><strong>Type B</strong></td><td>OLT 侧 + OLT 到分光器的光纤；分光器在 OLT 侧有<strong>两个输入口</strong></td><td>只能恢复 <strong>OLT 侧</strong>（ONU 侧不冗余）</td><td>冷备；切换期间会丢信号甚至丢帧</td></tr>
+      <tr><td><strong>Type C</strong></td><td>OLT 侧 <strong>和 ONU 侧都双份</strong></td><td><strong>任意一点</strong>故障都能切到备用</td><td>热备；可实现<strong>无损切换（hitless）</strong></td></tr>
+      <tr><td>Type D</td><td>Type B 与 C 的混合</td><td colspan="2"><em>已废弃</em></td></tr>
+    </tbody>
+  </table>
+  <p class="cite">来源：ITU-T G.984.1 (03/2008) 第 14.2 节。切换可由故障自动触发（LOS 失光、LOF 失帧、信号劣化 BER 超标），
+  也可由人工强制触发（光纤割接、更换）。两种都要求是<strong>可选功能</strong>（14.3）。</p>
+
+  <p>把保护"跑"一遍。点左下"故障点"按钮，在 <strong>无 → OLT/主干 → 配线段</strong> 之间切换，
+  再切换 <strong>Type B / Type C</strong>，观察光脉冲走哪条路：</p>
+  <ul>
+    <li><strong>主干故障</strong>：Type B 与 Type C 都能倒换到 OLT-B（都能恢复）。</li>
+    <li><strong>配线段故障（关键区别）</strong>：<strong>Type B 业务中断</strong>——它只保护 OLT 侧与主干，
+    保护不到 ONU 侧；而 <strong>Type C 倒换到备用配线，业务不断</strong>（图里 ONU 的第②个上行口）。</li>
+  </ul>
+  <div class="ponmap" data-mode="protection"></div>
+
+  <div class="win">
+    <span class="label">一句话记住区别</span>
+    <p><strong>Type B 保的是"主干和 OLT"，Type C 保的是"从 OLT 到 ONU 全程"。</strong>
+    Type C 才敢说"任意一点断了业务不断"。</p>
+  </div>
+
+  <h3>医院该怎么用</h3>
+  <table>
+    <thead><tr><th>区域</th><th>建议</th></tr></thead>
+    <tbody>
+      <tr><td>手术室、影像中心（PACS/CT/MR）、数字病理、核心业务</td><td><strong>Type C</strong>（双 OLT/双板卡 + 双路径 + 双 ONU）</td></tr>
+      <tr><td>普通病房、门诊、办公</td><td>Type B（或结合楼栋双上行）</td></tr>
+      <tr><td>后勤、仓库等非关键</td><td>可不做 PON 侧保护，但保留 OLT 上行双归与双电源</td></tr>
+    </tbody>
+  </table>
+
+  <div class="tip">
+    <span class="t">别只盯 ODN</span>
+    保护是<strong>端到端</strong>的：除了 PON 侧 Type B/C，还要看 OLT 上行是否双归核心、核心交换机是否双机、
+    OLT 是否双电源、主备走线是否物理分离。只做 PON 保护、上行仍是单链路，等于白做。
+  </div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">04</span> 技能练习</h2>
+
+  <div class="quiz" data-quiz='[
+   {"q":"在院区内选 OLT 位置时，通常“不是”决定性因素的是？",
+    "options":["设备间的供电与空调条件","主干光缆的路由与长度","ODN 20 公里的距离上限","运维与安全管理的便利"],
+    "answer":2,
+    "explain":"无源 ODN 光纤可达 20 km，院内几公里远未触及上限，所以距离通常不是约束；真正决定位置的是机房条件、光缆路由、运维与可靠性。"},
+   {"q":"相比一级分光，二级分光（级联）的主要代价是什么？",
+    "options":["每级分光器都要单独供电","额外插入损耗与更多接续点","无法支持 1:32 分光比","必须改用 50G-PON 制式"],
+    "answer":1,
+    "explain":"二级分光多一级分光器与接续点：1:8+1:4=18.0 dB，比单级 1:32 的 17.5 dB 略高，还多出熔接/连接器损耗；但能省主干光纤、逐级下沉。"},
+   {"q":"Type B 保护能覆盖到的范围是？",
+    "options":["只能保护 OLT 侧与主干光纤","从 OLT 到 ONU 任意一点","只保护 ONU 侧与入户段","只保护机房的供电系统"],
+    "answer":0,
+    "explain":"Type B 双份 OLT 侧与 OLT 到分光器的光纤，ONU 侧不冗余，所以只能恢复 OLT 侧；冷备，切换期间可能丢信号或丢帧。"},
+   {"q":"Type C 相比 Type B 的关键优势是什么？",
+    "options":["整体造价明显更低","可以支持更大分光比","不需要 OLT 双机","热备且任意点可恢复"],
+    "answer":3,
+    "explain":"Type C 同时双份 OLT 侧与 ONU 侧，可热备、实现无损切换（hitless），任意一点故障都能切到备用；代价是全程双份，成本最高。"},
+   {"q":"新建医院里，最该采用 Type C 保护的是哪类区域？",
+    "options":["普通住院病房与走廊","门诊大厅与办公区","手术室、影像中心与核心业务","后勤仓库与停车场"],
+    "answer":2,
+    "explain":"手术室、影像中心（PACS/CT/MR）、数字病理等关键业务一旦中断直接影响诊疗，值得上 Type C；普通区域 Type B 或不做即可。"}
+  ]'></div>
+
+  <div class="recall">
+    <div class="rt">回忆练习 · 画出院区拓扑</div>
+    <p>用一张纸，为下面的场景画出<strong> OLT + ODN 拓扑</strong>，并标出保护方式。不用完美，关键是能把选择讲清楚：</p>
+    <p><strong>场景：</strong>新院区一栋 20 层住院楼（每层约 100 个点位，含病房、护士站、Wi-Fi AP），
+    另有独立的影像中心（CT/MR/PACS）和手术部。中心机房已在住院楼地下一层，条件齐全；
+    住院楼到影像中心约 500 m。</p>
+    <p>要回答：① OLT 放哪（几台、放哪里）？② ODN 用一级还是二级分光、分光器放哪？③ 哪些链路做 Type B、哪些做 Type C？</p>
+    <textarea placeholder="画出拓扑，并写下三个选择与理由……"></textarea>
+    <button type="button">看参考答案</button>
+    <div class="reveal">
+      <p><strong>① OLT：</strong>中心机房条件齐全 → 在<strong>住院楼地下一层中心机房放主 OLT</strong>；
+      若影像中心点位多、光缆路由独立，可在影像中心设备间放一台<strong>小容量 OLT</strong>（混合式），
+      两台上行都双归到核心交换机。</p>
+      <p><strong>② ODN：</strong>住院楼采用<strong>二级分光</strong>——主干到楼层用 1:8，楼层内再用 1:4 到房间，
+      合起来 1:32（约 18.0 dB，回 L2 光功率预算验证）；影像中心点位少、带宽高，用<strong>一级 1:4–1:8</strong> 直连更简单、损耗更低。</p>
+      <p><strong>③ 保护：</strong>手术部、影像中心（PACS）走 <strong>Type C</strong>（双 OLT/双板卡 + 双路径 + 双 ONU，任意点可恢复）；
+      普通病房与办公走 <strong>Type B</strong>（保 OLT 侧与主干）。所有 OLT 上行<strong>双归核心</strong>、双电源。</p>
+      <p class="cite">没有唯一标准答案；只要你的理由能对上"机房条件 / 省级光缆路由 / 光功率预算 / 故障影响范围"这几条，就是好方案。</p>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <h2><span class="no">05</span> 本课推荐阅读（Primary Source）</h2>
+
+  <div class="reading">
+    <span class="t">权威原文 · 中英对照</span>
+    <p><strong>ITU-T G.984.1 第 14 章《Protection on the PON section》</strong>——
+    Type A / B / C / D 四种保护配置的原始定义，以及切换类型与要求。</p>
+    <p>我已把该章整理成<strong>中英对照双语 PDF</strong>（上下排）：</p>
+    <p>👉 <a href="../reference/0004-itu-protection-bilingual.pdf">reference/0004-itu-protection-bilingual.pdf</a>
+    &nbsp;·&nbsp; 原文：<a href="https://www.itu.int/rec/T-REC-G.984.1/en" target="_blank">G.984.1</a></p>
+  </div>
+
+  <div class="reading">
+    <span class="t">速查</span>
+    <p>OLT 部署模式 + 一级/二级分光 + 保护类型对比：<a href="../reference/0004-topology-and-protection-cheatsheet.html">reference/0004-topology-and-protection-cheatsheet.html</a></p>
+  </div>
+
+  <div class="footer">
+    <div class="next">
+      <span class="t">下一课</span>
+      <p>下一课开始“落到房间”。<strong>Lesson 05 · 医院场景设计</strong>：病房、门诊、手术室、影像科、无线覆盖、物联网各自怎么接，VLAN / 硬隔离切片 / QoS 怎么划。你可以先想：医院的“内网、外网、设备网”应该在物理上怎么分？</p>
+    </div>
+    <div class="links">
+      <a href="../index.html">课程主页</a>
+      <a href="./0003-pon-standards-and-selection.html">← Lesson 03</a>
+      <a href="./0004-topology-and-protection.html">本课</a>
+      <a href="../reference/0004-topology-and-protection-cheatsheet.html">拓扑速查表</a>
+      <a href="../GLOSSARY.md">术语表</a>
+      <a href="../ROADMAP.md">路线图</a>
+    </div>
+  </div>
+
+</div>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/recall.js"></script>
+<script src="../assets/pon-flow.js"></script>
+</body>
+</html>
