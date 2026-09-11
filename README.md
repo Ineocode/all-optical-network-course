@@ -59,6 +59,31 @@
   - 例：Lesson 02 光功率预算动画显示脉冲沿途变暗并实时累计 dB；Lesson 04 保护倒换可点"故障点"切换主干/配线故障，对比 Type B 与 Type C。
 - **测验 / 回忆练习 / 清单**：纯前端，无依赖。
 
+## 团队使用
+
+### 获取课程
+
+```bash
+git clone https://github.com/Ineocode/all-optical-network-course.git
+cd all-optical-network-course
+```
+
+然后用浏览器打开 **`index.html`** 即可——纯静态，不需要服务器、不需要联网。
+
+### 浏览与协作
+
+- 本仓库为 **private**：团队成员需被邀请为 **Collaborator**（或克隆到本地查看）。
+- 勘误、补充一手资料、改进动画：直接开 **Issue** 或提 **PR**。
+- 新增课程：在 `lessons/` 下新建 `NNNN-*.html`，并在 `index.html` 的路线图里加一张卡片（模板可参考现有 lesson）。
+
+### 三个常用入口
+
+| 入口 | 路径 |
+|---|---|
+| 课程主页（路线图导航） | `index.html` |
+| 课程正文 | `lessons/` |
+| 速查表与双语 PDF | `reference/` |
+
 ## 资料来源与免责声明
 
 - 课程中的技术数值尽量给出出处。**ITU-T 建议书**版权归 ITU，本项目仅摘录关键条款用于教学；完整内容请查阅 [ITU-T](https://www.itu.int/rec/T-REC-G.9807.1/en) 原文。
