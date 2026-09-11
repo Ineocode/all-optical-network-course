@@ -110,7 +110,12 @@ TypeB配线故障=null（无通路）；TypeC配线故障=A口→入A→出②�
 
 ## 仓库 / 团队分享（2026-09-11）
 
-- **GitHub 仓库**：https://github.com/Ineocode/all-optical-network-course （**private**，默认分支 `main`）
+- **GitHub 仓库**：https://github.com/Ineocode/all-optical-network-course （**public**，默认分支 `main`）
+  - 已改为 public：任何拿到链接的人都能下载（无需邀请协作者）。已验证匿名 ZIP 归档可下（codeload 200）。
+- **网络处置（重要）**：本机 `github.com` HTTPS 被阻断（DNS 解析到被墙 IP，curl 超时 000），但 `api.github.com`/`codeload.github.com`/`raw.githubusercontent.com` 可通。
+  - 解法：**SSH over 443**。`ssh.github.com:443` 可连；已生成部署密钥 `~/.ssh/id_ed25519_alloptical` 并通过 API 注册到仓库；`~/.ssh/config` 加 `github-deploy` 别名。
+  - `origin` 已改为 `git@github-deploy:Ineocode/all-optical-network-course.git`，`git push` 正常。
+  - 备选：把 `github.com` 在 hosts 里指向可用 IP（实测 `20.27.177.113` / `20.200.245.247` / `140.82.114.3` 可通，默认的 `20.205.243.166` 不通）。
 - 已推送 46 个文件；`.research/`（21MB 研究草稿与 ITU PDF）已在 `.gitignore` 中排除
 - 本机环境有个失效代理（`http_proxy=127.0.0.1:16780`），已配置：
   `git config --global http.https://github.com.proxy ""`（并同样配 api.github.com）
