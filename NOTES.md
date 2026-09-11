@@ -105,7 +105,10 @@ TypeB配线故障=null（无通路）；TypeC配线故障=A口→入A→出②�
 
 - **GitHub 仓库**：https://github.com/Ineocode/all-optical-network-course （**private**，默认分支 `main`）
 - 已推送 46 个文件；`.research/`（21MB 研究草稿与 ITU PDF）已在 `.gitignore` 中排除
-- 本机 git 操作需**绕过失效代理**：在命令前加 `env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u ALL_PROXY -u all_proxy`
+- 本机环境有个失效代理（`http_proxy=127.0.0.1:16780`），已配置：
+  `git config --global http.https://github.com.proxy ""`（并同样配 api.github.com）
+  → 现在直接 `git push` 即可，无需再清 env；若别的工具报代理错，仍可在命令前加
+  `env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u ALL_PROXY -u all_proxy`
 - 日后更新：`git add -A && git commit -m "..." && git push`
 - 团队加入：GitHub 仓库 Settings → Collaborators 邀请；或直接 `git clone https://github.com/Ineocode/all-optical-network-course.git`
 
